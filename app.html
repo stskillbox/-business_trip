@@ -8,15 +8,826 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-/* SECTION:CSS */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --yellow:#FFDD2D;--blue:#428BF9;--black:#1A1A1A;--surface:#FFFFFF;
+  --surface2:#F6F7F9;--border:#E5E7EB;--text2:#6B7280;--green:#10B981;
+  --orange:#F59E0B;--red:#EF4444;--purple:#7C3AED;
+  --r-btn:10px;--r-card:16px;--r-pill:999px;--r-input:12px;
+}
+body{font-family:'Inter',sans-serif;background:var(--surface2);color:var(--black);font-size:14px;line-height:1.5;min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;border:none;background:none;font-family:inherit;font-size:inherit;}
+input,select,textarea{font-family:inherit;font-size:inherit;}
+svg{flex-shrink:0;display:block;}
+
+/* HEADER */
+.header{position:fixed;top:0;left:0;right:0;height:60px;background:var(--surface);border-bottom:1px solid var(--border);z-index:100;display:flex;align-items:center;}
+.header-inner{width:100%;max-width:1440px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:12px;}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0;cursor:pointer;}
+.logo-sq{width:36px;height:36px;background:var(--yellow);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;color:var(--black);}
+.logo-text{font-weight:700;font-size:15px;color:var(--black);}
+.header-nav{display:flex;align-items:center;gap:2px;margin-left:16px;flex:1;overflow-x:auto;}
+.nav-link{padding:6px 10px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .15s;}
+.nav-link:hover{background:var(--surface2);color:var(--black);}
+.nav-link.active{background:var(--surface2);color:var(--black);font-weight:600;}
+.header-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.role-switcher{display:flex;background:var(--surface2);border-radius:var(--r-pill);padding:3px;border:1px solid var(--border);}
+.role-btn{padding:4px 12px;border-radius:var(--r-pill);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;color:var(--text2);}
+.role-btn.active{background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.1);color:var(--black);}
+.role-btn.employee.active{color:var(--blue);}
+.role-btn.admin.active{color:var(--purple);}
+.notif-btn{position:relative;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:background .15s;cursor:pointer;}
+.notif-btn:hover{background:var(--surface2);}
+.notif-badge{position:absolute;top:4px;right:4px;width:16px;height:16px;background:var(--red);border-radius:var(--r-pill);font-size:10px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface);}
+.avatar{width:36px;height:36px;border-radius:var(--r-pill);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;cursor:pointer;}
+.avatar.employee{background:var(--blue);}
+.avatar.admin{background:var(--purple);}
+
+/* LAYOUT */
+.main-wrap{padding-top:60px;min-height:100vh;}
+.page{display:none;}
+.page.active{display:block;}
+.page-content{max-width:1200px;margin:0 auto;padding:28px 24px 80px;}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;gap:12px;flex-wrap:wrap;}
+.page-title{font-size:22px;font-weight:800;}
+.btn-row{display:flex;gap:10px;align-items:center;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:var(--r-btn);font-weight:600;font-size:13px;cursor:pointer;transition:all .15s;line-height:1.2;border:none;}
+.btn-primary{background:var(--yellow);color:var(--black);}
+.btn-primary:hover{background:#f5d400;box-shadow:0 2px 8px rgba(255,221,45,.4);}
+.btn-outline{background:transparent;color:var(--black);border:1.5px solid var(--border)!important;}
+.btn-outline:hover{background:var(--surface2);}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-blue:hover{background:#2d7ef0;}
+.btn-red-text{background:none;border:none;color:var(--red);font-weight:600;font-size:13px;cursor:pointer;padding:9px 0;}
+.btn-outline-red{background:transparent;color:var(--red);border:1.5px solid var(--red)!important;}
+.btn-outline-red:hover{background:#fef2f2;}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:#0ea572;}
+.btn-lg{padding:13px 24px;font-size:15px;border-radius:12px;}
+.btn-full{width:100%;justify-content:center;}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);transition:box-shadow .2s;}
+.card:hover{box-shadow:0 4px 20px rgba(0,0,0,.07);}
+.card-pad{padding:20px;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:var(--r-pill);font-size:11px;font-weight:700;line-height:1.4;}
+.badge-green{background:#d1fae5;color:#065f46;}
+.badge-blue{background:#dbeafe;color:#1d4ed8;}
+.badge-orange{background:#fef3c7;color:#92400e;}
+.badge-red{background:#fee2e2;color:#991b1b;}
+.badge-purple{background:#ede9fe;color:#5b21b6;}
+.badge-gray{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
+
+/* INPUTS */
+.input-field{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--r-input);background:var(--surface2);font-size:14px;outline:none;transition:border-color .15s;}
+.input-field:focus{border-color:var(--blue);background:var(--surface);}
+.input-field::placeholder{color:var(--text2);}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-label{font-size:12px;font-weight:600;color:var(--text2);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.form-single{margin-bottom:16px;}
+
+/* TOGGLES */
+.toggle{width:40px;height:22px;border-radius:var(--r-pill);background:var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;display:inline-block;}
+.toggle.on{background:var(--yellow);}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:var(--r-pill);background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15);}
+.toggle.on::after{transform:translateX(18px);}
+.toggle-wrap{display:flex;align-items:center;gap:8px;}
+
+/* FILTER PILLS */
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+.filter-pill{padding:6px 14px;border-radius:var(--r-pill);font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--text2);transition:all .15s;}
+.filter-pill:hover{border-color:var(--blue);color:var(--blue);}
+.filter-pill.active{background:var(--black);color:#fff;border-color:var(--black);}
+.count{font-size:11px;opacity:.7;margin-left:3px;}
+
+/* GRIDS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.grid-trips{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px;}
+
+/* ── HOME ── */
+.stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px;}
+.stat-mini{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:12px;height:70px;}
+.stat-mini.clickable{cursor:pointer;}
+.stat-mini.clickable:hover{box-shadow:0 2px 12px rgba(0,0,0,.08);}
+.stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.stat-icon.blue{background:#dbeafe;color:var(--blue);}
+.stat-icon.green{background:#d1fae5;color:var(--green);}
+.stat-icon.orange{background:#fef3c7;color:var(--orange);}
+.stat-label{font-size:11px;color:var(--text2);font-weight:500;}
+.stat-val{font-size:16px;font-weight:800;}
+.ai-hero{text-align:center;padding:44px 0 36px;max-width:640px;margin:0 auto;}
+.ai-badge{display:inline-flex;align-items:center;gap:6px;background:var(--blue);color:#fff;padding:5px 14px;border-radius:var(--r-pill);font-size:12px;font-weight:700;margin-bottom:16px;}
+.ai-hero h1{font-size:38px;font-weight:900;line-height:1.15;margin-bottom:12px;}
+.ai-hero p{font-size:16px;color:var(--text2);max-width:480px;margin:0 auto;}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:28px 0;}
+.step-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:20px;display:flex;gap:14px;align-items:flex-start;}
+.step-num{width:32px;height:32px;border-radius:var(--r-pill);background:var(--blue);color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-title{font-weight:700;font-size:14px;margin-bottom:4px;}
+.step-desc{font-size:13px;color:var(--text2);}
+.feat-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;}
+.feat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:20px;}
+.feat-icon-wrap{width:40px;height:40px;background:var(--surface2);border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;color:var(--blue);}
+.feat-title{font-weight:700;margin-bottom:6px;}
+.feat-desc{font-size:13px;color:var(--text2);}
+.search-bar-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:28px;display:flex;align-items:center;padding:6px 8px;gap:8px;max-width:700px;margin:0 auto 20px;box-shadow:0 2px 16px rgba(0,0,0,.06);}
+.search-bar-wrap:focus-within{border-color:var(--blue);}
+.search-mic{width:44px;height:44px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--text2);cursor:pointer;flex-shrink:0;border:none;}
+.search-mic:hover{background:var(--border);}
+.search-input{flex:1;border:none;background:transparent;font-size:15px;outline:none;color:var(--black);}
+.search-input::placeholder{color:var(--text2);}
+.search-send{width:44px;height:44px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;flex-shrink:0;border:none;transition:background .15s;}
+.search-send:hover{background:#2d7ef0;}
+.quick-pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:28px;}
+.quick-pill{padding:7px 14px;border-radius:var(--r-pill);border:1.5px solid var(--border);background:var(--surface);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;color:var(--text2);}
+.quick-pill:hover{border-color:var(--blue);color:var(--blue);}
+.cat-tabs{display:flex;gap:8px;justify-content:center;margin-bottom:28px;}
+.cat-tab{display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;padding:6px 12px;border-radius:12px;transition:all .15s;}
+.cat-tab.active .cat-icon{background:var(--black);}
+.cat-tab.active .cat-icon svg{stroke:#fff;}
+.cat-tab.active .cat-label{color:var(--black);font-weight:700;}
+.cat-icon{width:48px;height:48px;background:var(--surface2);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:background .15s;}
+.cat-icon:hover{background:var(--border);}
+.cat-label{font-size:12px;font-weight:600;color:var(--text2);}
+.section-title{font-size:17px;font-weight:800;margin-bottom:16px;}
+.trip-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden;transition:box-shadow .2s;cursor:pointer;}
+.trip-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.08);}
+.trip-top{height:4px;}
+.trip-top.blue{background:var(--blue);}
+.trip-top.green{background:var(--green);}
+.trip-top.orange{background:var(--orange);}
+.trip-top.purple{background:var(--purple);}
+.trip-top.gray{background:var(--border);}
+.trip-body{padding:16px;}
+.trip-route{font-size:17px;font-weight:800;margin:8px 0 4px;}
+.trip-meta{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);margin-bottom:3px;}
+.trip-price{font-size:16px;font-weight:800;margin-top:10px;}
+.trip-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.trip-tag{padding:3px 9px;border-radius:var(--r-pill);font-size:11px;font-weight:600;background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
+.trip-tag.ai{color:var(--blue);border-color:var(--blue);background:#eff6ff;}
+
+/* ── CHAT ── */
+#page-chat .page-content{max-width:740px;padding-bottom:120px;}
+.chat-messages{display:flex;flex-direction:column;gap:18px;}
+.cmsg{display:flex;gap:12px;align-items:flex-start;}
+.cmsg.user-msg{flex-direction:row-reverse;}
+.cmsg-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.cmsg-av.bot{background:var(--yellow);color:var(--black);}
+.cmsg-av.user{background:var(--blue);color:#fff;}
+.cmsg-bubble{padding:12px 16px;border-radius:16px;max-width:560px;font-size:14px;line-height:1.6;}
+.cmsg-bubble.bot{background:var(--surface);border:1px solid var(--border);border-radius:4px 16px 16px 16px;}
+.cmsg-bubble.user{background:var(--blue);color:#fff;border-radius:16px 4px 16px 16px;}
+.onboard-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:24px;max-width:580px;}
+.ob-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.ob-logo{width:36px;height:36px;background:var(--yellow);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;}
+.ob-name{font-weight:800;font-size:16px;}
+.ob-desc{font-size:14px;color:var(--text2);margin-bottom:16px;line-height:1.6;}
+.ob-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.ob-step{display:flex;gap:10px;align-items:flex-start;}
+.ob-snum{width:24px;height:24px;border-radius:var(--r-pill);background:var(--blue);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.ob-st{font-weight:700;font-size:13px;}
+.ob-sh{font-size:12px;color:var(--text2);}
+.ob-ex{background:var(--surface2);border-radius:10px;padding:12px 14px;cursor:pointer;border:1px solid var(--border);transition:border-color .15s;}
+.ob-ex:hover{border-color:var(--blue);}
+.ob-ex-lbl{font-size:11px;color:var(--text2);font-weight:600;margin-bottom:4px;}
+.ob-ex-txt{font-size:14px;font-weight:500;color:var(--black);}
+.chat-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.chat-pill{padding:8px 14px;border-radius:var(--r-pill);border:1.5px solid var(--blue);background:#fff;color:var(--blue);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;}
+.chat-pill:hover{background:var(--blue);color:#fff;}
+.chat-pill.disabled{opacity:.4;pointer-events:none;}
+.fl-list{display:flex;flex-direction:column;gap:10px;margin-top:8px;max-width:560px;}
+.fl-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;transition:all .15s;}
+.fl-card:hover{border-color:var(--blue);}
+.fl-card.best{border-color:var(--blue);}
+.fl-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.fl-airline{font-weight:700;font-size:14px;}
+.fl-price{font-size:20px;font-weight:900;}
+.fl-route{font-size:13px;font-weight:600;margin-bottom:3px;}
+.fl-time{font-size:12px;color:var(--text2);}
+.fl-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.ft-g{background:#d1fae5;color:#065f46;padding:3px 8px;border-radius:var(--r-pill);font-size:11px;font-weight:600;}
+.ft-o{background:#fef3c7;color:#92400e;padding:3px 8px;border-radius:var(--r-pill);font-size:11px;font-weight:600;}
+.ft-gr{background:var(--surface2);color:var(--text2);border:1px solid var(--border);padding:3px 8px;border-radius:var(--r-pill);font-size:11px;font-weight:600;}
+.fl-select{margin-top:10px;width:100%;padding:9px;border-radius:10px;background:var(--yellow);font-weight:700;font-size:13px;cursor:pointer;border:none;transition:all .15s;}
+.fl-select:hover{background:#f5d400;}
+.fl-select.selected{background:var(--green);color:#fff;}
+.hl-list{display:flex;flex-direction:column;gap:10px;margin-top:8px;max-width:560px;}
+.hl-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px;cursor:pointer;transition:all .15s;}
+.hl-card:hover{border-color:var(--blue);}
+.hl-card.best{border-color:var(--blue);}
+.hl-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+.hl-name{font-weight:700;font-size:14px;}
+.hl-stars{color:var(--orange);font-size:13px;}
+.hl-price{font-size:18px;font-weight:900;}
+.hl-meta{font-size:12px;color:var(--text2);}
+.hl-select{margin-top:10px;width:100%;padding:9px;border-radius:10px;background:var(--yellow);font-weight:700;font-size:13px;cursor:pointer;border:none;transition:all .15s;}
+.hl-select:hover{background:#f5d400;}
+.hl-select.selected{background:var(--green);color:#fff;}
+.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;max-width:560px;}
+.sum-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--border);font-size:13px;}
+.sum-row:last-of-type{border-bottom:none;}
+.sum-lbl{color:var(--text2);}
+.sum-total{display:flex;justify-content:space-between;padding:12px 0 6px;border-top:2px solid var(--black);font-weight:900;font-size:17px;}
+.cashback{display:flex;align-items:center;gap:8px;background:#d1fae5;border-radius:10px;padding:9px 14px;margin-top:10px;font-size:13px;font-weight:600;color:#065f46;}
+.ai-note{border-left:3px solid var(--blue);padding:10px 14px;background:#eff6ff;border-radius:0 10px 10px 0;font-size:13px;margin:14px 0;line-height:1.6;}
+.confirm-card{background:#d1fae5;border:1px solid #6ee7b7;border-radius:14px;padding:24px;max-width:560px;}
+.confirm-icon{width:52px;height:52px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;margin-bottom:16px;color:#fff;}
+.confirm-title{font-weight:800;font-size:18px;color:#065f46;margin-bottom:12px;}
+.confirm-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;}
+.confirm-lbl{color:#065f46;opacity:.8;}
+.confirm-val{font-weight:700;color:#065f46;}
+.vc-mini{background:linear-gradient(135deg,#1A1A2E,#0F3460);border-radius:12px;padding:16px;color:#fff;margin-top:16px;}
+.vc-mini-num{font-size:15px;font-weight:700;letter-spacing:3px;margin-bottom:8px;}
+.vc-mini-foot{display:flex;justify-content:space-between;align-items:center;font-size:11px;opacity:.8;}
+.vc-mini-note{font-size:12px;color:#065f46;margin-top:10px;line-height:1.5;}
+.typing-dots{display:flex;gap:4px;align-items:center;padding:4px 0;}
+.typing-dots span{width:7px;height:7px;border-radius:50%;background:var(--text2);animation:typing .8s ease infinite;}
+.typing-dots span:nth-child(2){animation-delay:.15s;}
+.typing-dots span:nth-child(3){animation-delay:.3s;}
+@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
+
+/* CHAT INPUT BAR */
+.chat-input-bar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:12px 16px;display:none;z-index:90;}
+.chat-input-bar.visible{display:flex;}
+.chat-input-inner{max-width:740px;margin:0 auto;display:flex;gap:10px;align-items:flex-end;width:100%;}
+.chat-textarea{flex:1;border:1.5px solid var(--border);border-radius:14px;padding:10px 14px;resize:none;min-height:44px;max-height:140px;font-size:14px;outline:none;background:var(--surface2);transition:border-color .15s;}
+.chat-textarea:focus{border-color:var(--blue);background:var(--surface);}
+.chat-send{width:44px;height:44px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;flex-shrink:0;border:none;transition:background .15s;}
+.chat-send:hover{background:#2d7ef0;}
+
+/* ── TRIPS ── */
+.appr-sec{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:20px;margin-bottom:24px;}
+.appr-hdr{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.appr-title{font-size:16px;font-weight:800;}
+.appr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;}
+.appr-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.appr-emp{font-weight:700;font-size:14px;margin-bottom:2px;}
+.appr-dept{font-size:12px;color:var(--text2);margin-bottom:10px;}
+.appr-route{font-weight:800;font-size:16px;margin-bottom:4px;}
+.appr-budget{display:flex;gap:16px;margin-bottom:8px;font-size:13px;flex-wrap:wrap;}
+.appr-ai{background:#eff6ff;border-radius:8px;padding:8px 10px;font-size:12px;margin-bottom:10px;border-left:3px solid var(--blue);line-height:1.5;}
+.appr-btns{display:flex;gap:8px;}
+
+/* ── NEW TRIP STEPPER ── */
+.autosave{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:5px;}
+.stepper{display:flex;align-items:center;margin-bottom:32px;flex-wrap:wrap;gap:8px;}
+.st-step{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.st-num{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;transition:all .2s;}
+.st-num.active{background:var(--yellow);color:var(--black);}
+.st-num.done{background:var(--green);color:#fff;}
+.st-num.idle{background:var(--border);color:var(--text2);}
+.st-lbl{font-size:13px;font-weight:600;color:var(--text2);transition:color .2s;}
+.st-lbl.active{color:var(--black);}
+.st-line{flex:1;height:2px;background:var(--border);margin:0 12px;min-width:40px;transition:background .2s;}
+.st-line.done{background:var(--green);}
+.step-pane{display:none;}
+.step-pane.active{display:block;}
+.tag-input-box{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--r-input);background:var(--surface2);min-height:44px;cursor:text;}
+.tag-chip{display:flex;align-items:center;gap:5px;background:var(--black);color:#fff;padding:3px 10px;border-radius:var(--r-pill);font-size:12px;font-weight:600;}
+.tag-chip button{background:none;border:none;color:#fff;cursor:pointer;opacity:.7;font-size:15px;line-height:1;padding:0 2px;}
+.ai-sug{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px;}
+.ai-sug-icon{width:28px;height:28px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;}
+.ai-sug-t{font-weight:700;margin-bottom:3px;font-size:13px;}
+.ai-sug-d{font-size:13px;}
+.transport-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.transport-tab{display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:var(--r-pill);border:1.5px solid var(--border);font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .15s;}
+.transport-tab.active{border-color:var(--black);background:var(--black);color:#fff;}
+.rdot{width:14px;height:14px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rdot.on::after{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;}
+.block-sec{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:16px;}
+.block-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.block-title{font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px;}
+.ttt-tabs{display:flex;background:var(--surface2);border-radius:var(--r-pill);padding:3px;margin-bottom:14px;width:fit-content;}
+.ttt-tab{padding:5px 14px;border-radius:var(--r-pill);font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .15s;}
+.ttt-tab.active{background:var(--surface);box-shadow:0 1px 4px rgba(0,0,0,.1);color:var(--black);}
+.sidebar-chat{background:linear-gradient(135deg,#7C3AED,#428BF9);border-radius:var(--r-card);padding:20px;color:#fff;}
+.sc-icon{width:44px;height:44px;background:rgba(255,255,255,.2);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.sc-title{font-weight:800;font-size:14px;margin-bottom:6px;}
+.sc-desc{font-size:12px;opacity:.8;line-height:1.5;}
+.step-btns{display:flex;gap:12px;margin-top:24px;align-items:center;flex-wrap:wrap;}
+.info-panel{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:14px 16px;display:flex;gap:10px;align-items:flex-start;margin-bottom:16px;}
+.info-icon{color:var(--blue);flex-shrink:0;margin-top:1px;}
+.step3-layout{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
+.s3-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--surface2);font-size:14px;}
+.s3-row:last-child{border-bottom:none;}
+.s3-total{display:flex;justify-content:space-between;padding:12px 0 0;font-weight:800;font-size:16px;}
+.flow-box{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+.flow-node{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:7px 12px;font-size:12px;font-weight:600;}
+
+/* ── FINANCE ── */
+.finance-layout{display:grid;grid-template-columns:380px 1fr;gap:20px;align-items:start;}
+.vcard{background:linear-gradient(135deg,#1A1A2E 0%,#0F3460 100%);border-radius:20px;padding:22px;color:#fff;position:relative;overflow:hidden;}
+.vc-chip{width:40px;height:30px;background:linear-gradient(135deg,#d4af37,#ffd700);border-radius:6px;margin-bottom:16px;}
+.vc-cardlabel{font-size:10px;opacity:.6;margin-bottom:2px;letter-spacing:.5px;text-transform:uppercase;}
+.vc-trip{font-size:12px;opacity:.7;margin-bottom:14px;}
+.vc-num{font-size:20px;font-weight:700;letter-spacing:4px;margin-bottom:16px;}
+.vc-foot{display:flex;justify-content:space-between;align-items:flex-end;}
+.vc-holder{font-size:12px;font-weight:700;letter-spacing:1px;opacity:.9;}
+.vc-bank{background:var(--yellow);color:var(--black);padding:4px 10px;border-radius:6px;font-size:12px;font-weight:900;letter-spacing:1px;}
+.vc-shine{position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(circle,rgba(255,255,255,.1),transparent 70%);border-radius:50%;pointer-events:none;}
+.bal-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:18px;margin-top:14px;}
+.bal-title{font-weight:700;font-size:15px;margin-bottom:12px;}
+.bal-row{display:flex;justify-content:space-between;padding:6px 0;font-size:14px;}
+.bal-row.total{font-weight:800;font-size:15px;}
+.bal-green{color:var(--green);font-weight:800;}
+.prog-bar{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;margin:10px 0 14px;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--yellow),var(--orange));border-radius:4px;}
+.bal-btns{display:flex;gap:8px;}
+.daily-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:18px;margin-top:14px;}
+.txn-list{display:flex;flex-direction:column;}
+.txn-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;transition:background .15s;}
+.txn-item:hover{background:var(--surface2);}
+.txn-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.txn-icon.blue{background:#dbeafe;color:var(--blue);}
+.txn-icon.purple{background:#ede9fe;color:var(--purple);}
+.txn-icon.orange{background:#fef3c7;color:var(--orange);}
+.txn-icon.green{background:#d1fae5;color:var(--green);}
+.txn-icon.gray{background:var(--surface2);color:var(--text2);}
+.txn-name{font-weight:600;font-size:13px;display:flex;align-items:center;gap:6px;}
+.txn-meta{font-size:11px;color:var(--text2);}
+.txn-amt{margin-left:auto;font-weight:700;font-size:14px;white-space:nowrap;}
+.txn-amt.pos{color:var(--green);}
+.ocr-b{font-size:10px;background:#d1fae5;color:#065f46;padding:2px 6px;border-radius:var(--r-pill);font-weight:700;}
+.ocr-upload{background:var(--surface2);border:2px dashed var(--border);border-radius:14px;padding:28px;text-align:center;cursor:pointer;transition:all .15s;margin-top:16px;}
+.ocr-upload:hover{border-color:var(--blue);background:#eff6ff;}
+
+/* ── DOCUMENTS ── */
+.tabs-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:5px;}
+.tab-btn{padding:7px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .15s;border:none;background:none;}
+.tab-btn:hover{color:var(--black);}
+.tab-btn.active{background:var(--black);color:#fff;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+.doc-table{width:100%;border-collapse:collapse;}
+.doc-table th{padding:10px 12px;text-align:left;font-size:11px;font-weight:700;color:var(--text2);border-bottom:2px solid var(--border);white-space:nowrap;}
+.doc-table td{padding:11px 12px;border-bottom:1px solid var(--surface2);font-size:13px;vertical-align:middle;}
+.doc-table tr:hover td{background:var(--surface2);}
+.edo-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--green);}
+.ao-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:20px;}
+.ao-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;gap:10px;flex-wrap:wrap;}
+.ao-title{font-weight:800;font-size:15px;}
+.ao-items{display:flex;flex-direction:column;margin-bottom:12px;}
+.ao-item{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--surface2);}
+.ao-item:last-child{border-bottom:none;}
+.ao-totals{background:var(--surface2);border-radius:10px;padding:12px;margin-bottom:14px;}
+.ao-trow{display:flex;justify-content:space-between;font-size:13px;padding:3px 0;}
+.ao-trow.bold{font-weight:800;}
+.nds-card{background:#eff6ff;border:1px solid #bfdbfe;border-radius:14px;padding:18px;display:flex;justify-content:space-between;align-items:center;margin-top:16px;flex-wrap:wrap;gap:12px;}
+.nds-amt{font-size:22px;font-weight:900;color:var(--blue);}
+.edo-svc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;}
+.edo-ok{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--green);}
+.hr-doc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;}
+.hr-doc-t{font-weight:700;font-size:14px;margin-bottom:2px;}
+.hr-doc-s{font-size:12px;color:var(--text2);}
+
+/* ── ANALYTICS ── */
+.kpi-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:20px;position:relative;overflow:hidden;}
+.kpi-val{font-size:32px;font-weight:900;line-height:1;margin-bottom:6px;}
+.kpi-label{font-size:12px;color:var(--text2);font-weight:500;margin-bottom:8px;}
+.kpi-delta{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700;}
+.kpi-delta.up-good{color:var(--green);}
+.kpi-delta.up-bad{color:var(--red);}
+.kpi-delta.dn-good{color:var(--green);}
+.kpi-delta.dn-bad{color:var(--red);}
+.kpi-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;position:absolute;top:16px;right:16px;}
+.kpi-icon.blue{background:#dbeafe;color:var(--blue);}
+.kpi-icon.orange{background:#fef3c7;color:var(--orange);}
+.kpi-icon.green{background:#d1fae5;color:var(--green);}
+.kpi-icon.purple{background:#ede9fe;color:var(--purple);}
+.an-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.insight-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--surface2);}
+.insight-item:last-child{border-bottom:none;}
+.ins-bar{width:3px;background:var(--blue);border-radius:2px;flex-shrink:0;}
+.ins-text{font-size:13px;line-height:1.5;}
+.ins-action{color:var(--blue);font-size:12px;font-weight:600;cursor:pointer;margin-top:4px;display:inline-block;}
+.bar-item{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.bar-city{font-size:13px;font-weight:600;width:110px;flex-shrink:0;}
+.bar-wrap{flex:1;height:18px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--blue),#74b3ff);border-radius:4px;transition:width 1s ease;width:0%;}
+.bar-stats{font-size:11px;color:var(--text2);width:130px;flex-shrink:0;text-align:right;}
+.dept-t{width:100%;border-collapse:collapse;}
+.dept-t th{font-size:11px;color:var(--text2);font-weight:700;padding:6px 8px;border-bottom:1px solid var(--border);text-align:left;}
+.dept-t td{padding:8px 8px;font-size:13px;border-bottom:1px solid var(--surface2);}
+.saves-num{font-size:36px;font-weight:900;color:var(--green);margin-bottom:4px;}
+.saves-sub{font-size:13px;color:var(--text2);margin-bottom:14px;}
+.saves-row{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--surface2);}
+.saves-row:last-child{border-bottom:none;}
+.esg-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:20px;display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;margin-top:16px;}
+.esg-num{font-size:28px;font-weight:900;color:var(--green);}
+.esg-lbl{font-size:12px;color:var(--text2);}
+.esg-div{width:1px;background:var(--border);align-self:stretch;}
+.esg-rec{font-size:13px;line-height:1.6;}
+
+/* ── SETTINGS ── */
+.settings-layout{display:grid;grid-template-columns:220px 1fr;gap:20px;align-items:start;}
+.settings-nav{display:flex;flex-direction:column;gap:2px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:8px;}
+.sn-item{padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);display:flex;align-items:center;gap:8px;transition:all .15s;}
+.sn-item:hover{background:var(--surface2);color:var(--black);}
+.sn-item.active{background:var(--black);color:#fff;}
+.stab{display:none;}
+.stab.active{display:block;}
+.pol-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:20px;margin-bottom:16px;}
+.pol-title{font-weight:800;font-size:15px;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.pol-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--surface2);gap:12px;flex-wrap:wrap;}
+.pol-row:last-child{border-bottom:none;}
+.pol-label{font-size:13px;font-weight:500;}
+.pol-ctrl{display:flex;align-items:center;gap:8px;}
+.roles-t{width:100%;border-collapse:collapse;}
+.roles-t th{font-size:12px;font-weight:700;color:var(--text2);padding:8px 12px;border-bottom:2px solid var(--border);text-align:left;}
+.roles-t td{padding:12px 12px;border-bottom:1px solid var(--surface2);font-size:13px;vertical-align:middle;}
+.tariff-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.tar-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-card);padding:22px;}
+.tar-card.current{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(255,221,45,.2);}
+.tar-badge{font-size:11px;font-weight:700;background:var(--yellow);color:var(--black);padding:3px 10px;border-radius:var(--r-pill);display:inline-block;margin-bottom:8px;}
+.tar-name{font-size:20px;font-weight:900;margin-bottom:4px;}
+.tar-price{font-size:28px;font-weight:900;margin-bottom:2px;}
+.tar-period{font-size:12px;color:var(--text2);margin-bottom:16px;}
+.tar-feats{display:flex;flex-direction:column;gap:7px;margin-bottom:18px;}
+.tar-feat{display:flex;align-items:flex-start;gap:8px;font-size:13px;}
+.tar-check{color:var(--green);flex-shrink:0;margin-top:1px;}
+.integr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
+.integr-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;}
+.integr-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.integr-name{font-weight:700;font-size:14px;}
+.integr-ok{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--green);}
+.integr-meta{font-size:12px;color:var(--text2);}
+.mice-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:22px;margin-bottom:20px;}
+.mice-types{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.mice-type{padding:7px 14px;border-radius:var(--r-pill);font-size:13px;font-weight:600;border:1.5px solid var(--border);cursor:pointer;color:var(--text2);transition:all .15s;}
+.mice-type.active{background:var(--black);color:#fff;border-color:var(--black);}
+.mice-event{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:18px;margin-bottom:12px;}
+.mice-ev-hdr{display:flex;justify-content:space-between;margin-bottom:10px;align-items:flex-start;flex-wrap:wrap;gap:8px;}
+.mice-ev-t{font-weight:800;font-size:15px;}
+.mice-bbar{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;margin:8px 0;}
+.mice-bfill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:3px;}
+.mice-blbl{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);}
+
+/* MOBILE NAV */
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:6px 0 8px;z-index:95;}
+.mob-nav-inner{display:flex;justify-content:space-around;}
+.mob-btn{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 8px;border-radius:8px;color:var(--text2);min-width:52px;}
+.mob-btn.active{color:var(--blue);}
+.mob-lbl{font-size:10px;font-weight:600;}
+
+/* ADMIN-ONLY */
+.admin-only{display:none;}
+.admin-mode .admin-only{display:block;}
+
+/* UTILS */
+.sep{height:1px;background:var(--border);margin:16px 0;}
+.muted{color:var(--text2);}
+.fw8{font-weight:800;}
+.mt4{margin-top:4px;}
+.mt8{margin-top:8px;}
+.mt12{margin-top:12px;}
+.mt16{margin-top:16px;}
+.mt20{margin-top:20px;}
+.mb8{margin-bottom:8px;}
+.mb12{margin-bottom:12px;}
+.mb16{margin-bottom:16px;}
+.mb20{margin-bottom:20px;}
+.text-center{text-align:center;}
+.d-flex{display:flex;}
+.g8{gap:8px;}
+.g12{gap:12px;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .3s ease forwards;}
+
+@media(max-width:900px){
+  .header-nav{display:none;}
+  .grid-2,.grid-3,.grid-4,.feat-cards,.steps-grid,.kpi-cards,.an-grid,.tariff-cards,.finance-layout,.settings-layout,.step3-layout{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .page-content{padding:16px 14px 90px;}
+  .mobile-nav{display:block;}
+  .chat-input-bar.visible{bottom:62px;}
+}
+@media(max-width:600px){
+  .stats-bar,.appr-grid,.grid-trips{grid-template-columns:1fr;}
+  .ai-hero h1{font-size:26px;}
+  .cat-tabs{flex-wrap:wrap;}
+}
 </style>
 </head>
 <body>
-<!-- SECTION:HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo" onclick="navigateTo('page-home')">
+      <div class="logo-sq">T</div>
+      <span class="logo-text">Командировка</span>
+    </div>
+    <nav class="header-nav">
+      <span class="nav-link active" data-page="page-home" onclick="navigateTo('page-home')">Главная</span>
+      <span class="nav-link" data-page="page-chat" onclick="navigateTo('page-chat')">AI-Помощник</span>
+      <span class="nav-link" data-page="page-trips" onclick="navigateTo('page-trips')">Командировки</span>
+      <span class="nav-link" data-page="page-new-trip" onclick="navigateTo('page-new-trip')">Новая заявка</span>
+      <span class="nav-link" data-page="page-finance" onclick="navigateTo('page-finance')">Финансы</span>
+      <span class="nav-link" data-page="page-documents" onclick="navigateTo('page-documents')">Документы</span>
+      <span class="nav-link" data-page="page-analytics" onclick="navigateTo('page-analytics')">Аналитика</span>
+      <span class="nav-link" data-page="page-settings" onclick="navigateTo('page-settings')">Настройки</span>
+    </nav>
+    <div class="header-right">
+      <div class="role-switcher">
+        <span class="role-btn employee active" onclick="switchRole('employee')">Сотрудник</span>
+        <span class="role-btn admin" onclick="switchRole('admin')">Администратор</span>
+      </div>
+      <div class="notif-btn" onclick="navigateTo('page-trips')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="notif-badge">3</span>
+      </div>
+      <div class="avatar employee" id="user-avatar">МК</div>
+    </div>
+  </div>
+</header>
 <div class="main-wrap">
-<!-- SECTION:PAGE1 -->
-<!-- SECTION:PAGE2 -->
-<!-- SECTION:PAGE3 -->
+<div id="page-home" class="page active">
+<div class="page-content">
+  <!-- Stats Bar -->
+  <div class="stats-bar">
+    <div class="stat-mini">
+      <div class="stat-icon blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
+      <div><div class="stat-label">Активных командировок</div><div class="stat-val">2</div></div>
+    </div>
+    <div class="stat-mini">
+      <div class="stat-icon green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+      <div><div class="stat-label">Суточные этого месяца</div><div class="stat-val">4 800 ₽</div></div>
+    </div>
+    <div class="stat-mini clickable" onclick="navigateTo('page-trips')">
+      <div class="stat-icon orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <div><div class="stat-label">Ожидают согласования</div><div class="stat-val" style="color:var(--orange)">1</div></div>
+    </div>
+  </div>
+
+  <!-- AI Hero -->
+  <div class="ai-hero">
+    <div class="ai-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      AI-First
+    </div>
+    <h1>Куда летим?</h1>
+    <p>Опишите командировку — AI подберёт лучшие варианты за секунды</p>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-bar-wrap">
+    <button class="search-mic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+    <input class="search-input" id="home-search" placeholder="Например: 1 билет в Казань, самолёт, 10 марта, отель с завтраком" onkeydown="if(event.key==='Enter')handleHomeSearch()">
+    <button class="search-send" onclick="handleHomeSearch()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+
+  <!-- Quick Pills -->
+  <div class="quick-pills">
+    <span class="quick-pill" onclick="setSearchAndGo('Билет в Казань на 10 марта')">Билет в Казань на 10 марта</span>
+    <span class="quick-pill" onclick="setSearchAndGo('Командировка в СПб 15-18 мая')">Командировка в СПб 15–18 мая</span>
+    <span class="quick-pill" onclick="setSearchAndGo('Отель до 5000 ₽/ночь')">Отель до 5 000 ₽/ночь</span>
+    <span class="quick-pill" onclick="setSearchAndGo('Авансовый отчёт за февраль')">Авансовый отчёт за февраль</span>
+    <span class="quick-pill" onclick="setSearchAndGo('MICE-мероприятие на 50 человек')">MICE-мероприятие на 50 человек</span>
+  </div>
+
+  <!-- Category Tabs -->
+  <div class="cat-tabs">
+    <div class="cat-tab active" onclick="setCatTab(this)">
+      <div class="cat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
+      <span class="cat-label">Авиа</span>
+    </div>
+    <div class="cat-tab" onclick="setCatTab(this)">
+      <div class="cat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <span class="cat-label">Отели</span>
+    </div>
+    <div class="cat-tab" onclick="setCatTab(this)">
+      <div class="cat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="8" y1="14" x2="16" y2="14"/></svg></div>
+      <span class="cat-label">Поезда</span>
+    </div>
+    <div class="cat-tab" onclick="setCatTab(this)">
+      <div class="cat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v9a2 2 0 0 1-2 2h-1"/><circle cx="8.5" cy="17" r="2.5"/><circle cx="17.5" cy="17" r="2.5"/></svg></div>
+      <span class="cat-label">Такси</span>
+    </div>
+    <div class="cat-tab" onclick="setCatTab(this)">
+      <div class="cat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <span class="cat-label">MICE</span>
+    </div>
+  </div>
+
+  <!-- How to Use -->
+  <div class="steps-grid">
+    <div class="step-card"><div class="step-num">1</div><div><div class="step-title">Опишите задачу</div><div class="step-desc">Направление, даты, бюджет в свободной форме</div></div></div>
+    <div class="step-card"><div class="step-num">2</div><div><div class="step-title">AI уточнит детали</div><div class="step-desc">Уточнит багаж, отель, трансфер одним диалогом</div></div></div>
+    <div class="step-card"><div class="step-num">3</div><div><div class="step-title">Бронируйте в 1 клик</div><div class="step-desc">Выберите из подобранных вариантов</div></div></div>
+  </div>
+
+  <!-- Feature Cards -->
+  <div class="feat-cards">
+    <div class="feat-card">
+      <div class="feat-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+      <div class="feat-title">Ищет по всем источникам</div>
+      <div class="feat-desc">500+ авиакомпаний, 3M+ отелей, корпоративные скидки 15–30%</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <div class="feat-title">Автоматизирует документы</div>
+      <div class="feat-desc">АО-1, приказ, суточные, закрывающие — формирует сам</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+      <div class="feat-title">Экономит время и деньги</div>
+      <div class="feat-desc">OCR чеков, интеграция 1С, возврат НДС автоматически</div>
+    </div>
+  </div>
+
+  <!-- Recent Trips -->
+  <div class="section-title">Последние командировки</div>
+  <div class="grid-trips">
+    <div class="trip-card"><div class="trip-top blue"></div><div class="trip-body">
+      <span class="badge badge-blue">В поездке</span>
+      <div class="trip-route">Москва → Санкт-Петербург</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 26 фев — 1 мар 2026</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Калинина М.А. · Продажи</div>
+      <div class="trip-price">18 450 ₽</div>
+      <div class="trip-tags"><span class="trip-tag ai">AI-подбор</span><span class="trip-tag">Аэрофлот</span><span class="trip-tag">Holiday Inn</span></div>
+    </div></div>
+    <div class="trip-card"><div class="trip-top orange"></div><div class="trip-body">
+      <span class="badge badge-orange">На согласовании</span>
+      <div class="trip-route">Москва → Казань</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 10 мар — 12 мар 2026</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Калинина М.А. · Продажи</div>
+      <div class="trip-price">17 200 ₽</div>
+      <div class="trip-tags"><span class="trip-tag ai">AI-подбор</span><span class="trip-tag">S7</span><span class="trip-tag">Kazan Palace</span></div>
+    </div></div>
+    <div class="trip-card"><div class="trip-top gray"></div><div class="trip-body">
+      <span class="badge badge-gray">Завершена</span>
+      <div class="trip-route">Москва → Екатеринбург</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 10 фев — 14 фев 2026</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Калинина М.А. · Продажи</div>
+      <div class="trip-price">22 800 ₽</div>
+      <div class="trip-tags"><span class="trip-tag">Уральские авиалинии</span><span class="trip-tag">Novotel</span></div>
+    </div></div>
+  </div>
+</div>
+</div>
+<div id="page-chat" class="page">
+<div class="page-content">
+  <div class="chat-messages" id="chat-messages">
+    <div class="cmsg">
+      <div class="cmsg-av bot">T</div>
+      <div class="onboard-card fade-in">
+        <div class="ob-hdr">
+          <div class="ob-logo">T</div>
+          <span class="ob-name">Т-Помощник</span>
+          <span class="badge badge-blue" style="margin-left:4px">AI</span>
+        </div>
+        <div class="ob-desc">Я AI-ассистент для корпоративных командировок. Помогу найти билеты, отель и трансфер, оформлю документы и сэкономлю ваш бюджет. Просто опишите поездку в свободной форме.</div>
+        <div class="ob-steps">
+          <div class="ob-step"><div class="ob-snum">1</div><div><div class="ob-st">Опишите поездку</div><div class="ob-sh">Куда, когда, с кем — всё в одном сообщении</div></div></div>
+          <div class="ob-step"><div class="ob-snum">2</div><div><div class="ob-st">Уточню детали</div><div class="ob-sh">Багаж, класс, предпочтения по отелю</div></div></div>
+          <div class="ob-step"><div class="ob-snum">3</div><div><div class="ob-st">Бронирую за вас</div><div class="ob-sh">Всё в одном клике, документы автоматически</div></div></div>
+        </div>
+        <div class="ob-ex" onclick="useExample()">
+          <div class="ob-ex-lbl">Попробуйте например:</div>
+          <div class="ob-ex-txt">Нужно в Казань на 10 марта, улететь рано утром, с отелем на 2 ночи с завтраком, бюджет до 20 000 ₽</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div id="page-trips" class="page">
+<div class="page-content">
+  <div class="page-header">
+    <h1 class="page-title">Мои командировки</h1>
+    <div class="btn-row">
+      <button class="btn btn-outline"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Экспорт</button>
+      <button class="btn btn-primary" onclick="navigateTo('page-new-trip')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Новая заявка</button>
+    </div>
+  </div>
+
+  <div class="filter-row" id="trip-filters">
+    <span class="filter-pill active" onclick="filterTrips('all',this)">Все<span class="count">8</span></span>
+    <span class="filter-pill" onclick="filterTrips('approval',this)">На согласовании<span class="count">2</span></span>
+    <span class="filter-pill" onclick="filterTrips('booked',this)">Забронировано<span class="count">1</span></span>
+    <span class="filter-pill" onclick="filterTrips('active',this)">В поездке<span class="count">1</span></span>
+    <span class="filter-pill" onclick="filterTrips('done',this)">Завершённые<span class="count">4</span></span>
+  </div>
+
+  <!-- Admin: approval queue -->
+  <div class="appr-sec admin-only" id="approval-queue">
+    <div class="appr-hdr">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span class="appr-title">Ожидают согласования</span>
+      <span class="badge badge-orange">2</span>
+    </div>
+    <div class="appr-grid">
+      <div class="appr-card">
+        <div class="appr-emp">Петров Алексей Иванович</div>
+        <div class="appr-dept">Отдел IT · Ведущий разработчик</div>
+        <div class="appr-route">Москва → Новосибирск</div>
+        <div class="appr-budget"><span>15–18 марта 2026</span><span>Бюджет: <strong>24 800 ₽</strong> / лимит 25 000 ₽</span></div>
+        <div class="appr-ai"><strong>AI:</strong> В рамках политики. Цена оптимальна — на 8% ниже среднего. Рекомендую согласовать.</div>
+        <div class="appr-btns">
+          <button class="btn btn-green" onclick="approveTrip(this,'approved')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Согласовать</button>
+          <button class="btn btn-outline-red" onclick="approveTrip(this,'rejected')">Отклонить</button>
+        </div>
+      </div>
+      <div class="appr-card">
+        <div class="appr-emp">Смирнова Ольга Владимировна</div>
+        <div class="appr-dept">Маркетинг · Менеджер проектов</div>
+        <div class="appr-route">Москва → Сочи</div>
+        <div class="appr-budget"><span>20–23 марта 2026</span><span>Бюджет: <strong>38 400 ₽</strong> / лимит 30 000 ₽</span></div>
+        <div class="appr-ai"><strong>AI:</strong> <span style="color:var(--orange)">Превышение лимита на 8 400 ₽.</span> Отель выходит за рамки политики. Рекомендую альтернативу за 29 200 ₽.</div>
+        <div class="appr-btns">
+          <button class="btn btn-green" onclick="approveTrip(this,'approved')">Согласовать</button>
+          <button class="btn btn-outline-red" onclick="approveTrip(this,'rejected')">Отклонить</button>
+        </div>
+      </div>
+      <div class="appr-card">
+        <div class="appr-emp">Козлов Дмитрий Сергеевич</div>
+        <div class="appr-dept">Продажи · Менеджер по работе с клиентами</div>
+        <div class="appr-route">Москва → Казань</div>
+        <div class="appr-budget"><span>10–12 марта 2026</span><span>Бюджет: <strong>17 200 ₽</strong> / лимит 20 000 ₽</span></div>
+        <div class="appr-ai"><strong>AI:</strong> В рамках политики. Выбран оптимальный маршрут, потенциальная экономия 2 400 ₽ при бронировании сегодня.</div>
+        <div class="appr-btns">
+          <button class="btn btn-green" onclick="approveTrip(this,'approved')">Согласовать</button>
+          <button class="btn btn-outline-red" onclick="approveTrip(this,'rejected')">Отклонить</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trip Cards Grid -->
+  <div class="grid-trips" id="trips-grid">
+    <div class="trip-card" data-status="active"><div class="trip-top blue"></div><div class="trip-body">
+      <span class="badge badge-blue">В поездке</span>
+      <div class="trip-route">Москва → Санкт-Петербург</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 26 фев — 1 мар 2026</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Калинина М.А. · Продажи</div>
+      <div class="trip-price">18 450 ₽</div>
+      <div class="trip-tags"><span class="trip-tag ai">AI-подбор</span><span class="trip-tag">Аэрофлот</span><span class="trip-tag">Holiday Inn</span></div>
+    </div></div>
+    <div class="trip-card" data-status="approval"><div class="trip-top orange"></div><div class="trip-body">
+      <span class="badge badge-orange">На согласовании</span>
+      <div class="trip-route">Москва → Казань</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 10 мар — 12 мар 2026</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Калинина М.А. · Продажи</div>
+      <div class="trip-price">17 200 ₽</div>
+      <div class="trip-tags"><span class="trip-tag ai">AI-подбор</span><span class="trip-tag">S7</span><span class="trip-tag">Kazan Palace</span></div>
+    </div></div>
+    <div class="trip-card" data-status="approval"><div class="trip-top orange"></div><div class="trip-body">
+      <span class="badge badge-orange">На согласовании</span>
+      <div class="trip-route">Москва → Новосибирск</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 15 мар — 18 мар 2026</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Петров А.И. · IT</div>
+      <div class="trip-price">24 800 ₽</div>
+      <div class="trip-tags"><span class="trip-tag">S7</span><span class="trip-tag">Azimut Hotel</span></div>
+    </div></div>
+    <div class="trip-card" data-status="booked"><div class="trip-top purple"></div><div class="trip-body">
+      <span class="badge badge-purple">Забронировано</span>
+      <div class="trip-route">Москва → Сочи</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 20 мар — 23 мар 2026</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Смирнова О.В. · Маркетинг</div>
+      <div class="trip-price">29 200 ₽</div>
+      <div class="trip-tags"><span class="trip-tag ai">AI-подбор</span><span class="trip-tag">Победа</span><span class="trip-tag">Radisson Blu</span></div>
+    </div></div>
+    <div class="trip-card" data-status="done"><div class="trip-top gray"></div><div class="trip-body">
+      <span class="badge badge-gray">Завершена</span>
+      <div class="trip-route">Москва → Екатеринбург</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 10 фев — 14 фев 2026</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Калинина М.А. · Продажи</div>
+      <div class="trip-price">22 800 ₽</div>
+      <div class="trip-tags"><span class="trip-tag">Уральские авиалинии</span><span class="trip-tag">Novotel</span></div>
+    </div></div>
+    <div class="trip-card" data-status="done"><div class="trip-top gray"></div><div class="trip-body">
+      <span class="badge badge-gray">Завершена</span>
+      <div class="trip-route">Москва → Казань</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 7 фев — 9 фев 2026</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Иванов Д.С. · Финансы</div>
+      <div class="trip-price">14 600 ₽</div>
+      <div class="trip-tags"><span class="trip-tag">Победа</span><span class="trip-tag">Kazan Palace</span></div>
+    </div></div>
+    <div class="trip-card" data-status="done"><div class="trip-top gray"></div><div class="trip-body">
+      <span class="badge badge-gray">Завершена</span>
+      <div class="trip-route">Москва → Санкт-Петербург</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 15 янв — 17 янв 2026</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Калинина М.А. · Продажи</div>
+      <div class="trip-price">16 300 ₽</div>
+      <div class="trip-tags"><span class="trip-tag">Сапсан</span><span class="trip-tag">Marriott</span></div>
+    </div></div>
+    <div class="trip-card" data-status="done"><div class="trip-top gray"></div><div class="trip-body">
+      <span class="badge badge-gray">Завершена</span>
+      <div class="trip-route">Москва → Краснодар</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> 5 янв — 7 янв 2026</div>
+      <div class="trip-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Петров А.И. · IT</div>
+      <div class="trip-price">11 900 ₽</div>
+      <div class="trip-tags"><span class="trip-tag">S7</span><span class="trip-tag">Hilton Garden</span></div>
+    </div></div>
+  </div>
+</div>
+</div>
 <!-- SECTION:PAGE4 -->
 <!-- SECTION:PAGE5 -->
 <!-- SECTION:PAGE6 -->
