@@ -828,16 +828,856 @@ svg{flex-shrink:0;display:block;}
   </div>
 </div>
 </div>
-<!-- SECTION:PAGE4 -->
-<!-- SECTION:PAGE5 -->
-<!-- SECTION:PAGE6 -->
-<!-- SECTION:PAGE7 -->
-<!-- SECTION:PAGE8 -->
+<!-- PAGE: NEW TRIP (STEPPER) -->
+<div id="page-new-trip" class="page">
+<div class="page-content" style="max-width:860px">
+  <div style="margin-bottom:6px"><span class="muted" style="font-size:13px;cursor:pointer" onclick="navigateTo('page-trips')">← Командировки</span></div>
+  <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;flex-wrap:wrap;gap:8px">
+    <h1 class="page-title">Новая командировка</h1>
+  </div>
+  <div class="autosave mb16" id="autosave-label"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Сохранено 1 марта 12:47:30</div>
+
+  <div class="stepper" id="stepper">
+    <div class="st-step" onclick="goToStep(1)"><div class="st-num active" id="sn1">1</div><span class="st-lbl active" id="sl1">О поездке</span></div>
+    <div class="st-line" id="line12"></div>
+    <div class="st-step" onclick="goToStep(2)"><div class="st-num idle" id="sn2">2</div><span class="st-lbl" id="sl2">Билеты и отель</span></div>
+    <div class="st-line" id="line23"></div>
+    <div class="st-step" onclick="goToStep(3)"><div class="st-num idle" id="sn3">3</div><span class="st-lbl" id="sl3">Подтверждение</span></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step-pane active" id="sp1">
+    <div class="ai-sug mb16">
+      <div class="ai-sug-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+      <div><div class="ai-sug-t">AI-подсказка</div><div class="ai-sug-d">Вы часто летите в Казань по вторникам. Быстро создать как в прошлый раз (14 200 ₽)?</div></div>
+      <button class="btn btn-blue" style="margin-left:auto;flex-shrink:0;font-size:12px;padding:7px 14px">Использовать шаблон</button>
+    </div>
+
+    <div class="card card-pad mb16">
+      <div style="font-weight:700;font-size:14px;margin-bottom:14px;display:flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Маршрут</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Откуда</label><input class="input-field" value="Москва"></div>
+        <div class="form-group"><label class="form-label">Куда</label><input class="input-field" placeholder="Город назначения"></div>
+      </div>
+      <button class="btn btn-outline" style="font-size:12px;padding:6px 14px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Добавить город (мультимаршрут)</button>
+    </div>
+
+    <div class="card card-pad mb16">
+      <div style="font-weight:700;font-size:14px;margin-bottom:14px;display:flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Период</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Дата начала</label><input class="input-field" type="date" value="2026-03-10"></div>
+        <div class="form-group"><label class="form-label">Дата окончания</label><input class="input-field" type="date" value="2026-03-12"></div>
+      </div>
+    </div>
+
+    <div class="card card-pad mb16">
+      <div style="font-weight:700;font-size:14px;margin-bottom:14px;display:flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Кто едет</div>
+      <div class="form-single">
+        <div class="form-label mb8">Сотрудники</div>
+        <div class="tag-input-box"><div class="tag-chip">Калинина М.А.<button>×</button></div><input style="border:none;background:none;outline:none;font-size:13px;min-width:80px" placeholder="Добавить..."></div>
+      </div>
+    </div>
+
+    <div class="card card-pad mb16">
+      <div style="font-weight:700;font-size:14px;margin-bottom:14px;display:flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Цель и бюджет</div>
+      <div class="form-row mb16">
+        <div class="form-group"><label class="form-label">Цель командировки</label>
+          <select class="input-field"><option>Участие в переговорах</option><option>Конференция</option><option>Обучение</option><option>Аудит</option><option>Другое</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Название проекта</label><input class="input-field" placeholder="Введите..."></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Примерный бюджет (₽)</label><input class="input-field" placeholder="25 000" type="number"></div>
+        <div class="form-group"><label class="form-label">ЦФО / Подразделение</label>
+          <select class="input-field"><option>Продажи</option><option>IT</option><option>Маркетинг</option><option>HR</option><option>Финансы</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-btns">
+      <span class="muted" style="font-size:12px">Шаг 1 из 3</span>
+      <div style="margin-left:auto;display:flex;gap:10px">
+        <button class="btn btn-red-text" onclick="navigateTo('page-trips')">Удалить черновик</button>
+        <button class="btn btn-primary btn-lg" onclick="goToStep(2)">Продолжить →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step-pane" id="sp2">
+    <div class="card card-pad mb16">
+      <div style="font-weight:700;font-size:14px;margin-bottom:14px">Тип транспорта</div>
+      <div class="transport-tabs">
+        <div class="transport-tab active" onclick="selTransport(this)"><div class="rdot on"></div>Самолёт</div>
+        <div class="transport-tab" onclick="selTransport(this)"><div class="rdot"></div>Поезд</div>
+        <div class="transport-tab" onclick="selTransport(this)"><div class="rdot"></div>Смешанный</div>
+      </div>
+    </div>
+
+    <div class="block-sec">
+      <div class="block-hdr">
+        <div class="block-title"><div class="toggle on" id="t-ticket" onclick="this.classList.toggle('on')"></div>Нужен билет</div>
+        <div class="ttt-tabs"><div class="ttt-tab active" onclick="selTtt(this)">Туда-обратно</div><div class="ttt-tab" onclick="selTtt(this)">В одну сторону</div></div>
+      </div>
+      <div class="form-row mb12">
+        <div class="form-group"><label class="form-label">Откуда</label><input class="input-field" value="Москва (SVO)"></div>
+        <div class="form-group"><label class="form-label">Куда</label><input class="input-field" value="Казань (KZN)"></div>
+      </div>
+      <div class="form-row mb12">
+        <div class="form-group"><label class="form-label">Даты (туда и обратно)</label><input class="input-field" value="10.03.2026 — 12.03.2026" style="cursor:pointer" readonly></div>
+        <div class="form-group"><label class="form-label">Вылет туда</label><select class="input-field"><option>Любое время</option><option>Утро (06–12)</option><option>День (12–18)</option><option>Вечер (18–00)</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Вылет обратно</label><select class="input-field"><option>Любое время</option><option>Утро (06–12)</option><option>День (12–18)</option><option>Вечер (18–00)</option></select></div>
+        <div class="form-group" style="justify-content:flex-end">
+          <div class="toggle-wrap mt16"><div class="toggle" id="t-bag" onclick="this.classList.toggle('on')"></div><span style="font-size:13px;font-weight:500">Добавить багаж</span></div>
+        </div>
+      </div>
+      <button class="btn btn-primary mt12" style="font-size:13px">Найти билет</button>
+    </div>
+
+    <div class="block-sec">
+      <div class="block-hdr">
+        <div class="block-title"><div class="toggle on" id="t-hotel" onclick="this.classList.toggle('on')"></div>Нужен отель</div>
+        <span style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer">Корпоративные отели</span>
+      </div>
+      <div class="form-row mb12">
+        <div class="form-group full-col"><label class="form-label">Название или локация</label><input class="input-field" placeholder="Центр Казани или конкретный отель"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Заезд и выезд</label><input class="input-field" value="10.03.2026 — 12.03.2026" readonly></div>
+        <div class="form-group"><label class="form-label">Макс. цена/ночь</label><input class="input-field" placeholder="6 000 ₽" type="number"></div>
+      </div>
+      <button class="btn btn-primary mt12" style="font-size:13px">Найти отель</button>
+    </div>
+
+    <div class="block-sec">
+      <div class="block-hdr"><div class="block-title"><div class="toggle" id="t-transfer" onclick="this.classList.toggle('on')"></div>Нужен трансфер</div></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Откуда</label><select class="input-field"><option>Аэропорт Казани</option></select></div>
+        <div class="form-group"><label class="form-label">Куда</label><input class="input-field" placeholder="Адрес или отель"></div>
+      </div>
+    </div>
+
+    <div class="info-panel">
+      <div class="info-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <div style="font-size:13px;line-height:1.5"><strong>10 марта — суббота.</strong> Укажи причину нахождения в командировке в выходной день: <select class="input-field" style="display:inline-block;width:auto;padding:4px 10px;margin-left:6px;font-size:12px"><option>Производственная необходимость</option><option>Дорогостоящий перелёт</option></select></div>
+    </div>
+
+    <div class="ai-note"><strong>AI:</strong> Билеты S7 Москва–Казань на 10 марта сейчас на <strong>22% дешевле</strong> среднего за последние 30 дней. Рекомендую бронировать сегодня — потенциальная экономия 1 800 ₽.</div>
+
+    <div style="display:grid;grid-template-columns:1fr 240px;gap:20px;margin-top:8px" class="step3-layout">
+      <div class="step-btns">
+        <button class="btn btn-outline" onclick="goToStep(1)">← Назад</button>
+        <span class="muted" style="font-size:12px">Шаг 2 из 3</span>
+        <button class="btn btn-primary btn-lg" onclick="goToStep(3)">Продолжить →</button>
+      </div>
+      <div class="sidebar-chat">
+        <div class="sc-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <div class="sc-title">Чат по заявке</div>
+        <div class="sc-desc">Можно оставить комментарии по билетам и отелю для тревел-менеджера</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: CONFIRMATION -->
+  <div class="step-pane" id="sp3">
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:20px" class="step3-layout">
+      <div>
+        <div class="card card-pad mb16">
+          <div style="font-weight:800;font-size:15px;margin-bottom:14px">Сводка заявки</div>
+          <div class="s3-row"><span class="muted">Маршрут</span><span class="fw8">Москва → Казань</span></div>
+          <div class="s3-row"><span class="muted">Даты</span><span class="fw8">10–12 марта 2026</span></div>
+          <div class="s3-row"><span class="muted">Сотрудник</span><span class="fw8">Калинина М.А.</span></div>
+          <div class="s3-row"><span class="muted">Цель</span><span class="fw8">Участие в переговорах</span></div>
+          <div class="s3-row"><span class="muted">Транспорт</span><span class="fw8">Самолёт (туда-обратно)</span></div>
+          <div class="s3-row"><span class="muted">Отель</span><span class="fw8">Kazань, 2 ночи</span></div>
+          <div class="s3-total"><span>Ориентировочный бюджет</span><span style="color:var(--blue)">≈ 17 200 ₽</span></div>
+        </div>
+
+        <div class="card card-pad mb16">
+          <div style="font-weight:700;font-size:14px;margin-bottom:14px;display:flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Автоформирование документов</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;padding:9px 12px;background:var(--surface2);border-radius:9px;font-size:13px"><span>Приказ о командировке (Т-9)</span><span style="color:var(--green);font-weight:600">✓ Авто</span></div>
+            <div style="display:flex;justify-content:space-between;padding:9px 12px;background:var(--surface2);border-radius:9px;font-size:13px"><span>Служебное задание</span><span style="color:var(--green);font-weight:600">✓ Авто</span></div>
+            <div style="display:flex;justify-content:space-between;padding:9px 12px;background:var(--surface2);border-radius:9px;font-size:13px"><span>Суточные: 2 дня × 700 ₽ = 1 400 ₽</span><span style="color:var(--green);font-weight:600">✓ На карту</span></div>
+          </div>
+        </div>
+
+        <div class="card card-pad mb16">
+          <div style="font-weight:700;font-size:14px;margin-bottom:12px">Цепочка согласования</div>
+          <div class="flow-box">
+            <div class="flow-node" style="background:#eff6ff;border-color:var(--blue);color:var(--blue)">Калинина М.А.</div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            <div class="flow-node">Никитин А. (руководитель)</div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            <div class="flow-node">Петров А. (CFO, авто >10k)</div>
+          </div>
+          <div style="font-size:12px;color:var(--text2)">Ориентировочное время согласования: <strong>2–4 часа</strong></div>
+        </div>
+
+        <div class="step-btns">
+          <button class="btn btn-outline" onclick="goToStep(2)">← Назад</button>
+          <span class="muted" style="font-size:12px">Шаг 3 из 3</span>
+          <button class="btn btn-primary btn-lg" id="submitBtn" onclick="submitTrip()">Отправить на согласование</button>
+        </div>
+      </div>
+
+      <div class="card card-pad" style="position:sticky;top:80px">
+        <div style="font-weight:700;font-size:14px;margin-bottom:12px">Виртуальная карта</div>
+        <div class="vc-mini" style="margin-bottom:12px">
+          <div class="vc-chip" style="width:32px;height:24px;margin-bottom:10px;border-radius:4px"></div>
+          <div class="vc-mini-num">•••• •••• •••• ????</div>
+          <div class="vc-mini-foot"><span>KALININA M.A.</span><span style="background:var(--yellow);color:var(--black);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:900">T-BANK</span></div>
+        </div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.6">После одобрения заявки будет выпущена виртуальная карта с лимитом <strong>17 200 ₽</strong>. Категории: транспорт, проживание, питание.</div>
+        <div style="margin-top:12px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;color:var(--green)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Кэшбэк 5% = +860 ₽</div>
+      </div>
+    </div>
+  </div>
 </div>
-<!-- SECTION:CHATBAR -->
-<!-- SECTION:MOBNAV -->
+</div>
+
+<!-- PAGE: FINANCE -->
+<div id="page-finance" class="page">
+<div class="page-content">
+  <div class="page-header">
+    <h1 class="page-title">Финансы</h1>
+    <div class="btn-row">
+      <button class="btn btn-outline"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>Загрузить чек</button>
+      <button class="btn btn-primary"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Авансовый отчёт</button>
+    </div>
+  </div>
+  <div class="finance-layout">
+    <div>
+      <div class="vcard">
+        <div class="vc-shine"></div>
+        <div class="vc-chip"></div>
+        <div class="vc-cardlabel">Командировочная карта</div>
+        <div class="vc-trip">Командировка #1247 · Санкт-Петербург</div>
+        <div class="vc-num">•••• •••• •••• 4521</div>
+        <div class="vc-foot">
+          <div><div class="vc-holder">KALININA M.A.</div><div style="font-size:10px;opacity:.5;margin-top:2px;letter-spacing:.5px">VIRTUAL CARD</div></div>
+          <div class="vc-bank">T-БАНК</div>
+        </div>
+      </div>
+      <div class="bal-card">
+        <div class="bal-title">Баланс командировки</div>
+        <div class="bal-row"><span class="muted">Лимит</span><span class="fw8">30 000 ₽</span></div>
+        <div class="bal-row"><span class="muted">Потрачено</span><span>18 450 ₽</span></div>
+        <div class="bal-row total"><span>Остаток</span><span class="bal-green">11 550 ₽</span></div>
+        <div class="prog-bar mt8"><div class="prog-fill" style="width:61.5%"></div></div>
+        <div class="bal-btns">
+          <button class="btn btn-outline" style="flex:1;justify-content:center;font-size:12px;padding:8px">Пополнить</button>
+          <button class="btn btn-outline" style="flex:1;justify-content:center;font-size:12px;padding:8px">Заблокировать</button>
+        </div>
+      </div>
+      <div class="daily-card">
+        <div class="bal-title">Суточные</div>
+        <div class="bal-row"><span class="muted">За 4 дня (фев)</span><span class="fw8">2 800 ₽</span></div>
+        <div class="bal-row"><span class="muted">Начислены</span><span style="color:var(--green);font-weight:600">25 фев 2026</span></div>
+        <div class="bal-row"><span class="muted">На карту</span><span>•••• 3218 (зарплатная)</span></div>
+      </div>
+      <div class="ocr-upload mt12" onclick="this.innerHTML='<div style=&quot;color:var(--green);font-weight:700&quot;>✓ Чек распознан: 1 200 ₽, 11 мар, Питание (НДС 200 ₽). <button style=&quot;color:var(--blue);font-weight:600;background:none;border:none;cursor:pointer;font-size:12px&quot;>Добавить в отчёт</button></div>'">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 8px"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>
+        <div style="font-weight:700;margin-bottom:4px">Сфотографировать чек (OCR)</div>
+        <div style="font-size:12px;color:var(--text2)">AI распознает сумму, НДС и категорию</div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <div style="padding:16px 18px;border-bottom:1px solid var(--border);font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center">Транзакции <span style="font-size:12px;color:var(--blue);font-weight:600;cursor:pointer">Все операции</span></div>
+        <div class="txn-list">
+          <div class="txn-item"><div class="txn-icon blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></div><div><div class="txn-name">Аэрофлот — СПб <span class="badge badge-blue" style="font-size:10px">Авиа</span></div><div class="txn-meta">25 фев · ••••4521</div></div><div class="txn-amt">-8 200 ₽</div></div>
+          <div class="txn-item"><div class="txn-icon purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg></div><div><div class="txn-name">Holiday Inn Московские ворота</div><div class="txn-meta">25–28 фев · 3 ночи · ••••4521</div></div><div class="txn-amt">-7 800 ₽</div></div>
+          <div class="txn-item"><div class="txn-icon orange"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg></div><div><div class="txn-name">Яндекс Такси</div><div class="txn-meta">25 фев · Трансфер</div></div><div class="txn-amt">-1 250 ₽</div></div>
+          <div class="txn-item"><div class="txn-icon gray"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div><div><div class="txn-name">Ресторан «Палкинъ» <span class="ocr-b">OCR</span></div><div class="txn-meta">26 фев · Питание</div></div><div class="txn-amt">-1 200 ₽</div></div>
+          <div class="txn-item"><div class="txn-icon gray"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg></div><div><div class="txn-name">Яндекс Такси</div><div class="txn-meta">27 фев · Разъезды</div></div><div class="txn-amt">-890 ₽</div></div>
+          <div class="txn-item"><div class="txn-icon green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg></div><div><div class="txn-name">Кэшбэк 5% начислен <span class="badge badge-green" style="font-size:10px">+925 ₽</span></div><div class="txn-meta">1 мар · Автоматически</div></div><div class="txn-amt pos">+925 ₽</div></div>
+        </div>
+      </div>
+      <div class="nds-card"><div><div style="font-weight:700;font-size:14px;margin-bottom:4px">Возврат НДС (20%)</div><div style="font-size:12px;color:var(--text2)">Авиа + отель · Рассчитан автоматически</div></div><div class="nds-amt">2 867 ₽</div><button class="btn btn-blue" style="font-size:13px">Сформировать</button></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- PAGE: DOCUMENTS -->
+<div id="page-documents" class="page">
+<div class="page-content">
+  <div class="page-header">
+    <h1 class="page-title">Документы</h1>
+    <div class="btn-row">
+      <button class="btn btn-outline"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Поиск</button>
+      <button class="btn btn-primary" onclick="navigateTo('page-finance')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>Загрузить чек OCR</button>
+    </div>
+  </div>
+
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="switchTab(this,'dt-ao')">Авансовые отчёты <span class="badge badge-orange" style="font-size:10px">2</span></button>
+    <button class="tab-btn" onclick="switchTab(this,'dt-closing')">Закрывающие</button>
+    <button class="tab-btn" onclick="switchTab(this,'dt-hr')">Кадровые (Т-9)</button>
+    <button class="tab-btn" onclick="switchTab(this,'dt-edo')">ЭДО / 1С</button>
+  </div>
+
+  <!-- АО -->
+  <div id="dt-ao" class="tab-pane active">
+    <div class="ao-card mb16">
+      <div class="ao-hdr">
+        <div>
+          <div class="ao-title">АО-1 / Казань #1248 <span class="badge badge-orange">На проверке</span></div>
+          <div style="font-size:12px;color:var(--text2);margin-top:3px">Калинина М.А. · 10–12 мар 2026 · Создан 12 мар</div>
+        </div>
+        <div class="btn-row"><button class="btn btn-outline" style="font-size:12px;padding:7px 14px">PDF</button><button class="btn btn-primary" style="font-size:12px;padding:7px 14px">Отправить</button></div>
+      </div>
+      <div class="ao-items">
+        <div class="ao-item"><span>S7 Airlines, Москва–Казань (10 мар)</span><span>4 200 ₽</span></div>
+        <div class="ao-item"><span>S7 Airlines, Казань–Москва (12 мар)</span><span>4 000 ₽</span></div>
+        <div class="ao-item"><span>Kazan Palace Hotel, 2 ночи с завтраком</span><span>7 800 ₽</span></div>
+        <div class="ao-item"><span>Яндекс Такси, трансфер аэропорт–отель</span><span>1 200 ₽</span></div>
+        <div class="ao-item" style="color:var(--green)"><span>Суточные: 2 дня × 700 ₽</span><span>1 400 ₽</span></div>
+      </div>
+      <div class="ao-totals">
+        <div class="ao-trow"><span>Выдан аванс</span><span>20 000 ₽</span></div>
+        <div class="ao-trow"><span>Фактические расходы</span><span>17 200 ₽</span></div>
+        <div class="ao-trow bold" style="color:var(--green)"><span>Возврат в кассу</span><span>+2 800 ₽</span></div>
+        <div class="ao-trow" style="color:var(--blue)"><span>Возврат НДС (20%)</span><span>2 867 ₽</span></div>
+      </div>
+      <div class="btn-row"><button class="btn btn-outline" style="font-size:12px">Выгрузить в 1С</button><button class="btn btn-outline" style="font-size:12px">Отправить в ЭДО</button><button class="btn btn-outline" style="font-size:12px">Скачать PDF</button></div>
+    </div>
+    <div class="ao-card mb16">
+      <div class="ao-hdr">
+        <div>
+          <div class="ao-title">АО-1 / Санкт-Петербург #1240 <span class="badge badge-green">Принят</span></div>
+          <div style="font-size:12px;color:var(--text2);margin-top:3px">Калинина М.А. · 25 фев – 1 мар 2026 · Принят 3 мар · Выгружен в 1С</div>
+        </div>
+        <div class="btn-row"><button class="btn btn-outline" style="font-size:12px;padding:7px 14px">PDF</button></div>
+      </div>
+      <div class="ao-items">
+        <div class="ao-item"><span>Аэрофлот, авиабилеты туда-обратно</span><span>8 200 ₽</span></div>
+        <div class="ao-item"><span>Holiday Inn, 3 ночи</span><span>7 800 ₽</span></div>
+        <div class="ao-item"><span>Такси, питание, прочее</span><span>3 340 ₽</span></div>
+        <div class="ao-item" style="color:var(--green)"><span>Суточные: 4 дня × 700 ₽</span><span>2 800 ₽</span></div>
+      </div>
+      <div class="ao-totals"><div class="ao-trow bold"><span>Итого расходы</span><span>22 140 ₽</span></div><div class="ao-trow" style="color:var(--green)"><span>Кэшбэк начислен</span><span>+925 ₽</span></div></div>
+    </div>
+  </div>
+
+  <!-- CLOSING DOCS -->
+  <div id="dt-closing" class="tab-pane">
+    <div class="card mb16" style="overflow:hidden">
+      <div style="padding:16px 18px;border-bottom:1px solid var(--border);font-weight:700;font-size:15px;display:flex;justify-content:space-between">Акты выполненных работ <button class="btn btn-primary" style="font-size:12px;padding:7px 14px">Заказать</button></div>
+      <table class="doc-table">
+        <thead><tr><th>Документ</th><th>Сумма</th><th>Дата</th><th>ЭДО</th><th>Статус</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>Акт №1248, Казань</td><td>17 200 ₽</td><td>12.03.26</td><td><span class="edo-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Диадок</span></td><td><span class="badge badge-green">Подписан</span></td><td><button class="btn btn-outline" style="font-size:11px;padding:4px 10px">PDF</button></td></tr>
+          <tr><td>Акт №1240, СПб</td><td>24 800 ₽</td><td>01.03.26</td><td><span class="edo-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>СБИС</span></td><td><span class="badge badge-green">Подписан</span></td><td><button class="btn btn-outline" style="font-size:11px;padding:4px 10px">PDF</button></td></tr>
+          <tr><td>Акт №1232, Новосибирск</td><td>31 400 ₽</td><td>15.02.26</td><td><span class="edo-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Диадок</span></td><td><span class="badge badge-green">Подписан</span></td><td><button class="btn btn-outline" style="font-size:11px;padding:4px 10px">PDF</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card mb16" style="overflow:hidden">
+      <div style="padding:16px 18px;border-bottom:1px solid var(--border);font-weight:700;font-size:15px">Счета-фактуры (НДС 20%)</div>
+      <table class="doc-table">
+        <thead><tr><th>Номер</th><th>Сумма НДС</th><th>Дата</th><th>Покупатель</th><th>Статус</th><th></th></tr></thead>
+        <tbody>
+          <tr><td>СФ №1248</td><td>2 867 ₽</td><td>12.03.26</td><td>ООО «Ваша компания»</td><td><span class="badge badge-green">Принята</span></td><td><button class="btn btn-outline" style="font-size:11px;padding:4px 10px">XML</button></td></tr>
+          <tr><td>СФ №1240</td><td>4 133 ₽</td><td>01.03.26</td><td>ООО «Ваша компания»</td><td><span class="badge badge-green">Принята</span></td><td><button class="btn btn-outline" style="font-size:11px;padding:4px 10px">XML</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- HR DOCS -->
+  <div id="dt-hr" class="tab-pane">
+    <div class="hr-doc"><div><div class="hr-doc-t">Приказ о командировке Т-9 #1248</div><div class="hr-doc-s">Калинина М.А. · Казань · 10–12 мар 2026 · Создан 8 мар</div></div><div class="btn-row"><span class="badge badge-green">Подписан (КЭДО)</span><button class="btn btn-outline" style="font-size:12px">PDF</button></div></div>
+    <div class="hr-doc"><div><div class="hr-doc-t">Служебное задание #1248</div><div class="hr-doc-s">Участие в переговорах · Продажи · Рук.: Никитин А.</div></div><div class="btn-row"><span class="badge badge-green">Подписан</span><button class="btn btn-outline" style="font-size:12px">PDF</button></div></div>
+    <div class="hr-doc"><div><div class="hr-doc-t">Приказ о командировке Т-9 #1240</div><div class="hr-doc-s">Калинина М.А. · СПб · 25 фев – 1 мар 2026</div></div><div class="btn-row"><span class="badge badge-green">Подписан</span><button class="btn btn-outline" style="font-size:12px">PDF</button></div></div>
+    <div class="hr-doc"><div><div class="hr-doc-t">Служебное задание #1240</div><div class="hr-doc-s">Встреча с партнёрами · Продажи · Рук.: Никитин А.</div></div><div class="btn-row"><span class="badge badge-green">Подписан</span><button class="btn btn-outline" style="font-size:12px">PDF</button></div></div>
+  </div>
+
+  <!-- EDO / 1C -->
+  <div id="dt-edo" class="tab-pane">
+    <div class="grid-2 mb16">
+      <div class="edo-svc"><div><div style="font-weight:700;font-size:14px;margin-bottom:2px">Диадок (ЭДО)</div><div style="font-size:12px;color:var(--text2)">Подключён · Последняя отправка: 12 мар</div></div><div class="edo-ok"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Активно</div></div>
+      <div class="edo-svc"><div><div style="font-weight:700;font-size:14px;margin-bottom:2px">СБИС</div><div style="font-size:12px;color:var(--text2)">Подключён · Подписание ЭЦП</div></div><div class="edo-ok"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Активно</div></div>
+    </div>
+    <div class="card mb16" style="overflow:hidden">
+      <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-weight:700;font-size:14px;display:flex;justify-content:space-between">Выгрузка в 1С <button class="btn btn-primary" style="font-size:12px;padding:8px 16px">Выгрузить за март</button></div>
+      <div style="padding:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:4px">
+        <div style="text-align:center;background:var(--surface2);border-radius:12px;padding:14px"><div style="font-size:22px;font-weight:900">147</div><div style="font-size:12px;color:var(--text2)">записей к выгрузке</div></div>
+        <div style="text-align:center;background:#d1fae5;border-radius:12px;padding:14px"><div style="font-size:22px;font-weight:900;color:#065f46">4.2M ₽</div><div style="font-size:12px;color:#065f46">общая сумма</div></div>
+        <div style="text-align:center;background:#eff6ff;border-radius:12px;padding:14px"><div style="font-size:22px;font-weight:900;color:var(--blue)">680K ₽</div><div style="font-size:12px;color:var(--blue)">возврат НДС</div></div>
+      </div>
+      <div style="padding:0 18px 18px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface2);border-radius:10px"><div style="width:32px;height:32px;background:#d1fae5;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#065f46">1С</div><div style="flex:1"><div style="font-weight:600;font-size:13px">1С:Бухгалтерия 3.0</div><div style="font-size:11px;color:var(--text2)">Подключена · Последняя выгрузка: 1 мар</div></div><button class="btn btn-primary" style="font-size:12px;padding:7px 14px">Выгрузить</button></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface2);border-radius:10px"><div style="width:32px;height:32px;background:#d1fae5;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#065f46">ЗУП</div><div style="flex:1"><div style="font-weight:600;font-size:13px">1С:ЗУП 3.1</div><div style="font-size:11px;color:var(--text2)">Подключена · Синхронизация суточных</div></div><button class="btn btn-primary" style="font-size:12px;padding:7px 14px">Синхронизировать</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- PAGE: ANALYTICS -->
+<div id="page-analytics" class="page">
+<div class="page-content">
+  <div class="page-header">
+    <h1 class="page-title">Аналитика</h1>
+    <div class="btn-row">
+      <select class="input-field" style="width:auto;font-weight:600">
+        <option>Февраль 2026</option><option>Январь 2026</option><option>Q4 2025</option>
+      </select>
+      <button class="btn btn-outline"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Excel</button>
+    </div>
+  </div>
+
+  <div class="kpi-cards">
+    <div class="kpi-card"><div class="kpi-icon blue"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg></div><div class="kpi-val" data-cnt="147">0</div><div class="kpi-label">Командировок за месяц</div><div class="kpi-delta up-good">▲ +23% к прошлому</div></div>
+    <div class="kpi-card"><div class="kpi-icon orange"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg></div><div class="kpi-val" data-cnt="4.2" data-suf="M ₽">0</div><div class="kpi-label">Общие расходы</div><div class="kpi-delta up-bad">▲ +8% к плану</div></div>
+    <div class="kpi-card"><div class="kpi-icon green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div><div class="kpi-val" data-cnt="680" data-suf="K ₽">0</div><div class="kpi-label">Экономия AI</div><div class="kpi-delta up-good">▲ +16% от бюджета</div></div>
+    <div class="kpi-card"><div class="kpi-icon purple"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="kpi-val" data-cnt="2.4" data-suf=" дня">0</div><div class="kpi-label">Среднее согласование</div><div class="kpi-delta dn-good">▼ −41% (ранее 4.1 дня)</div></div>
+  </div>
+
+  <div class="an-grid">
+    <div class="card card-pad">
+      <div style="font-weight:800;font-size:15px;margin-bottom:14px">AI-инсайты <span class="badge badge-blue" style="font-size:11px">3</span></div>
+      <div class="insight-item"><div class="ins-bar"></div><div><div class="ins-text"><strong>Переплата за отели в СПб:</strong> маркетинг тратит на 18% больше IT. Рекомендую единый лимит 5 500 ₽/ночь.</div><span class="ins-action">Применить →</span></div></div>
+      <div class="insight-item"><div class="ins-bar"></div><div><div class="ins-text"><strong>Оптимум бронирования:</strong> Москва–Казань дешевле за 14 дней. Сейчас среднее — за 5 дней. Экономия: 120K ₽/мес.</div><span class="ins-action">Настроить напоминания →</span></div></div>
+      <div class="insight-item"><div class="ins-bar" style="background:var(--orange)"></div><div><div class="ins-text"><strong>3 сотрудника не сдали отчёты</strong> за январь. Задолженность: 87 400 ₽. AI отправил напоминания.</div><span class="ins-action">Посмотреть список →</span></div></div>
+    </div>
+    <div class="card card-pad">
+      <div style="font-weight:800;font-size:15px;margin-bottom:16px">Топ направления</div>
+      <div class="bar-item"><div class="bar-city">Санкт-Петербург</div><div class="bar-wrap"><div class="bar-fill" data-w="85%"></div></div><div class="bar-stats">42 поездки · 1.2M ₽</div></div>
+      <div class="bar-item"><div class="bar-city">Казань</div><div class="bar-wrap"><div class="bar-fill" data-w="62%"></div></div><div class="bar-stats">28 поездки · 890K ₽</div></div>
+      <div class="bar-item"><div class="bar-city">Екатеринбург</div><div class="bar-wrap"><div class="bar-fill" data-w="48%"></div></div><div class="bar-stats">21 поездка · 720K ₽</div></div>
+      <div class="bar-item"><div class="bar-city">Новосибирск</div><div class="bar-wrap"><div class="bar-fill" data-w="38%"></div></div><div class="bar-stats">17 поездок · 580K ₽</div></div>
+      <div class="bar-item"><div class="bar-city">Сочи</div><div class="bar-wrap"><div class="bar-fill" data-w="30%"></div></div><div class="bar-stats">14 поездок · 420K ₽</div></div>
+    </div>
+    <div class="card card-pad">
+      <div style="font-weight:800;font-size:15px;margin-bottom:14px">Расходы по отделам</div>
+      <table class="dept-t">
+        <thead><tr><th>Отдел</th><th>Поездки</th><th>Расход</th><th>Δ</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:700">Продажи</td><td>48</td><td style="font-weight:700">1.42M ₽</td><td style="color:var(--red);font-weight:600">+12%</td></tr>
+          <tr><td style="font-weight:700">IT</td><td>35</td><td style="font-weight:700">980K ₽</td><td style="color:var(--green);font-weight:600">−5%</td></tr>
+          <tr><td style="font-weight:700">Маркетинг</td><td>28</td><td style="font-weight:700">840K ₽</td><td style="color:var(--red);font-weight:600">+8%</td></tr>
+          <tr><td style="font-weight:700">HR</td><td>18</td><td style="font-weight:700">520K ₽</td><td style="color:var(--green);font-weight:600">−3%</td></tr>
+          <tr><td style="font-weight:700">Финансы</td><td>12</td><td style="font-weight:700">340K ₽</td><td style="color:var(--green);font-weight:600">−11%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card card-pad">
+      <div style="font-weight:800;font-size:15px;margin-bottom:4px">Экономия с AI</div>
+      <div class="saves-num">680 000 ₽</div>
+      <div class="saves-sub">сэкономлено за февраль 2026</div>
+      <div class="saves-row"><span class="muted">Предиктивное бронирование</span><span class="fw8">240K ₽</span></div>
+      <div class="saves-row"><span class="muted">Корпоративные тарифы</span><span class="fw8">195K ₽</span></div>
+      <div class="saves-row"><span class="muted">AI-оптимизация маршрутов</span><span class="fw8">145K ₽</span></div>
+      <div class="saves-row"><span class="muted">Своевременное бронирование</span><span class="fw8">100K ₽</span></div>
+    </div>
+  </div>
+
+  <div class="esg-card">
+    <div><div class="esg-num">12.4 т</div><div class="esg-lbl">CO₂ за месяц</div></div>
+    <div class="esg-div"></div>
+    <div><div class="esg-num" style="color:var(--blue)">−18%</div><div class="esg-lbl">vs. прошлый месяц</div></div>
+    <div class="esg-div"></div>
+    <div class="esg-rec"><strong>ESG-рекомендация AI:</strong> 8 перелётов Москва–СПб можно заменить на Сапсан — экономия 2.1 т CO₂ и 340K ₽. <span class="ins-action" style="display:inline">Применить →</span></div>
+  </div>
+</div>
+</div>
+
+<!-- PAGE: SETTINGS -->
+<div id="page-settings" class="page">
+<div class="page-content">
+  <div class="page-header"><h1 class="page-title">Настройки</h1></div>
+  <div class="settings-layout">
+    <div class="settings-nav">
+      <div class="sn-item active" onclick="switchStab(this,'stab-policy')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Тревел-политика</div>
+      <div class="sn-item" onclick="switchStab(this,'stab-approval')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Согласование</div>
+      <div class="sep"></div>
+      <div class="sn-item" onclick="switchStab(this,'stab-roles')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Роли и доступы</div>
+      <div class="sn-item" onclick="switchStab(this,'stab-employees')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Сотрудники</div>
+      <div class="sep"></div>
+      <div class="sn-item" onclick="switchStab(this,'stab-tariff')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Тарифный план</div>
+      <div class="sn-item" onclick="switchStab(this,'stab-integr')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Интеграции</div>
+    </div>
+    <div>
+      <!-- TRAVEL POLICY -->
+      <div id="stab-policy" class="stab active">
+        <div class="pol-card">
+          <div class="pol-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Авиабилеты</div>
+          <div class="pol-row"><div class="pol-label">Лимит эконом-класса (все сотрудники)</div><div class="pol-ctrl"><input class="input-field" style="width:110px;text-align:right" value="15 000 ₽"><button class="btn btn-outline" style="font-size:12px;padding:6px 10px">Изменить</button></div></div>
+          <div class="pol-row"><div class="pol-label">Бизнес-класс (директора, рейсы >4ч)</div><div class="pol-ctrl"><div class="toggle on" onclick="this.classList.toggle('on')"></div><span style="font-size:13px">Разрешён</span></div></div>
+          <div class="pol-row" style="border-bottom:none"><div class="pol-label">Бронировать не позднее (дней до вылета)</div><div class="pol-ctrl"><input class="input-field" style="width:70px;text-align:center" value="3"><button class="btn btn-outline" style="font-size:12px;padding:6px 10px">✓</button></div></div>
+        </div>
+        <div class="pol-card">
+          <div class="pol-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>Отели</div>
+          <div class="pol-row"><div class="pol-label">Лимит Москва / СПб</div><div class="pol-ctrl"><input class="input-field" style="width:110px;text-align:right" value="7 500 ₽/ночь"><button class="btn btn-outline" style="font-size:12px;padding:6px 10px">Изменить</button></div></div>
+          <div class="pol-row" style="border-bottom:none"><div class="pol-label">Лимит в регионах</div><div class="pol-ctrl"><input class="input-field" style="width:110px;text-align:right" value="5 500 ₽/ночь"><button class="btn btn-outline" style="font-size:12px;padding:6px 10px">Изменить</button></div></div>
+        </div>
+        <div class="pol-card">
+          <div class="pol-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>Суточные и автоматизация</div>
+          <div class="pol-row"><div class="pol-label">Суточные РФ (не облагаются НДФЛ до 700 ₽)</div><div class="pol-ctrl"><input class="input-field" style="width:100px;text-align:right" value="700 ₽/день"></div></div>
+          <div class="pol-row"><div class="pol-label">Автосогласование в рамках политики</div><div class="pol-ctrl"><div class="toggle on" onclick="this.classList.toggle('on')"></div><span style="font-size:13px">Включено</span></div></div>
+          <div class="pol-row"><div class="pol-label">AI-рекомендации при бронировании</div><div class="pol-ctrl"><div class="toggle on" onclick="this.classList.toggle('on')"></div><span style="font-size:13px">Включено</span></div></div>
+          <div class="pol-row" style="border-bottom:none"><div class="pol-label">Уведомлять CFO при превышении лимита >20%</div><div class="pol-ctrl"><div class="toggle on" onclick="this.classList.toggle('on')"></div><span style="font-size:13px">Включено</span></div></div>
+        </div>
+      </div>
+
+      <!-- ROLES -->
+      <div id="stab-roles" class="stab">
+        <div class="card card-pad mb16" style="overflow-x:auto">
+          <div style="font-weight:800;font-size:15px;margin-bottom:14px">Матрица прав доступа</div>
+          <table class="roles-t">
+            <thead><tr><th>Действие</th><th>Сотрудник</th><th>Руководитель</th><th>Тревел-менеджер</th><th>Бухгалтер</th><th>CFO</th></tr></thead>
+            <tbody>
+              <tr><td>Создать заявку</td><td><span class="badge badge-green">✓</span></td><td><span class="badge badge-green">✓</span></td><td><span class="badge badge-green">✓</span></td><td><span class="badge badge-gray">—</span></td><td><span class="badge badge-green">✓</span></td></tr>
+              <tr><td>Согласовать</td><td><span class="badge badge-gray">—</span></td><td><span class="badge badge-blue">Свой отдел</span></td><td><span class="badge badge-green">✓ Все</span></td><td><span class="badge badge-gray">—</span></td><td><span class="badge badge-green">✓ Все</span></td></tr>
+              <tr><td>Видеть расходы</td><td><span class="badge badge-blue">Свои</span></td><td><span class="badge badge-blue">Отдел</span></td><td><span class="badge badge-green">✓ Все</span></td><td><span class="badge badge-green">✓ Все</span></td><td><span class="badge badge-green">✓ Все</span></td></tr>
+              <tr><td>Авансовый отчёт</td><td><span class="badge badge-blue">Создать</span></td><td><span class="badge badge-blue">Просмотр</span></td><td><span class="badge badge-blue">Просмотр</span></td><td><span class="badge badge-green">✓ Принять</span></td><td><span class="badge badge-green">✓ Все</span></td></tr>
+              <tr><td>BI-аналитика</td><td><span class="badge badge-gray">—</span></td><td><span class="badge badge-blue">Отдел</span></td><td><span class="badge badge-green">✓ Компания</span></td><td><span class="badge badge-blue">Финансы</span></td><td><span class="badge badge-green">✓ Полная</span></td></tr>
+              <tr><td>Тревел-политика</td><td><span class="badge badge-gray">—</span></td><td><span class="badge badge-gray">—</span></td><td><span class="badge badge-green">✓ Редактировать</span></td><td><span class="badge badge-gray">—</span></td><td><span class="badge badge-green">✓ Все</span></td></tr>
+              <tr><td>MICE</td><td><span class="badge badge-gray">—</span></td><td><span class="badge badge-gray">—</span></td><td><span class="badge badge-green">✓ Полный</span></td><td><span class="badge badge-gray">—</span></td><td><span class="badge badge-blue">Просмотр</span></td></tr>
+              <tr><td>Интеграции / API</td><td><span class="badge badge-gray">—</span></td><td><span class="badge badge-gray">—</span></td><td><span class="badge badge-gray">—</span></td><td><span class="badge badge-gray">—</span></td><td><span class="badge badge-green">✓ Все</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TARIFF -->
+      <div id="stab-tariff" class="stab">
+        <div class="card card-pad mb16">
+          <div style="font-weight:800;font-size:15px;margin-bottom:4px">Тарифный план</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:18px">Текущий: <strong>Pro</strong> · Следующее списание: 1 апреля 2026</div>
+          <div class="tariff-cards">
+            <div class="tar-card"><div class="tar-name">Free</div><div class="tar-price">0 ₽</div><div class="tar-period">/мес · до 50 сотр.</div><div class="tar-feats"><div class="tar-feat"><svg class="tar-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Бронирование (+150 ₽/сбор)</div><div class="tar-feat"><svg class="tar-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Базовая тревел-политика</div><div class="tar-feat"><svg class="tar-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>1 уровень согласования</div><div class="tar-feat" style="color:var(--text2)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>OCR чеков</div><div class="tar-feat" style="color:var(--text2)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Интеграция 1С</div></div><button class="btn btn-outline btn-full" style="margin-top:16px">Бесплатный</button></div>
+            <div class="tar-card current"><div class="tar-badge">Текущий план</div><div class="tar-name">Pro</div><div class="tar-price">9 900 ₽</div><div class="tar-period">/мес · до 1000 сотр.</div><div class="tar-feats"><div class="tar-feat"><svg class="tar-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Бронирование без сборов</div><div class="tar-feat"><svg class="tar-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>OCR чеков</div><div class="tar-feat"><svg class="tar-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Интеграция 1С + ЗУП</div><div class="tar-feat"><svg class="tar-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>AI-рекомендации</div><div class="tar-feat"><svg class="tar-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Кэшбэк до 5%</div></div><button class="btn btn-primary btn-full" style="margin-top:16px">Активен</button></div>
+            <div class="tar-card"><div class="tar-name">Enterprise</div><div class="tar-price">Индивид.</div><div class="tar-period">тариф · 1000+ сотр.</div><div class="tar-feats"><div class="tar-feat"><svg class="tar-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Всё из Pro</div><div class="tar-feat"><svg class="tar-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>SAP / Oracle</div><div class="tar-feat"><svg class="tar-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>MICE полный цикл</div><div class="tar-feat"><svg class="tar-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Кэшбэк до 10%</div><div class="tar-feat"><svg class="tar-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Кредитная линия 50М ₽</div></div><button class="btn btn-outline btn-full" style="margin-top:16px">Связаться с нами</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTEGRATIONS -->
+      <div id="stab-integr" class="stab">
+        <div class="integr-grid">
+          <div class="integr-card"><div class="integr-hdr"><div class="integr-name">1С Бухгалтерия 3.0</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div><div class="integr-ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Подключена</div><div class="integr-meta mt4">Посл. выгрузка: 1 мар 2026</div></div>
+          <div class="integr-card"><div class="integr-hdr"><div class="integr-name">1С:ЗУП 3.1</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div><div class="integr-ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Подключена</div><div class="integr-meta mt4">Синхронизация суточных</div></div>
+          <div class="integr-card"><div class="integr-hdr"><div class="integr-name">Диадок (ЭДО)</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div><div class="integr-ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Подключена</div><div class="integr-meta mt4">Отправка актов и СФ</div></div>
+          <div class="integr-card"><div class="integr-hdr"><div class="integr-name">Яндекс Такси Бизнес</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div><div class="integr-ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Подключена</div><div class="integr-meta mt4">Корпоративная оплата</div></div>
+          <div class="integr-card"><div class="integr-hdr"><div class="integr-name">Telegram-бот</div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div><div class="integr-ok"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Активен</div><div class="integr-meta mt4">Согласования в боте</div></div>
+          <div class="integr-card"><div class="integr-hdr"><div class="integr-name">СБИС</div><div class="toggle" onclick="this.classList.toggle('on')"></div></div><div style="color:var(--text2);font-size:12px;font-weight:600">○ Доступна</div><div class="integr-meta mt4">Альтернативный ЭДО</div></div>
+          <div class="integr-card"><div class="integr-hdr"><div class="integr-name">HRlink КЭДО</div><div class="toggle" onclick="this.classList.toggle('on')"></div></div><div style="color:var(--text2);font-size:12px;font-weight:600">○ Доступна</div><div class="integr-meta mt4">Электронные кадровые докум.</div></div>
+          <div class="integr-card"><div class="integr-hdr"><div class="integr-name">SAP ERP</div><div class="toggle" onclick="this.classList.toggle('on')"></div></div><div style="color:var(--text2);font-size:12px;font-weight:600">○ Enterprise</div><div class="integr-meta mt4">Двусторонняя интеграция</div></div>
+          <div class="integr-card"><div class="integr-hdr"><div class="integr-name">Google Calendar</div><div class="toggle" onclick="this.classList.toggle('on')"></div></div><div style="color:var(--text2);font-size:12px;font-weight:600">○ Доступна</div><div class="integr-meta mt4">Авто-создание заявок из событий</div></div>
+        </div>
+      </div>
+
+      <div id="stab-approval" class="stab">
+        <div class="card card-pad">
+          <div style="font-weight:800;font-size:15px;margin-bottom:16px">Цепочки согласования</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="padding:14px;background:var(--surface2);border-radius:12px"><div style="font-weight:700;font-size:13px;margin-bottom:8px">Стандартная заявка (до 10 000 ₽)</div><div class="flow-box"><div class="flow-node" style="background:#eff6ff;border-color:var(--blue)">Сотрудник</div><span>→</span><div class="flow-node" style="background:#d1fae5;border-color:var(--green)">Авто ✓</div></div></div>
+            <div style="padding:14px;background:var(--surface2);border-radius:12px"><div style="font-weight:700;font-size:13px;margin-bottom:8px">Стандартная заявка (10–50 000 ₽)</div><div class="flow-box"><div class="flow-node">Сотрудник</div><span>→</span><div class="flow-node">Руководитель</div><span>→</span><div class="flow-node" style="background:#d1fae5;border-color:var(--green)">Авто ✓</div></div></div>
+            <div style="padding:14px;background:var(--surface2);border-radius:12px"><div style="font-weight:700;font-size:13px;margin-bottom:8px">Заявка свыше 50 000 ₽</div><div class="flow-box"><div class="flow-node">Сотрудник</div><span>→</span><div class="flow-node">Руководитель</div><span>→</span><div class="flow-node">CFO</div></div></div>
+            <div style="padding:14px;background:var(--surface2);border-radius:12px"><div style="font-weight:700;font-size:13px;margin-bottom:8px">Превышение лимита (>20%)</div><div class="flow-box"><div class="flow-node">Сотрудник</div><span>→</span><div class="flow-node">Руководитель</div><span>→</span><div class="flow-node">CFO</div><span>→</span><div class="flow-node">Финансовый контроль</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="stab-employees" class="stab">
+        <div class="card" style="overflow:hidden">
+          <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center">Сотрудники (247) <button class="btn btn-primary" style="font-size:12px;padding:7px 14px">+ Добавить</button></div>
+          <table class="doc-table">
+            <thead><tr><th>ФИО</th><th>Отдел</th><th>Роль</th><th>Поездок</th><th>Статус</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">Калинина Марина А.</td><td>Продажи</td><td><span class="badge badge-blue">Сотрудник</span></td><td>12</td><td><span class="badge badge-green">Активна</span></td></tr>
+              <tr><td style="font-weight:600">Петров Алексей И.</td><td>IT</td><td><span class="badge badge-blue">Сотрудник</span></td><td>8</td><td><span class="badge badge-green">Активен</span></td></tr>
+              <tr><td style="font-weight:600">Никитин Андрей В.</td><td>Продажи</td><td><span class="badge badge-orange">Руководитель</span></td><td>5</td><td><span class="badge badge-green">Активен</span></td></tr>
+              <tr><td style="font-weight:600">Смирнова Ольга В.</td><td>Маркетинг</td><td><span class="badge badge-blue">Сотрудник</span></td><td>9</td><td><span class="badge badge-green">Активна</span></td></tr>
+              <tr><td style="font-weight:600">Иванова Наталья П.</td><td>Бухгалтерия</td><td><span class="badge badge-purple">Бухгалтер</span></td><td>0</td><td><span class="badge badge-green">Активна</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+<!-- CHAT INPUT BAR -->
+<div class="chat-input-bar" id="chat-bar">
+  <div class="chat-input-inner">
+    <textarea class="chat-textarea" id="chat-ta" rows="1" placeholder="Опишите командировку..."></textarea>
+    <button class="chat-send" id="chat-send-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+<!-- MOBILE NAV -->
+<nav class="mobile-nav">
+  <div class="mob-nav-inner">
+    <div class="mob-btn active" data-page="page-home" onclick="navigateTo('page-home')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="mob-lbl">Главная</span></div>
+    <div class="mob-btn" data-page="page-chat" onclick="navigateTo('page-chat')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg><span class="mob-lbl">AI</span></div>
+    <div class="mob-btn" data-page="page-trips" onclick="navigateTo('page-trips')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg><span class="mob-lbl">Поездки</span></div>
+    <div class="mob-btn" data-page="page-finance" onclick="navigateTo('page-finance')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><span class="mob-lbl">Финансы</span></div>
+    <div class="mob-btn" data-page="page-analytics" onclick="navigateTo('page-analytics')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="mob-lbl">Аналитика</span></div>
+  </div>
+</nav>
 <script>
-/* SECTION:JS */
+/* ── NAVIGATION ── */
+let currentPage = 'page-home';
+let currentRole = 'employee';
+
+function navigateTo(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const pg = document.getElementById(id);
+  if (pg) { pg.classList.add('active'); pg.style.animation='none'; void pg.offsetHeight; pg.style.animation='fadeIn .3s ease'; }
+  currentPage = id;
+  document.querySelectorAll('.nav-link,[data-page]').forEach(el => {
+    el.classList.toggle('active', el.dataset && el.dataset.page === id);
+  });
+  const bar = document.getElementById('chat-bar');
+  if (bar) bar.classList.toggle('visible', id === 'page-chat');
+  if (id === 'page-analytics') { setTimeout(()=>{ animateCounters(); animateBars(); }, 250); }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── ROLE SWITCH ── */
+function switchRole(role) {
+  currentRole = role;
+  document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+  const rb = document.querySelector('.role-btn.' + role);
+  if (rb) rb.classList.add('active');
+  const av = document.getElementById('user-avatar');
+  if (role === 'admin') {
+    document.body.classList.add('admin-mode');
+    if (av) { av.className = 'avatar admin'; av.textContent = 'АП'; }
+  } else {
+    document.body.classList.remove('admin-mode');
+    if (av) { av.className = 'avatar employee'; av.textContent = 'МК'; }
+  }
+}
+
+/* ── STEPPER ── */
+let tripStep = 1;
+function goToStep(n) {
+  [1,2,3].forEach(i => {
+    const sp = document.getElementById('sp'+i);
+    const sn = document.getElementById('sn'+i);
+    const sl = document.getElementById('sl'+i);
+    if (!sp||!sn||!sl) return;
+    sp.classList.toggle('active', i === n);
+    sn.className = 'st-num ' + (i < n ? 'done' : i === n ? 'active' : 'idle');
+    sn.textContent = i < n ? '✓' : i;
+    sl.className = 'st-lbl' + (i === n ? ' active' : '');
+  });
+  const l12 = document.getElementById('line12');
+  const l23 = document.getElementById('line23');
+  if (l12) l12.className = 'st-line' + (n > 1 ? ' done' : '');
+  if (l23) l23.className = 'st-line' + (n > 2 ? ' done' : '');
+  tripStep = n;
+  const hint = document.getElementById('autosave-label');
+  if (hint) { hint.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Сохранено только что'; }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function submitTrip() {
+  const btn = document.getElementById('submitBtn');
+  if (!btn) return;
+  btn.textContent = 'Отправляю...';
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.textContent = '✓ Отправлено на согласование';
+    btn.classList.add('btn-primary');
+    btn.style.background = 'var(--green)';
+    setTimeout(() => navigateTo('page-trips'), 1500);
+  }, 1400);
+}
+
+function selTransport(el) {
+  el.closest('.transport-tabs').querySelectorAll('.transport-tab').forEach(t => {
+    t.classList.remove('active');
+    t.querySelector('.rdot').classList.remove('on');
+  });
+  el.classList.add('active');
+  el.querySelector('.rdot').classList.add('on');
+}
+function selTtt(el) {
+  el.closest('.ttt-tabs').querySelectorAll('.ttt-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ── DOCUMENT TABS ── */
+function switchTab(btn, tabId) {
+  const bar = btn.closest('.tabs-bar');
+  if (!bar) return;
+  bar.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const parent = bar.nextElementSibling ? bar.parentElement : document;
+  document.querySelectorAll('.tab-pane').forEach(p => {
+    if (p.id && (p.id.startsWith('dt-') || p.closest('#page-documents'))) p.classList.remove('active');
+  });
+  const tp = document.getElementById(tabId);
+  if (tp) tp.classList.add('active');
+}
+
+/* ── SETTINGS TABS ── */
+function switchStab(el, id) {
+  el.closest('.settings-nav').querySelectorAll('.sn-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  el.closest('.settings-layout').querySelectorAll('.stab').forEach(s => s.classList.remove('active'));
+  const t = document.getElementById(id);
+  if (t) t.classList.add('active');
+}
+
+/* ── TRIPS FILTER ── */
+function filterTrips(status, el) {
+  document.querySelectorAll('#trip-filters .filter-pill').forEach(p => p.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.querySelectorAll('#trips-grid .trip-card').forEach(c => {
+    c.style.display = (status === 'all' || c.dataset.status === status) ? '' : 'none';
+  });
+}
+
+/* ── APPROVE/REJECT ── */
+function approveTrip(btn, action) {
+  const card = btn.closest('.appr-card');
+  if (action === 'approved') {
+    card.style.borderLeft = '4px solid var(--green)';
+    card.querySelector('.appr-btns').innerHTML = '<span class="badge badge-green" style="font-size:13px;padding:6px 12px">✓ Согласовано</span>';
+  } else {
+    card.style.opacity = '.4';
+    card.querySelectorAll('button').forEach(b => b.disabled = true);
+  }
+}
+
+/* ── CHAT ── */
+let chatStep = 0;
+let chatBusy = false;
+const chatMsgs = document.getElementById('chat-messages');
+
+function addBot(html) {
+  const d = document.createElement('div');
+  d.className = 'cmsg fade-in';
+  d.innerHTML = `<div class="cmsg-av bot">T</div><div class="cmsg-bubble bot">${html}</div>`;
+  chatMsgs.appendChild(d);
+  d.querySelectorAll('.chat-pill').forEach(p => p.addEventListener('click', () => { if(!chatBusy){ addUser(p.textContent); setTimeout(nextChat,500); }}));
+  d.querySelectorAll('.fl-select,.hl-select').forEach(b => b.addEventListener('click', () => {
+    const par = b.closest('.fl-list,.hl-list');
+    if (par) par.querySelectorAll('button').forEach(x => { x.disabled=true; x.classList.remove('selected'); });
+    b.classList.add('selected'); b.textContent = '✓ Выбрано';
+    if (!chatBusy) setTimeout(nextChat, 700);
+  }));
+  chatMsgs.scrollIntoView({behavior:'smooth',block:'end'});
+  return d;
+}
+function addUser(text) {
+  const d = document.createElement('div');
+  d.className = 'cmsg user-msg fade-in';
+  d.innerHTML = `<div class="cmsg-av user">${currentRole==='admin'?'АП':'МК'}</div><div class="cmsg-bubble user">${text}</div>`;
+  chatMsgs.appendChild(d);
+  chatMsgs.scrollIntoView({behavior:'smooth',block:'end'});
+}
+function showTyping() {
+  const d = document.createElement('div');
+  d.id = 'typing-ind'; d.className = 'cmsg';
+  d.innerHTML = `<div class="cmsg-av bot">T</div><div class="cmsg-bubble bot"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+  chatMsgs.appendChild(d);
+  chatMsgs.scrollIntoView({behavior:'smooth',block:'end'});
+}
+function hideTyping() { const t = document.getElementById('typing-ind'); if(t) t.remove(); }
+
+const chatFlows = [
+  () => { hideTyping(); addBot(`Нашёл билеты Москва — Казань на 10 марта. Нужен обратный?<div class="chat-pills"><div class="chat-pill">Да, 12 марта</div><div class="chat-pill">Да, 13 марта</div><div class="chat-pill">Только туда</div></div>`); chatBusy=false; },
+  () => { hideTyping(); addBot(`Принято! Нужен багаж?<div class="chat-pills"><div class="chat-pill">Да, 1 место 23 кг</div><div class="chat-pill">Только ручная кладь</div></div>`); chatBusy=false; },
+  () => { hideTyping(); addBot(`Забронировать отель?<div class="chat-pills"><div class="chat-pill">Да, с завтраком</div><div class="chat-pill">Да, без завтрака</div><div class="chat-pill">Нет</div></div>`); chatBusy=false; },
+  () => { hideTyping(); addBot(`Нужен трансфер из аэропорта?<div class="chat-pills"><div class="chat-pill">Да</div><div class="chat-pill">Нет</div></div>`); chatBusy=false; },
+  () => { hideTyping(); addBot(`Лучшие рейсы Москва — Казань, 10 марта:<div class="fl-list"><div class="fl-card best"><div class="fl-hdr"><span class="fl-airline">S7 Airlines</span><span class="fl-price">4 200 ₽</span></div><div class="fl-route">SVO — KZN · Прямой</div><div class="fl-time">07:30 — 09:45 · 2ч 15мин</div><div class="fl-tags"><span class="ft-g">В рамках политики</span><span class="ft-gr">Ручная кладь</span></div><button class="fl-select">Выбрать</button></div><div class="fl-card"><div class="fl-hdr"><span class="fl-airline">Аэрофлот</span><span class="fl-price">5 800 ₽</span></div><div class="fl-route">SVO — KZN · Прямой</div><div class="fl-time">12:10 — 14:20 · 2ч 10мин</div><div class="fl-tags"><span class="ft-g">В рамках политики</span><span class="ft-gr">Багаж вкл.</span></div><button class="fl-select">Выбрать</button></div><div class="fl-card"><div class="fl-hdr"><span class="fl-airline">Победа</span><span class="fl-price">3 100 ₽</span></div><div class="fl-route">VKO — KZN · Прямой</div><div class="fl-time">06:00 — 08:30 · 2ч 30мин</div><div class="fl-tags"><span class="ft-o">Без багажа</span><span class="ft-gr">Внуково</span></div><button class="fl-select">Выбрать</button></div></div>`); chatBusy=false; },
+  () => { hideTyping(); addBot(`Отели в Казани, 10–12 марта, с завтраком:<div class="hl-list"><div class="hl-card best"><div class="hl-hdr"><div><div class="hl-name">Kazan Palace by Tasigo</div><div class="hl-stars">★★★★</div></div><span class="hl-price">3 900 ₽/н.</span></div><div class="hl-meta">Центр · 4 мин до Кремля · Корпоративный тариф −15%</div><div class="fl-tags mt8"><span class="ft-g">В рамках политики</span></div><button class="hl-select">Выбрать</button></div><div class="hl-card"><div class="hl-hdr"><div><div class="hl-name">Courtyard by Marriott</div><div class="hl-stars">★★★★</div></div><span class="hl-price">4 800 ₽/н.</span></div><div class="hl-meta">Бизнес-район · Wi-Fi · Завтрак включён</div><div class="fl-tags mt8"><span class="ft-g">В рамках политики</span></div><button class="hl-select">Выбрать</button></div></div>`); chatBusy=false; },
+  () => { hideTyping(); addBot(`Итоговая сводка:<div class="sum-card mt8"><div class="sum-row"><span class="sum-lbl">S7 Москва–Казань (10 мар, 07:30)</span><span>4 200 ₽</span></div><div class="sum-row"><span class="sum-lbl">S7 Казань–Москва (12 мар, 18:00)</span><span>4 000 ₽</span></div><div class="sum-row"><span class="sum-lbl">Kazan Palace, 2 ночи с завтраком</span><span>7 800 ₽</span></div><div class="sum-row"><span class="sum-lbl">Трансфер аэропорт–отель</span><span>1 200 ₽</span></div><div class="sum-total"><span>Итого</span><span>17 200 ₽</span></div><div class="cashback">💳 +860 ₽ кэшбэк (5%) на карту</div></div><div class="ai-note"><strong>AI-совет:</strong> цена S7 вырастет на ~12% завтра. Рекомендую бронировать сейчас.</div><div style="display:flex;gap:10px;margin-top:12px"><button class="btn btn-primary btn-lg" id="book-all-btn" onclick="bookAll()">Забронировать всё — 17 200 ₽</button><button class="btn btn-outline" onclick="navigateTo(\'page-chat\')">Изменить</button></div>`); chatBusy=false; },
+  () => { hideTyping(); addBot(`<div class="confirm-card"><div class="confirm-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="confirm-title">Командировка забронирована!</div><div class="confirm-row"><span class="confirm-lbl">Заявка</span><span class="confirm-val">#1248</span></div><div class="confirm-row"><span class="confirm-lbl">Маршрут</span><span class="confirm-val">Москва — Казань — Москва</span></div><div class="confirm-row"><span class="confirm-lbl">Даты</span><span class="confirm-val">10–12 марта 2026</span></div><div class="confirm-row"><span class="confirm-lbl">Итого</span><span class="confirm-val">17 200 ₽</span></div><div class="vc-mini"><div class="vc-mini-num">•••• •••• •••• 7892</div><div class="vc-mini-foot"><span>KALININA M.A.</span><span style="background:var(--yellow);color:var(--black);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:900">T-BANK</span></div></div><div class="vc-mini-note">Лимит: 17 200 ₽. Билеты и ваучер отправлены на почту.</div></div>`); chatBusy=false; }
+];
+
+function nextChat() {
+  if (chatStep >= chatFlows.length) return;
+  chatBusy = true;
+  showTyping();
+  setTimeout(() => { chatFlows[chatStep](); chatStep++; }, chatStep >= 4 ? 1800 : 1200);
+}
+
+function bookAll() {
+  const btn = document.getElementById('book-all-btn');
+  if (!btn || btn.disabled) return;
+  btn.textContent = 'Бронирую...'; btn.style.background = 'var(--blue)'; btn.disabled = true;
+  setTimeout(() => { btn.textContent = '✓ Забронировано!'; btn.style.background = 'var(--green)'; setTimeout(nextChat, 800); }, 2000);
+}
+
+function sendChat() {
+  const ta = document.getElementById('chat-ta');
+  if (!ta) return;
+  const text = ta.value.trim();
+  if (!text || chatBusy) return;
+  addUser(text);
+  ta.value = ''; ta.style.height = 'auto';
+  if (chatStep === 0) setTimeout(nextChat, 500);
+}
+
+function useExample() {
+  navigateTo('page-chat');
+  setTimeout(() => {
+    addUser('1 билет в Казань, самолёт, 10 марта, бюджет до 20 000 ₽');
+    setTimeout(nextChat, 500);
+  }, 300);
+}
+
+function goToChat(text) {
+  const inp = document.getElementById('home-search');
+  const val = text || (inp && inp.value.trim());
+  if (!val) { navigateTo('page-chat'); return; }
+  navigateTo('page-chat');
+  setTimeout(() => { addUser(val); if (inp) inp.value = ''; if (chatStep === 0) setTimeout(nextChat, 500); }, 300);
+}
+
+/* ── CHAT INPUT ── */
+const chatTa = document.getElementById('chat-ta');
+if (chatTa) {
+  chatTa.addEventListener('input', () => { chatTa.style.height='auto'; chatTa.style.height=Math.min(chatTa.scrollHeight,140)+'px'; });
+  chatTa.addEventListener('keydown', e => { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();} });
+}
+const chatSendBtn = document.getElementById('chat-send-btn');
+if (chatSendBtn) chatSendBtn.addEventListener('click', sendChat);
+
+/* ── KPI COUNTERS ── */
+function animateCounters() {
+  document.querySelectorAll('[data-cnt]').forEach(el => {
+    const target = parseFloat(el.dataset.cnt);
+    const suf = el.dataset.suf || '';
+    const dur = 1200, start = performance.now();
+    function tick(now) {
+      const p = Math.min((now-start)/dur,1);
+      const e = 1-Math.pow(1-p,3);
+      const val = target*e;
+      el.textContent = (Number.isInteger(target)?Math.round(val):val.toFixed(1)) + suf;
+      if(p<1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+/* ── BAR CHARTS ── */
+function animateBars() {
+  document.querySelectorAll('.bar-fill[data-w]').forEach(b => {
+    b.style.width = '0%';
+    setTimeout(() => { b.style.width = b.dataset.w; }, 150);
+  });
+  document.querySelectorAll('.mice-bfill[data-w]').forEach(b => {
+    b.style.width = '0%';
+    setTimeout(() => { b.style.width = b.dataset.w; }, 200);
+  });
+}
+
+/* ── INIT ── */
+navigateTo('page-home');
 </script>
 </body>
 </html>
