@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travel AI — Корпоративные путешествия</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --yellow: #FFDD2D;
+      --yellow-dark: #F2C500;
+      --black: #1A1A1A;
+      --gray: #333;
+      --gray-light: #666;
+      --gray-bg: #F5F5F5;
+      --white: #FFFFFF;
+      --green: #062A2F;
+      --coral: #F89572;
+      --success: #36B472;
+      --warning: #FEAE22;
+      --error: #EA544A;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--gray-bg);
+      color: var(--black);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Top bar */
+    .topbar {
+      height: 64px;
+      background: var(--black);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+    }
+
+    .topbar-logo {
+      font-weight: 800;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .topbar-logo span { color: var(--yellow); }
+
+    .role-switcher {
+      display: flex;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 4px;
+    }
+
+    .role-btn {
+      padding: 8px 16px;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .role-btn.active {
+      background: var(--yellow);
+      color: var(--black);
+    }
+
+    .role-btn:hover:not(.active) {
+      color: var(--white);
+    }
+
+    /* Layout */
+    .app {
+      display: flex;
+      padding-top: 64px;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: var(--white);
+      border-right: 1px solid #E5E5E5;
+      padding: 24px 0;
+      position: fixed;
+      top: 64px;
+      left: 0;
+      bottom: 0;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+    }
+
+    .sidebar-nav li {
+      margin-bottom: 4px;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 24px;
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .sidebar-nav a:hover {
+      background: var(--gray-bg);
+      color: var(--black);
+    }
+
+    .sidebar-nav a.active {
+      background: rgba(255,221,45,0.2);
+      color: var(--black);
+      font-weight: 600;
+      border-left: 3px solid var(--yellow);
+      padding-left: 21px;
+    }
+
+    .sidebar-nav .icon {
+      width: 20px;
+      height: 20px;
+      background: var(--gray-bg);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .sidebar-nav a.active .icon {
+      background: var(--yellow);
+    }
+
+    .sidebar-nav .manager-only { display: none; }
+    body.role-manager .sidebar-nav .manager-only { display: flex; }
+    body.role-manager .sidebar-nav .employee-only { display: none; }
+
+    .main {
+      flex: 1;
+      margin-left: 240px;
+      padding: 32px;
+      min-height: calc(100vh - 64px);
+    }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* Chat */
+    .chat-container {
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 64px - 64px);
+      max-height: 680px;
+    }
+
+    .chat-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #EEE;
+      font-weight: 700;
+      font-size: 1.125rem;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .msg {
+      max-width: 75%;
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+    }
+
+    .msg.user {
+      align-self: flex-end;
+      background: var(--yellow);
+      color: var(--black);
+    }
+
+    .msg.bot {
+      align-self: flex-start;
+      background: var(--gray-bg);
+      color: var(--black);
+    }
+
+    .msg.bot .flight-card {
+      margin-top: 12px;
+      padding: 16px;
+      background: var(--white);
+      border-radius: 12px;
+      border: 1px solid #EEE;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .msg.bot .flight-card:hover {
+      border-color: var(--yellow);
+      box-shadow: 0 4px 12px rgba(255,221,45,0.2);
+    }
+
+    .msg.bot .flight-card h4 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .msg.bot .flight-card .price {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--black);
+    }
+
+    .msg.bot .flight-card .fee-note {
+      font-size: 0.75rem;
+      color: var(--gray-light);
+      margin-top: 8px;
+    }
+
+    .msg.bot .policy-warning {
+      margin-top: 12px;
+      padding: 12px;
+      background: #FFF9E6;
+      border-left: 4px solid var(--warning);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.875rem;
+    }
+
+    .msg.bot .policy-warning strong { display: block; margin-bottom: 4px; }
+
+    .chat-input-wrap {
+      padding: 16px 24px;
+      border-top: 1px solid #EEE;
+    }
+
+    .chat-input {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 14px 20px;
+      border: 1px solid #E0E0E0;
+      border-radius: 12px;
+      font-size: 0.9375rem;
+      font-family: inherit;
+    }
+
+    .chat-input input:focus {
+      outline: none;
+      border-color: var(--yellow);
+    }
+
+    .chat-input button {
+      padding: 14px 24px;
+      background: var(--yellow);
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .chat-input button:hover { background: var(--yellow-dark); }
+
+    .chat-suggestions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .chat-suggestions span {
+      padding: 8px 14px;
+      background: var(--gray-bg);
+      border-radius: 20px;
+      font-size: 0.8125rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chat-suggestions span:hover {
+      background: var(--yellow);
+    }
+
+    /* Trips */
+    .trips-grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .trip-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .trip-card:hover {
+      border-color: var(--yellow);
+      box-shadow: 0 4px 20px rgba(255,221,45,0.15);
+    }
+
+    .trip-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .trip-card h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+    }
+
+    .trip-card .dates {
+      font-size: 0.875rem;
+      color: var(--gray-light);
+      margin-top: 4px;
+    }
+
+    .trip-card .status {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .trip-card .status.confirmed { background: #E8F5E9; color: #2E7D32; }
+    .trip-card .status.pending { background: #FFF3E0; color: #E65100; }
+    .trip-card .status.refund { background: #FCE4EC; color: #C2185B; }
+
+    .trip-card-fees {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #EEE;
+      font-size: 0.875rem;
+    }
+
+    .trip-card-fees .row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .trip-card-fees .total {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #EEE;
+    }
+
+    /* Requests (status) */
+    .request-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .request-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .request-card h3 { font-size: 1rem; font-weight: 700; }
+
+    .request-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .request-status .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .request-status.in-progress .dot { background: var(--warning); }
+    .request-status.done .dot { background: var(--success); animation: none; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .request-timeline {
+      margin-top: 16px;
+      padding-left: 20px;
+      border-left: 2px solid #EEE;
+    }
+
+    .request-timeline .step {
+      position: relative;
+      padding-bottom: 16px;
+    }
+
+    .request-timeline .step::before {
+      content: '';
+      position: absolute;
+      left: -26px;
+      top: 4px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #DDD;
+    }
+
+    .request-timeline .step.done::before { background: var(--success); }
+    .request-timeline .step.current::before { background: var(--yellow); box-shadow: 0 0 0 4px rgba(255,221,45,0.3); }
+
+    .request-timeline .step .date { font-size: 0.75rem; color: var(--gray-light); }
+    .request-timeline .step .text { font-size: 0.875rem; margin-top: 2px; }
+
+    /* Expenses */
+    .expenses-layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 24px;
+    }
+
+    .expense-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .expense-item {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .expense-item .receipt-preview {
+      width: 56px;
+      height: 56px;
+      background: var(--gray-bg);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .expense-item .receipt-preview.matched {
+      background: #E8F5E9;
+      color: var(--success);
+    }
+
+    .expense-item .info { flex: 1; }
+    .expense-item .info h4 { font-size: 0.9375rem; font-weight: 600; }
+    .expense-item .info .match-note {
+      font-size: 0.75rem;
+      color: var(--success);
+      margin-top: 4px;
+    }
+
+    .expense-item .amount { font-weight: 700; font-size: 1.125rem; }
+
+    .upload-zone {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 32px;
+      border: 2px dashed #DDD;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .upload-zone:hover {
+      border-color: var(--yellow);
+      background: rgba(255,221,45,0.05);
+    }
+
+    .upload-zone .icon { font-size: 2.5rem; margin-bottom: 12px; }
+    .upload-zone p { color: var(--gray-light); font-size: 0.9375rem; }
+
+    /* Policy dashboard */
+    .dashboard-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .dash-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .dash-card .value {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .dash-card .value.green { color: var(--success); }
+    .dash-card .value.yellow { color: var(--warning); }
+    .dash-card .value.red { color: var(--error); }
+
+    .dash-card .label { font-size: 0.875rem; color: var(--gray-light); }
+
+    .violations-table {
+      background: var(--white);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .violations-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .violations-table th {
+      text-align: left;
+      padding: 16px 20px;
+      background: var(--gray-bg);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--gray-light);
+      text-transform: uppercase;
+    }
+
+    .violations-table td {
+      padding: 16px 20px;
+      border-top: 1px solid #EEE;
+      font-size: 0.9375rem;
+    }
+
+    .violations-table tr:hover td { background: #FAFAFA; }
+
+    .policy-badge {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .policy-badge.exceeded { background: #FFEBEE; color: var(--error); }
+    .policy-badge.ok { background: #E8F5E9; color: var(--success); }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 24px;
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: var(--white);
+      border-radius: 20px;
+      max-width: 480px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+      padding: 24px 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .modal-header h2 { font-size: 1.25rem; font-weight: 700; }
+
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: var(--gray-bg);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1.25rem;
+    }
+
+    .modal-close:hover { background: #E0E0E0; }
+
+    .modal-body { padding: 24px; }
+
+    .modal-body .fee-breakdown {
+      background: var(--gray-bg);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .modal-body .fee-breakdown .row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.9375rem;
+    }
+
+    .modal-body .fee-breakdown .total {
+      font-weight: 700;
+      font-size: 1.125rem;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #DDD;
+    }
+
+    .modal-footer {
+      padding: 0 24px 24px;
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .modal-footer button {
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-size: 0.9375rem;
+    }
+
+    .modal-footer .btn-primary {
+      background: var(--yellow);
+      color: var(--black);
+    }
+
+    .modal-footer .btn-primary:hover { background: var(--yellow-dark); }
+
+    .modal-footer .btn-secondary {
+      background: var(--gray-bg);
+      color: var(--gray);
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .page-subtitle {
+      color: var(--gray-light);
+      font-size: 0.9375rem;
+      margin-bottom: 24px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--black);
+      color: var(--white);
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 300;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-logo">Travel<span>AI</span></div>
+    <div class="role-switcher">
+      <button class="role-btn active" data-role="employee">Сотрудник</button>
+      <button class="role-btn" data-role="manager">Менеджер</button>
+    </div>
+  </div>
+
+  <div class="app">
+    <aside class="sidebar">
+      <ul class="sidebar-nav">
+        <li class="employee-only">
+          <a href="#" class="nav-link active" data-section="search">
+            <span class="icon">🔍</span> Поиск поездки
+          </a>
+        </li>
+        <li class="employee-only">
+          <a href="#" class="nav-link" data-section="trips">
+            <span class="icon">✈️</span> Мои поездки
+          </a>
+        </li>
+        <li class="employee-only">
+          <a href="#" class="nav-link" data-section="requests">
+            <span class="icon">📋</span> Запросы на изменения
+          </a>
+        </li>
+        <li class="employee-only">
+          <a href="#" class="nav-link" data-section="expenses">
+            <span class="icon">🧾</span> Расходы
+          </a>
+        </li>
+        <li class="manager-only">
+          <a href="#" class="nav-link" data-section="policy">
+            <span class="icon">📊</span> Дашборд политики
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <main class="main">
+      <!-- Поиск -->
+      <section class="section active" id="section-search">
+        <div class="chat-container">
+          <div class="chat-header">Умный поиск — опишите поездку своими словами</div>
+          <div class="chat-messages" id="chatMessages">
+            <div class="msg bot">
+              Привет! Напишите, куда и когда хотите поехать. Например: «Рейс в Берлин 12–15 марта, утро, эконом»
+            </div>
+          </div>
+          <div class="chat-input-wrap">
+            <div class="chat-input">
+              <input type="text" id="chatInput" placeholder="Опишите поездку..." autocomplete="off">
+              <button id="chatSend">Найти</button>
+            </div>
+            <div class="chat-suggestions">
+              <span class="suggestion">Рейс Москва — Берлин 12–15 марта</span>
+              <span class="suggestion">Отель в центре Парижа на 3 ночи</span>
+              <span class="suggestion">Поездка в Лондон на неделю, бюджет до 150к</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Поездки -->
+      <section class="section" id="section-trips">
+        <h1 class="page-title">Мои поездки</h1>
+        <p class="page-subtitle">Все бронирования с прозрачной разбивкой комиссий</p>
+        <div class="trips-grid" id="tripsGrid">
+          <div class="trip-card" data-trip="1">
+            <div class="trip-card-header">
+              <div>
+                <h3>Москва → Берлин → Москва</h3>
+                <div class="dates">12–15 марта 2025</div>
+              </div>
+              <span class="status confirmed">Подтверждено</span>
+            </div>
+            <div class="trip-card-fees">
+              <div class="row"><span>Рейс (Aeroflot)</span><span>24 500 ₽</span></div>
+              <div class="row"><span>Сервисный сбор</span><span>490 ₽</span></div>
+              <div class="row total"><span>Итого</span><span>24 990 ₽</span></div>
+              <div class="row" style="font-size:0.75rem;color:#888;margin-top:8px">
+                <span>При отмене: возврат по правилам авиакомпании, комиссия 0 ₽</span>
+              </div>
+            </div>
+          </div>
+          <div class="trip-card" data-trip="2">
+            <div class="trip-card-header">
+              <div>
+                <h3>Берлин — Отель Adlon Kempinski</h3>
+                <div class="dates">12–15 марта 2025, 3 ночи</div>
+              </div>
+              <span class="status confirmed">Подтверждено</span>
+            </div>
+            <div class="trip-card-fees">
+              <div class="row"><span>Отель</span><span>45 000 ₽</span></div>
+              <div class="row"><span>Сервисный сбор</span><span>900 ₽</span></div>
+              <div class="row total"><span>Итого</span><span>45 900 ₽</span></div>
+              <div class="row" style="font-size:0.75rem;color:#888;margin-top:8px">
+                <span>Бесплатная отмена до 10 марта</span>
+              </div>
+            </div>
+          </div>
+          <div class="trip-card" data-trip="3">
+            <div class="trip-card-header">
+              <div>
+                <h3>Москва → Лондон → Москва</h3>
+                <div class="dates">20–27 апреля 2025</div>
+              </div>
+              <span class="status refund">Запрос на возврат</span>
+            </div>
+            <div class="trip-card-fees">
+              <div class="row"><span>Рейс (British Airways)</span><span>38 200 ₽</span></div>
+              <div class="row"><span>Сервисный сбор</span><span>764 ₽</span></div>
+              <div class="row total"><span>Итого</span><span>38 964 ₽</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Запросы -->
+      <section class="section" id="section-requests">
+        <h1 class="page-title">Запросы на изменения</h1>
+        <p class="page-subtitle">Единый статус — никакого пинг-понга с авиакомпаниями</p>
+        <div class="request-card">
+          <div class="request-card-header">
+            <h3>Возврат: Москва — Лондон, 20 апреля</h3>
+            <span class="request-status in-progress">
+              <span class="dot"></span> В работе у авиакомпании
+            </span>
+          </div>
+          <div class="request-timeline">
+            <div class="step done">
+              <div class="date">25 фев, 14:32</div>
+              <div class="text">Запрос отправлен в British Airways</div>
+            </div>
+            <div class="step current">
+              <div class="date">25 фев, 14:35</div>
+              <div class="text">Ожидаем ответ авиакомпании до 5 марта</div>
+            </div>
+            <div class="step">
+              <div class="date">—</div>
+              <div class="text">Возврат на карту (3–10 рабочих дней)</div>
+            </div>
+          </div>
+        </div>
+        <div class="request-card">
+          <div class="request-card-header">
+            <h3>Изменение даты: Отель Adlon, Берлин</h3>
+            <span class="request-status done">
+              <span class="dot"></span> Выполнено
+            </span>
+          </div>
+          <div class="request-timeline">
+            <div class="step done">
+              <div class="date">20 фев, 09:15</div>
+              <div class="text">Запрос на перенос 12–15 → 14–17 марта</div>
+            </div>
+            <div class="step done">
+              <div class="date">20 фев, 11:42</div>
+              <div class="text">Отель подтвердил изменение</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Расходы -->
+      <section class="section" id="section-expenses">
+        <h1 class="page-title">Расходы</h1>
+        <p class="page-subtitle">Чеки автоматически привязываются к бронированиям</p>
+        <div class="expenses-layout">
+          <div>
+            <div class="expense-list">
+              <div class="expense-item">
+                <div class="receipt-preview matched">✓</div>
+                <div class="info">
+                  <h4>Такси Sber, Берлин</h4>
+                  <div class="match-note">Привязано к поездке Москва — Берлин, 12–15 марта</div>
+                </div>
+                <div class="amount">1 240 ₽</div>
+              </div>
+              <div class="expense-item">
+                <div class="receipt-preview matched">✓</div>
+                <div class="info">
+                  <h4>Обед, ресторан Borchardt</h4>
+                  <div class="match-note">Привязано к поездке Москва — Берлин, 12–15 марта</div>
+                </div>
+                <div class="amount">4 800 ₽</div>
+              </div>
+              <div class="expense-item">
+                <div class="receipt-preview">📄</div>
+                <div class="info">
+                  <h4>Чек загружен 28 фев</h4>
+                  <div class="match-note" style="color:var(--warning)">Ищем подходящую поездку...</div>
+                </div>
+                <div class="amount">890 ₽</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="upload-zone" id="uploadZone">
+              <div class="icon">📤</div>
+              <p><strong>Перетащите чек сюда</strong></p>
+              <p>или нажмите для выбора файла</p>
+              <p style="margin-top:8px;font-size:0.75rem">PDF, фото, скриншот — распознаем автоматически</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Политика (менеджер) -->
+      <section class="section" id="section-policy">
+        <h1 class="page-title">Дашборд политики</h1>
+        <p class="page-subtitle">Нарушения, экономия и контроль</p>
+        <div class="dashboard-cards">
+          <div class="dash-card">
+            <div class="value green">94%</div>
+            <div class="label">Броней в рамках политики</div>
+          </div>
+          <div class="dash-card">
+            <div class="value yellow">12</div>
+            <div class="label">Исключений за месяц</div>
+          </div>
+          <div class="dash-card">
+            <div class="value green">−8%</div>
+            <div class="label">Экономия vs рыночные цены</div>
+          </div>
+        </div>
+        <div class="violations-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Сотрудник</th>
+                <th>Поездка</th>
+                <th>Причина</th>
+                <th>Статус</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Иванов А.</td>
+                <td>Москва — Лондон, 20 апр</td>
+                <td>Класс выше эконома на 12 000 ₽</td>
+                <td><span class="policy-badge exceeded">Превышение</span></td>
+              </tr>
+              <tr>
+                <td>Петрова М.</td>
+                <td>Берлин — отель, 12–15 мар</td>
+                <td>Отель в рамках политики</td>
+                <td><span class="policy-badge ok">OK</span></td>
+              </tr>
+              <tr>
+                <td>Сидоров К.</td>
+                <td>Париж, 5–8 мая</td>
+                <td>Рейс дороже лимита на 3 200 ₽</td>
+                <td><span class="policy-badge exceeded">Превышение</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Модалка с деталями комиссий -->
+  <div class="modal-overlay" id="feeModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Прозрачная разбивка</h2>
+        <button class="modal-close" id="modalClose">×</button>
+      </div>
+      <div class="modal-body">
+        <p>Москва → Берлин, 12–15 марта</p>
+        <div class="fee-breakdown">
+          <div class="row"><span>Стоимость рейса</span><span>24 500 ₽</span></div>
+          <div class="row"><span>Сервисный сбор (2%)</span><span>490 ₽</span></div>
+          <div class="row total"><span>Итого к оплате</span><span>24 990 ₽</span></div>
+        </div>
+        <p style="margin-top:16px;font-size:0.875rem;color:var(--gray-light)">
+          При отмене: возврат по правилам авиакомпании. Наша комиссия за отмену — 0 ₽.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modalCancel">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Role switch
+    const body = document.body;
+    const roleBtns = document.querySelectorAll('.role-btn');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('.section');
+
+    roleBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        roleBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const role = btn.dataset.role;
+        body.className = role === 'manager' ? 'role-manager' : '';
+        if (role === 'manager') {
+          showSection('policy');
+          navLinks.forEach(l => {
+            l.classList.toggle('active', l.dataset.section === 'policy');
+          });
+        } else {
+          showSection('search');
+          navLinks.forEach(l => {
+            l.classList.toggle('active', l.dataset.section === 'search');
+          });
+        }
+      });
+    });
+
+    // Navigation
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const section = link.dataset.section;
+        showSection(section);
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      });
+    });
+
+    function showSection(id) {
+      sections.forEach(s => {
+        s.classList.toggle('active', s.id === 'section-' + id);
+      });
+    }
+
+    // Chat
+    const chatInput = document.getElementById('chatInput');
+    const chatSend = document.getElementById('chatSend');
+    const chatMessages = document.getElementById('chatMessages');
+    const suggestions = document.querySelectorAll('.suggestion');
+
+    const chatResponses = {
+      default: {
+        msg: `Нашёл варианты. Вот лучший по соотношению цена/время:`,
+        card: {
+          route: 'Москва (SVO) → Берлин (BER)',
+          times: '12 мар, 08:45 — 10:20 · 13 мар, 18:30 — 22:15',
+          airline: 'Aeroflot',
+          price: '24 500 ₽',
+          fee: 'Сервисный сбор 490 ₽ · Комиссия за отмену 0 ₽'
+        }
+      },
+      over: {
+        msg: `Этот рейс превышает лимит по политике на 4 200 ₽.`,
+        policy: `Рекомендую альтернативу: рейс в 14:30, тот же день — 28 100 ₽, в рамках политики. Забронировать?`
+      }
+    };
+
+    function addMsg(text, isUser, extraHtml = '') {
+      const div = document.createElement('div');
+      div.className = 'msg ' + (isUser ? 'user' : 'bot');
+      div.innerHTML = text + (extraHtml || '');
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      addMsg(text, true);
+      chatInput.value = '';
+
+      setTimeout(() => {
+        const lower = text.toLowerCase();
+        if (lower.includes('лондон') || lower.includes('london') || lower.includes('дорог')) {
+          addMsg(chatResponses.over.msg, false,
+            `<div class="policy-warning"><strong>Объяснение политики</strong>${chatResponses.over.policy}</div>`);
+        } else {
+          const c = chatResponses.default.card;
+          addMsg(chatResponses.default.msg, false,
+            `<div class="flight-card">
+              <h4>${c.route}</h4>
+              <div style="font-size:0.875rem;color:var(--gray-light)">${c.times}</div>
+              <div style="font-size:0.875rem;margin-top:6px">${c.airline}</div>
+              <div class="price">${c.price}</div>
+              <div class="fee-note">${c.fee}</div>
+            </div>`);
+        }
+      }, 800);
+    }
+
+    chatSend.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+
+    suggestions.forEach(s => {
+      s.addEventListener('click', () => {
+        chatInput.value = s.textContent;
+        sendMessage();
+      });
+    });
+
+    // Клик по карточке рейса в чате
+    chatMessages.addEventListener('click', (e) => {
+      const card = e.target.closest('.flight-card');
+      if (card) {
+        const toast = document.getElementById('toast');
+        toast.textContent = 'Бронирование добавлено в корзину. Перейдите в «Мои поездки».';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+      }
+    });
+
+    // Trip cards -> modal
+    document.querySelectorAll('.trip-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.getElementById('feeModal').classList.add('active');
+      });
+    });
+
+    // Modal close
+    document.getElementById('modalClose').addEventListener('click', () => {
+      document.getElementById('feeModal').classList.remove('active');
+    });
+    document.getElementById('modalCancel').addEventListener('click', () => {
+      document.getElementById('feeModal').classList.remove('active');
+    });
+    document.getElementById('feeModal').addEventListener('click', (e) => {
+      if (e.target.id === 'feeModal') e.target.classList.remove('active');
+    });
+
+    // Upload zone
+    document.getElementById('uploadZone').addEventListener('click', () => {
+      alert('В прототипе: загрузка чека → автоматическое распознавание и привязка к поездке');
+    });
+  </script>
+</body>
+</html>

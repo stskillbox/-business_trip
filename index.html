@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Т-Командировка</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --yellow: #FFDD2D;
+  --yellow-h: #F5D326;
+  --black: #1A1A1A;
+  --blue: #428BF9;
+  --blue-h: #3578E0;
+  --blue-10: rgba(66,139,249,0.08);
+  --blue-20: rgba(66,139,249,0.15);
+  --white: #FFFFFF;
+  --bg: #F3F4F6;
+  --card: #FFFFFF;
+  --card-h: #F9FAFB;
+  --t1: #1A1A1A;
+  --t2: #6B7280;
+  --t3: #9CA3AF;
+  --border: #E5E7EB;
+  --green: #22C55E;
+  --green-10: rgba(34,197,94,0.1);
+  --orange: #F59E0B;
+  --orange-10: rgba(245,158,11,0.1);
+  --red: #EF4444;
+  --red-10: rgba(239,68,68,0.1);
+  --r-sm: 12px;
+  --r-md: 16px;
+  --r-lg: 20px;
+  --r-xl: 24px;
+  --sh-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --sh-md: 0 2px 8px rgba(0,0,0,0.06);
+  --sh-lg: 0 4px 16px rgba(0,0,0,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--t1);background:var(--bg);line-height:1.5;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* SVG ICON SYSTEM */
+.icon{display:inline-flex;align-items:center;justify-content:center}
+.icon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.icon-sm svg{width:16px;height:16px}
+.icon-lg svg{width:24px;height:24px}
+.icon-xl svg{width:32px;height:32px}
+
+/* HEADER */
+.header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);height:56px;padding:0 24px;display:flex;align-items:center;justify-content:space-between}
+.h-logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;cursor:pointer;color:var(--t1)}
+.h-logo-mark{width:28px;height:28px;background:var(--yellow);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:var(--black)}
+.h-nav{display:flex;gap:2px}
+.h-nav button{padding:8px 14px;border:none;background:transparent;font-size:13px;font-weight:500;color:var(--t2);border-radius:8px;cursor:pointer;transition:all .15s;font-family:inherit}
+.h-nav button:hover{background:var(--bg);color:var(--t1)}
+.h-nav button.active{background:var(--blue-10);color:var(--blue);font-weight:600}
+.h-right{display:flex;align-items:center;gap:8px}
+.h-notif{position:relative;width:36px;height:36px;border:none;background:transparent;border-radius:10px;cursor:pointer;color:var(--t2);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.h-notif:hover{background:var(--bg)}
+.h-notif .dot{position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--red);border-radius:50%;border:2px solid white}
+.h-user{display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;border:1px solid var(--border);background:white;border-radius:999px;cursor:pointer;transition:all .15s;font-family:inherit}
+.h-user:hover{border-color:var(--blue)}
+.h-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white}
+.h-user-name{font-size:13px;font-weight:500}
+
+.h-role-switch{display:flex;background:var(--bg);border-radius:8px;padding:2px;gap:2px;margin-right:8px}
+.h-role-btn{padding:6px 12px;border:none;background:transparent;font-size:12px;font-weight:500;border-radius:6px;cursor:pointer;transition:all .15s;font-family:inherit;color:var(--t2)}
+.h-role-btn.active{background:white;color:var(--t1);font-weight:600;box-shadow:var(--sh-sm)}
+
+/* PAGES */
+.page{display:none;animation:pageIn .25s ease}
+.page.active{display:block}
+@keyframes pageIn{from{opacity:0}to{opacity:1}}
+
+/* ══════ HOME / AI FIRST ══════ */
+.hero{padding:48px 24px 0;text-align:center;max-width:640px;margin:0 auto}
+.hero-title{font-size:32px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px;color:var(--t1)}
+.hero-sub{font-size:15px;color:var(--t2);margin-bottom:32px}
+
+/* ONBOARDING STEPS */
+.onboard-steps{display:flex;gap:16px;max-width:580px;margin:0 auto 36px;padding:0 8px}
+.onboard-step{flex:1;padding:20px 16px;background:var(--card);border-radius:var(--r-md);text-align:center;border:1px solid var(--border)}
+.onboard-num{width:28px;height:28px;background:var(--blue);color:white;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-bottom:10px}
+.onboard-text{font-size:13px;color:var(--t2);line-height:1.4}
+
+/* WHAT BOT CAN DO */
+.bot-features{display:flex;gap:14px;max-width:580px;margin:0 auto 40px;padding:0 8px}
+.bot-feat{flex:1;padding:20px 16px;background:var(--card);border-radius:var(--r-md);border:1px solid var(--border)}
+.bot-feat-icon{width:40px;height:40px;background:var(--bg);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--t2);margin-bottom:12px}
+.bot-feat-title{font-size:14px;font-weight:600;margin-bottom:4px}
+.bot-feat-desc{font-size:12px;color:var(--t2);line-height:1.4}
+
+/* SEARCH INPUT */
+.search-bar{max-width:580px;margin:0 auto 24px;padding:0 8px}
+.search-wrap{display:flex;align-items:flex-end;background:var(--card);border:2px solid var(--border);border-radius:var(--r-xl);padding:14px 16px;transition:all .2s;box-shadow:var(--sh-sm)}
+.search-wrap:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-10)}
+.search-wrap textarea{flex:1;border:none;outline:none;font-size:15px;font-family:inherit;resize:none;height:22px;max-height:100px;line-height:22px;color:var(--t1)}
+.search-wrap textarea::placeholder{color:var(--t3)}
+.search-actions{display:flex;gap:6px;margin-left:10px}
+.search-actions button{width:36px;height:36px;border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.btn-mic{background:transparent;color:var(--t3)}
+.btn-mic:hover{background:var(--bg);color:var(--t2)}
+.btn-go{background:var(--blue);color:white}
+.btn-go:hover{background:var(--blue-h);transform:scale(1.05)}
+
+/* QUICK SCENARIOS (text only) */
+.scenarios{display:flex;flex-wrap:wrap;gap:8px;max-width:580px;margin:0 auto 48px;padding:0 8px;justify-content:center}
+.scenario{padding:8px 16px;background:var(--card);border:1px solid var(--border);border-radius:999px;font-size:13px;color:var(--t2);cursor:pointer;transition:all .15s;font-family:inherit}
+.scenario:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-10)}
+
+/* BOTTOM TABS */
+.bottom-tabs{display:flex;gap:4px;max-width:580px;margin:0 auto 48px;padding:0 8px;justify-content:center}
+.bottom-tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 16px;border-radius:var(--r-sm);cursor:pointer;transition:all .15s;min-width:72px;color:var(--t3)}
+.bottom-tab:hover{background:var(--card);color:var(--t2)}
+.bottom-tab.active{color:var(--blue);background:var(--blue-10)}
+.bottom-tab-icon{width:32px;height:32px;background:var(--bg);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.bottom-tab.active .bottom-tab-icon{background:var(--blue-20)}
+.bottom-tab-label{font-size:11px;font-weight:500}
+
+/* SECTION */
+.section{max-width:1000px;margin:0 auto;padding:0 24px}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-size:18px;font-weight:700}
+.section-link{font-size:13px;font-weight:500;color:var(--blue);cursor:pointer;border:none;background:none;font-family:inherit}
+.section-link:hover{text-decoration:underline}
+
+/* TRIP CARDS */
+.trips-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:48px}
+.trip{background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);padding:20px;cursor:pointer;transition:all .2s;position:relative}
+.trip:hover{box-shadow:var(--sh-md);transform:translateY(-1px)}
+.trip-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;margin-bottom:10px}
+.trip-badge.pending{background:var(--orange-10);color:var(--orange)}
+.trip-badge.booked{background:var(--green-10);color:var(--green)}
+.trip-badge.active{background:var(--blue-10);color:var(--blue)}
+.trip-route{font-size:16px;font-weight:700;margin-bottom:2px}
+.trip-dates{font-size:13px;color:var(--t2);margin-bottom:12px}
+.trip-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.trip-chip{padding:4px 10px;background:var(--bg);border-radius:6px;font-size:12px;color:var(--t2)}
+.trip-bottom{display:flex;align-items:center;justify-content:space-between}
+.trip-price{font-size:15px;font-weight:700}
+.trip-who{font-size:12px;color:var(--t3)}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:48px}
+.stat{padding:20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r-md)}
+.stat-label{font-size:12px;color:var(--t2);margin-bottom:6px}
+.stat-val{font-size:24px;font-weight:700}
+.stat-delta{font-size:12px;font-weight:600;margin-top:2px}
+.stat-delta.up{color:var(--green)}
+
+/* ══════ CHAT ══════ */
+.chat-page{max-width:680px;margin:0 auto;padding:16px 16px 120px;min-height:calc(100vh - 56px)}
+.chat-msgs{display:flex;flex-direction:column;gap:12px}
+
+.msg{display:flex;gap:10px;max-width:85%;animation:msgIn .3s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg.bot{align-self:flex-start}
+.msg.user{align-self:flex-end;flex-direction:row-reverse}
+.msg-ava{width:32px;height:32px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px}
+.msg.bot .msg-ava{background:var(--blue-10);color:var(--blue)}
+.msg.user .msg-ava{background:var(--yellow);color:var(--black);font-weight:700;font-size:11px}
+.msg-body{padding:14px 18px;border-radius:var(--r-md);font-size:14px;line-height:1.6}
+.msg.bot .msg-body{background:var(--card);border:1px solid var(--border);border-top-left-radius:4px}
+.msg.user .msg-body{background:var(--blue);color:white;border-top-right-radius:4px}
+
+/* ONBOARD MSG */
+.onboard-msg{background:var(--card)!important;border:1px solid var(--border)!important;border-radius:var(--r-md)!important}
+.onboard-msg .ob-title{font-weight:700;font-size:15px;margin-bottom:8px}
+.onboard-msg .ob-steps{margin:12px 0}
+.onboard-msg .ob-step{display:flex;gap:10px;padding:8px 0}
+.onboard-msg .ob-step-num{width:22px;height:22px;background:var(--blue);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.onboard-msg .ob-step-text{font-size:13px;color:var(--t2);line-height:1.4}
+.onboard-msg .ob-example{background:var(--bg);border-radius:var(--r-sm);padding:12px 14px;font-size:13px;color:var(--t1);margin-top:8px;cursor:pointer;border:1px solid transparent;transition:all .15s}
+.onboard-msg .ob-example:hover{border-color:var(--blue);background:var(--blue-10)}
+.onboard-msg .ob-example-label{font-size:11px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+
+/* CLARIFICATION BUTTONS */
+.clarify-btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.clarify-btn{padding:8px 16px;border:1px solid var(--border);background:var(--card);border-radius:999px;font-size:13px;cursor:pointer;transition:all .15s;font-family:inherit;color:var(--t1)}
+.clarify-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-10)}
+.clarify-btn.selected{border-color:var(--blue);background:var(--blue);color:white}
+
+/* RESULT CARDS */
+.results{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.result{background:var(--card);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px;cursor:pointer;transition:all .15s}
+.result:hover{border-color:var(--blue);box-shadow:var(--sh-sm)}
+.result.best{border-color:var(--blue);background:rgba(66,139,249,0.03)}
+.result-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--blue);background:var(--blue-10);padding:2px 8px;border-radius:4px;margin-bottom:8px}
+.result-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.result-airline{font-weight:600;font-size:14px}
+.result-price{font-size:18px;font-weight:700}
+.result-route{font-size:13px;color:var(--t2);margin-bottom:8px}
+.result-tags{display:flex;gap:6px;flex-wrap:wrap}
+.result-tag{font-size:11px;padding:3px 8px;border-radius:4px}
+.result-tag.ok{background:var(--green-10);color:var(--green)}
+.result-tag.warn{background:var(--orange-10);color:var(--orange)}
+.result-tag.info{background:var(--bg);color:var(--t2)}
+.result-select{width:100%;padding:10px;border:none;background:var(--yellow);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px;transition:all .15s;font-family:inherit}
+.result-select:hover{background:var(--yellow-h)}
+
+/* AI NOTE */
+.ai-note{background:var(--blue-10);border-left:3px solid var(--blue);border-radius:var(--r-sm);padding:12px 14px;margin-top:12px;font-size:13px;color:var(--blue)}
+
+/* BOOKING SUMMARY */
+.summary{background:var(--bg);border-radius:var(--r-sm);padding:14px;margin-top:14px}
+.summary-row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}
+.summary-row.total{font-weight:700;font-size:15px;border-top:1px solid var(--border);margin-top:6px;padding-top:10px}
+.summary-cashback{color:var(--green);font-size:12px;font-weight:600;margin-top:4px}
+
+/* ACTION ROW */
+.act-row{display:flex;gap:8px;margin-top:14px}
+.act-primary{padding:12px 24px;background:var(--yellow);border:none;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;transition:all .15s;font-family:inherit}
+.act-primary:hover{background:var(--yellow-h)}
+.act-secondary{padding:12px 24px;background:transparent;border:1px solid var(--border);border-radius:10px;font-weight:500;font-size:14px;cursor:pointer;transition:all .15s;color:var(--t1);font-family:inherit}
+.act-secondary:hover{border-color:var(--blue);color:var(--blue)}
+
+/* TYPING */
+.typing{display:flex;gap:4px;padding:4px 0}
+.typing span{width:6px;height:6px;background:var(--blue);border-radius:50%;animation:blink 1.4s infinite both}
+.typing span:nth-child(2){animation-delay:.2s}
+.typing span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.25;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+
+/* CHAT FIXED INPUT */
+.chat-fixed{position:fixed;bottom:0;left:0;right:0;background:rgba(243,244,246,.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);padding:12px 16px;display:none;z-index:50}
+.chat-fixed .search-wrap{max-width:648px;margin:0 auto}
+
+/* ══════ BOOKING PAGE ══════ */
+.booking-form{max-width:640px;margin:32px auto;padding:28px;background:var(--card);border-radius:var(--r-lg);border:1px solid var(--border)}
+.b-tabs{display:flex;gap:2px;margin-bottom:20px;background:var(--bg);border-radius:10px;padding:3px}
+.b-tab{flex:1;padding:10px;border:none;background:transparent;font-size:13px;font-weight:500;cursor:pointer;border-radius:8px;transition:all .15s;font-family:inherit;color:var(--t2);display:flex;align-items:center;justify-content:center;gap:6px}
+.b-tab.active{background:white;color:var(--t1);font-weight:600;box-shadow:var(--sh-sm)}
+.b-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.b-field label{display:block;font-size:11px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.b-field input,.b-field select{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:border .15s;background:white}
+.b-field input:focus,.b-field select:focus{border-color:var(--blue)}
+.b-submit{width:100%;padding:14px;background:var(--yellow);border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit}
+.b-submit:hover{background:var(--yellow-h)}
+
+/* ══════ FINANCE ══════ */
+.fin-grid{display:grid;grid-template-columns:360px 1fr;gap:20px;max-width:1000px;margin:32px auto;padding:0 24px}
+.vcard{background:linear-gradient(135deg,#1A1A2E,#16213E);border-radius:var(--r-lg);padding:24px;color:white;position:relative;overflow:hidden}
+.vcard::after{content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:rgba(255,221,45,.12);border-radius:50%}
+.vc-label{font-size:11px;opacity:.6}
+.vc-type{font-size:15px;font-weight:600;margin-bottom:20px}
+.vc-num{font-size:20px;font-weight:600;letter-spacing:3px;margin-bottom:16px;font-variant-numeric:tabular-nums}
+.vc-row{display:flex;justify-content:space-between;align-items:flex-end}
+.vc-name{font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:1px}
+.vc-brand{font-size:10px;font-weight:800;background:var(--yellow);color:var(--black);padding:3px 8px;border-radius:4px}
+.vc-bal{padding:16px;background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);margin-top:16px}
+.vc-bal-row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px}
+.vc-bal-row span:first-child{color:var(--t2)}
+.vc-bal-row span:last-child{font-weight:600}
+.vc-prog{height:6px;background:var(--bg);border-radius:3px;margin-top:10px;overflow:hidden}
+.vc-prog-bar{height:100%;background:var(--blue);border-radius:3px;transition:width 1s ease}
+.txns{display:flex;flex-direction:column;gap:8px}
+.txn{display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r-sm);transition:all .15s}
+.txn:hover{box-shadow:var(--sh-sm)}
+.txn-icon{width:40px;height:40px;border-radius:10px;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--t2)}
+.txn-info{flex:1}
+.txn-name{font-size:14px;font-weight:600}
+.txn-meta{font-size:12px;color:var(--t2)}
+.txn-amt{font-size:15px;font-weight:700;text-align:right}
+.txn-amt.neg{color:var(--t1)}
+.txn-amt.pos{color:var(--green)}
+
+/* ══════ ANALYTICS ══════ */
+.a-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:1000px;margin:0 auto 48px;padding:0 24px}
+.a-card{padding:20px;background:var(--card);border:1px solid var(--border);border-radius:var(--r-md)}
+.a-card h3{font-size:15px;font-weight:700;margin-bottom:16px}
+.insight{padding:12px;background:var(--blue-10);border-left:3px solid var(--blue);border-radius:var(--r-sm);margin-bottom:8px;font-size:13px;line-height:1.5}
+.bar-row{margin-bottom:12px}
+.bar-label{display:flex;justify-content:space-between;margin-bottom:4px}
+.bar-name{font-size:13px;font-weight:500}
+.bar-val{font-size:13px;font-weight:600}
+.bar-bg{height:6px;background:var(--bg);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .8s ease}
+
+/* ══════ TRIPS PAGE ══════ */
+.page-head{padding:24px 24px 20px;max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.page-head h1{font-size:24px;font-weight:700}
+.tab-row{display:flex;gap:4px;max-width:1000px;margin:0 auto 20px;padding:0 24px}
+.tab-btn{padding:7px 14px;border:none;background:var(--card);border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;color:var(--t2);transition:all .15s;border:1px solid var(--border)}
+.tab-btn.active{background:var(--blue);color:white;border-color:var(--blue)}
+.tab-btn:hover:not(.active){background:var(--bg)}
+
+/* ADMIN SPECIFIC */
+.admin-panel{max-width:1000px;margin:0 auto;padding:0 24px 48px}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.approval{background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);padding:16px;transition:all .15s}
+.approval:hover{box-shadow:var(--sh-sm)}
+.approval-head{display:flex;justify-content:space-between;align-items:start;margin-bottom:8px}
+.approval-name{font-weight:600;font-size:14px}
+.approval-amount{font-weight:700;font-size:16px}
+.approval-route{font-size:13px;color:var(--t2);margin-bottom:12px}
+.approval-actions{display:flex;gap:6px}
+.approval-approve{padding:8px 20px;background:var(--green);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.approval-approve:hover{opacity:.9}
+.approval-reject{padding:8px 20px;background:var(--red-10);color:var(--red);border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.approval-reject:hover{background:var(--red);color:white}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .h-nav{display:none}
+  .hero-title{font-size:24px}
+  .hero{padding:32px 16px 0}
+  .onboard-steps{flex-direction:column}
+  .bot-features{flex-direction:column}
+  .stats{grid-template-columns:1fr 1fr}
+  .a-grid{grid-template-columns:1fr}
+  .fin-grid{grid-template-columns:1fr}
+  .b-fields{grid-template-columns:1fr}
+  .trips-row{grid-template-columns:1fr}
+  .admin-grid{grid-template-columns:1fr}
+  .h-role-switch{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="h-logo" onclick="showPage('home')">
+    <div class="h-logo-mark">Т</div>
+    <span>Командировка</span>
+  </div>
+  <nav class="h-nav" id="mainNav"></nav>
+  <div class="h-right">
+    <div class="h-role-switch">
+      <button class="h-role-btn active" onclick="switchRole('employee')">Сотрудник</button>
+      <button class="h-role-btn" onclick="switchRole('admin')">Администратор</button>
+    </div>
+    <button class="h-notif" title="Уведомления">
+      <span class="icon"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+      <span class="dot"></span>
+    </button>
+    <button class="h-user" id="userBtn">
+      <div class="h-avatar" id="userAvatar" style="background:var(--blue)">МК</div>
+      <span class="h-user-name" id="userName">Марина К.</span>
+    </button>
+  </div>
+</header>
+
+<!-- ══════ HOME ══════ -->
+<main class="page active" id="page-home">
+  <section class="hero">
+    <h1 class="hero-title" id="heroTitle">Куда летим?</h1>
+    <p class="hero-sub" id="heroSub">Опишите вашу командировку — AI-помощник подберёт лучшие варианты</p>
+
+    <div class="onboard-steps">
+      <div class="onboard-step">
+        <div class="onboard-num">1</div>
+        <div class="onboard-text">Укажите направление, даты и бюджет</div>
+      </div>
+      <div class="onboard-step">
+        <div class="onboard-num">2</div>
+        <div class="onboard-text">Бот уточнит детали: багаж, трансфер, отель</div>
+      </div>
+      <div class="onboard-step">
+        <div class="onboard-num">3</div>
+        <div class="onboard-text">Получите подходящие варианты и забронируйте</div>
+      </div>
+    </div>
+
+    <div class="bot-features">
+      <div class="bot-feat">
+        <div class="bot-feat-icon"><span class="icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span></div>
+        <div class="bot-feat-title">Ищет по всем</div>
+        <div class="bot-feat-desc">Авиа, поезда, отели, такси — единый поиск</div>
+      </div>
+      <div class="bot-feat">
+        <div class="bot-feat-icon"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span></div>
+        <div class="bot-feat-title">Находит выгодные</div>
+        <div class="bot-feat-desc">Подбирает рентабельные варианты в рамках политики</div>
+      </div>
+      <div class="bot-feat">
+        <div class="bot-feat-icon"><span class="icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span></div>
+        <div class="bot-feat-title">Бронирует сразу</div>
+        <div class="bot-feat-desc">Билеты + отель + трансфер за один диалог</div>
+      </div>
+    </div>
+
+    <div class="search-bar">
+      <div class="search-wrap">
+        <textarea id="homeInput" rows="1" placeholder="Например: 1 билет в Казань, самолёт, 10 марта" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();startChat()}"></textarea>
+        <div class="search-actions">
+          <button class="btn-mic" title="Голос"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span></button>
+          <button class="btn-go" onclick="startChat()" title="Отправить"><span class="icon"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="scenarios" id="homeScenarios">
+      <div class="scenario" onclick="fillSend('1 билет в Казань, самолёт, 10 марта')">Билет в Казань на 10 марта</div>
+      <div class="scenario" onclick="fillSend('Командировка в Екатеринбург 14-16 марта, 2 человека')">Командировка в Екатеринбург</div>
+      <div class="scenario" onclick="fillSend('Отель в Сочи на 3 ночи до 5000₽')">Отель в Сочи до 5000₽</div>
+      <div class="scenario" onclick="fillSend('Авансовый отчёт за последнюю поездку')">Авансовый отчёт</div>
+    </div>
+
+    <div class="bottom-tabs">
+      <div class="bottom-tab active">
+        <div class="bottom-tab-icon"><span class="icon"><svg viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.4-.1.9.3 1.1l5.4 3.1-2.8 2.8L4 13.8c-.4-.1-.8 0-1 .3l-.2.3c-.2.3-.1.7.1 1l2.5 2.5c.3.3.7.3 1 .1l.3-.2c.3-.2.4-.6.3-1L7.3 14.5l2.8-2.8 3.1 5.4c.2.4.7.5 1.1.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg></span></div>
+        <div class="bottom-tab-label">Авиа</div>
+      </div>
+      <div class="bottom-tab">
+        <div class="bottom-tab-icon"><span class="icon"><svg viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16"/><path d="M1 21h22"/><path d="M9 7h1"/><path d="M9 11h1"/><path d="M9 15h1"/><path d="M14 7h1"/><path d="M14 11h1"/><path d="M14 15h1"/></svg></span></div>
+        <div class="bottom-tab-label">Отели</div>
+      </div>
+      <div class="bottom-tab">
+        <div class="bottom-tab-icon"><span class="icon"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h3"/><path d="M8 11h3"/><path d="M16 3v18"/></svg></span></div>
+        <div class="bottom-tab-label">Поезда</div>
+      </div>
+      <div class="bottom-tab">
+        <div class="bottom-tab-icon"><span class="icon"><svg viewBox="0 0 24 24"><path d="M14 16H9m10.36-7.02A7.94 7.94 0 0 1 20 12c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8a7.94 7.94 0 0 1 3.02.58"/><circle cx="12" cy="12" r="2"/><path d="M16 8h5V3"/></svg></span></div>
+        <div class="bottom-tab-label">Такси</div>
+      </div>
+      <div class="bottom-tab">
+        <div class="bottom-tab-icon"><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></span></div>
+        <div class="bottom-tab-label">MICE</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section" id="homeTripsSection">
+    <div class="section-head">
+      <div class="section-title" id="homeSectionTitle">Мои командировки</div>
+      <button class="section-link" onclick="showPage('trips')">Все</button>
+    </div>
+    <div class="trips-row" id="homeTrips"></div>
+  </div>
+</main>
+
+<!-- ══════ CHAT ══════ -->
+<main class="page" id="page-chat">
+  <div class="chat-page">
+    <div class="chat-msgs" id="chatMsgs"></div>
+  </div>
+  <div class="chat-fixed" id="chatFixed">
+    <div class="search-wrap">
+      <textarea id="chatInput" rows="1" placeholder="Напишите сообщение..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
+      <div class="search-actions">
+        <button class="btn-mic"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span></button>
+        <button class="btn-go" onclick="sendMsg()"><span class="icon"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></span></button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ══════ TRIPS ══════ -->
+<main class="page" id="page-trips">
+  <div class="page-head">
+    <h1 id="tripsTitle">Мои командировки</h1>
+    <button class="act-primary" id="newTripBtn" onclick="fillSend('Создай новую командировку')">+ Новая заявка</button>
+  </div>
+  <div class="tab-row">
+    <button class="tab-btn active">Все</button>
+    <button class="tab-btn">На согласовании</button>
+    <button class="tab-btn">Забронировано</button>
+    <button class="tab-btn">В поездке</button>
+    <button class="tab-btn">Завершённые</button>
+  </div>
+  <div class="section" style="margin-bottom:48px">
+    <div class="trips-row" id="tripsAll"></div>
+  </div>
+  <div id="adminApprovals" style="display:none">
+    <div class="section">
+      <div class="section-head"><div class="section-title">Ожидают согласования</div></div>
+    </div>
+    <div class="admin-panel">
+      <div class="admin-grid" id="approvalsGrid"></div>
+    </div>
+  </div>
+</main>
+
+<!-- ══════ BOOKING ══════ -->
+<main class="page" id="page-booking">
+  <div class="page-head"><h1>Бронирование</h1></div>
+  <div class="booking-form">
+    <div class="b-tabs">
+      <button class="b-tab active"><span class="icon icon-sm"><svg viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.4-.1.9.3 1.1l5.4 3.1-2.8 2.8L4 13.8c-.4-.1-.8 0-1 .3l-.2.3c-.2.3-.1.7.1 1l2.5 2.5c.3.3.7.3 1 .1l.3-.2c.3-.2.4-.6.3-1L7.3 14.5l2.8-2.8 3.1 5.4c.2.4.7.5 1.1.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg></span> Авиа</button>
+      <button class="b-tab"><span class="icon icon-sm"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h3"/><path d="M8 11h3"/><path d="M16 3v18"/></svg></span> Поезда</button>
+      <button class="b-tab"><span class="icon icon-sm"><svg viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16"/><path d="M1 21h22"/><path d="M9 7h1"/><path d="M9 11h1"/><path d="M14 7h1"/><path d="M14 11h1"/></svg></span> Отели</button>
+      <button class="b-tab"><span class="icon icon-sm"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/></svg></span> Такси</button>
+    </div>
+    <div class="b-fields">
+      <div class="b-field"><label>Откуда</label><input value="Москва (SVO)" placeholder="Город"></div>
+      <div class="b-field"><label>Куда</label><input placeholder="Город или аэропорт"></div>
+      <div class="b-field"><label>Туда</label><input type="date" value="2026-03-10"></div>
+      <div class="b-field"><label>Обратно</label><input type="date" value="2026-03-12"></div>
+      <div class="b-field"><label>Сотрудник</label>
+        <select><option>Дмитрий Иванов</option><option>Анна Сидорова</option><option>Павел Смирнов</option></select>
+      </div>
+      <div class="b-field"><label>Командировка</label>
+        <select><option>Новая заявка</option><option>#1247 Казань</option><option>#1248 Екатеринбург</option></select>
+      </div>
+    </div>
+    <button class="b-submit" onclick="fillSend('Найди авиабилеты Москва → Казань на 10 марта')">Найти</button>
+  </div>
+</main>
+
+<!-- ══════ FINANCE ══════ -->
+<main class="page" id="page-finance">
+  <div class="page-head"><h1>Финансы</h1><button class="act-primary">+ Выпустить карту</button></div>
+  <div class="fin-grid">
+    <div>
+      <div class="vcard">
+        <div class="vc-label">Командировочная карта</div>
+        <div class="vc-type">Командировка #1247 · Казань</div>
+        <div class="vc-num">•••• •••• •••• 4521</div>
+        <div class="vc-row"><div class="vc-name">Дмитрий Иванов</div><div class="vc-brand">Т-БАНК</div></div>
+      </div>
+      <div class="vc-bal">
+        <div class="vc-bal-row"><span>Лимит</span><span>15 000 ₽</span></div>
+        <div class="vc-bal-row"><span>Потрачено</span><span>5 650 ₽</span></div>
+        <div class="vc-bal-row"><span>Остаток</span><span style="color:var(--green)">9 350 ₽</span></div>
+        <div class="vc-prog"><div class="vc-prog-bar" style="width:38%"></div></div>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:12px">Транзакции</h3>
+      <div class="txns">
+        <div class="txn">
+          <div class="txn-icon"><span class="icon"><svg viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.4-.1.9.3 1.1l5.4 3.1-2.8 2.8"/></svg></span></div>
+          <div class="txn-info"><div class="txn-name">S7 Airlines</div><div class="txn-meta">Авиабилет · Сегодня, 10:32</div></div>
+          <div class="txn-amt neg">-4 580 ₽</div>
+        </div>
+        <div class="txn">
+          <div class="txn-icon"><span class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/></svg></span></div>
+          <div class="txn-info"><div class="txn-name">Яндекс Такси</div><div class="txn-meta">Аэропорт → отель · Сегодня, 14:05</div></div>
+          <div class="txn-amt neg">-420 ₽</div>
+        </div>
+        <div class="txn">
+          <div class="txn-icon"><span class="icon"><svg viewBox="0 0 24 24"><path d="M15 11h.01"/><path d="M11 15h.01"/><path d="M16 16h.01"/><path d="m2 16 20 6-6-20A20 20 0 0 0 2 16"/></svg></span></div>
+          <div class="txn-info"><div class="txn-name">Кафе «Сказка»</div><div class="txn-meta">Чек распознан (OCR) · Сегодня, 19:30</div></div>
+          <div class="txn-amt neg">-650 ₽</div>
+        </div>
+        <div class="txn">
+          <div class="txn-icon"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span></div>
+          <div class="txn-info"><div class="txn-name">Кэшбэк 5%</div><div class="txn-meta">За авиабилет · Сегодня, 10:33</div></div>
+          <div class="txn-amt pos">+229 ₽</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ══════ ANALYTICS ══════ -->
+<main class="page" id="page-analytics">
+  <div class="page-head"><h1>Аналитика</h1>
+    <select style="padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;background:white"><option>Февраль 2026</option><option>Январь 2026</option></select>
+  </div>
+  <div class="section" style="margin-bottom:20px">
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Расходы</div><div class="stat-val" id="sExp">0</div><div class="stat-delta up">+12% к янв</div></div>
+      <div class="stat"><div class="stat-label">Экономия</div><div class="stat-val" id="sSav">0</div><div class="stat-delta up">+18% к янв</div></div>
+      <div class="stat"><div class="stat-label">Командировок</div><div class="stat-val" id="sTrip">0</div><div class="stat-delta up">+8</div></div>
+      <div class="stat"><div class="stat-label">Кэшбэк</div><div class="stat-val" id="sCash">0</div><div class="stat-delta up">+22%</div></div>
+    </div>
+  </div>
+  <div class="a-grid">
+    <div class="a-card">
+      <h3>AI-инсайты</h3>
+      <div class="insight">Расходы на отели в <strong>Сочи</strong> выросли на 40%. Рекомендуем пересмотреть лимит.</div>
+      <div class="insight">30% перелётов <strong>МСК — СПб</strong> можно заменить на Сапсан. Экономия до 18%.</div>
+      <div class="insight">Покупка билетов за <strong>14+ дней</strong> экономит в среднем 22%. Сейчас среднее — 5 дней.</div>
+      <div class="insight"><strong>3 сотрудника</strong> летят в Казань на одни даты. Групповое бронирование — скидка 15%.</div>
+    </div>
+    <div class="a-card">
+      <h3>Топ направлений</h3>
+      <div class="bar-row"><div class="bar-label"><span class="bar-name">Казань</span><span class="bar-val">320 000 ₽</span></div><div class="bar-bg"><div class="bar-fill" style="width:85%;background:var(--blue)"></div></div></div>
+      <div class="bar-row"><div class="bar-label"><span class="bar-name">Санкт-Петербург</span><span class="bar-val">280 000 ₽</span></div><div class="bar-bg"><div class="bar-fill" style="width:72%;background:var(--blue)"></div></div></div>
+      <div class="bar-row"><div class="bar-label"><span class="bar-name">Сочи</span><span class="bar-val">240 000 ₽</span></div><div class="bar-bg"><div class="bar-fill" style="width:60%;background:var(--blue)"></div></div></div>
+      <div class="bar-row"><div class="bar-label"><span class="bar-name">Екатеринбург</span><span class="bar-val">180 000 ₽</span></div><div class="bar-bg"><div class="bar-fill" style="width:47%;background:var(--blue)"></div></div></div>
+      <div class="bar-row"><div class="bar-label"><span class="bar-name">Новосибирск</span><span class="bar-val">120 000 ₽</span></div><div class="bar-bg"><div class="bar-fill" style="width:32%;background:var(--blue)"></div></div></div>
+    </div>
+    <div class="a-card">
+      <h3>По подразделениям</h3>
+      <div class="bar-row"><div class="bar-label"><span class="bar-name">Продажи</span><span class="bar-val">890 000 ₽</span></div><div class="bar-bg"><div class="bar-fill" style="width:92%;background:var(--blue)"></div></div></div>
+      <div class="bar-row"><div class="bar-label"><span class="bar-name">Маркетинг</span><span class="bar-val">540 000 ₽</span></div><div class="bar-bg"><div class="bar-fill" style="width:58%;background:var(--yellow)"></div></div></div>
+      <div class="bar-row"><div class="bar-label"><span class="bar-name">Разработка</span><span class="bar-val">320 000 ₽</span></div><div class="bar-bg"><div class="bar-fill" style="width:34%;background:var(--green)"></div></div></div>
+      <div class="bar-row"><div class="bar-label"><span class="bar-name">HR</span><span class="bar-val">280 000 ₽</span></div><div class="bar-bg"><div class="bar-fill" style="width:29%;background:#9B59B6"></div></div></div>
+    </div>
+    <div class="a-card">
+      <h3>Экономия за месяц</h3>
+      <div style="text-align:center;padding:20px 0">
+        <div style="font-size:36px;font-weight:800;color:var(--green)" id="savBig">0 ₽</div>
+        <div style="font-size:13px;color:var(--t2);margin-top:4px">сэкономлено в феврале</div>
+        <div style="margin-top:16px;font-size:14px;color:var(--t1)">Кэшбэк: <strong style="color:var(--green)">28 400 ₽</strong></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+/* ══════ ROLE & NAV ══════ */
+let role = 'employee';
+const navEmployee = [
+  {id:'home',label:'Главная'},
+  {id:'trips',label:'Командировки'},
+  {id:'booking',label:'Бронирование'},
+  {id:'finance',label:'Финансы'},
+];
+const navAdmin = [
+  {id:'home',label:'Главная'},
+  {id:'trips',label:'Все командировки'},
+  {id:'analytics',label:'Аналитика'},
+  {id:'finance',label:'Финансы'},
+  {id:'booking',label:'Бронирование'},
+];
+
+function switchRole(r) {
+  role = r;
+  document.querySelectorAll('.h-role-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.h-role-btn[onclick*="${r}"]`).classList.add('active');
+
+  if (r === 'admin') {
+    document.getElementById('userAvatar').textContent = 'АП';
+    document.getElementById('userAvatar').style.background = '#9B59B6';
+    document.getElementById('userName').textContent = 'Алексей П.';
+    document.getElementById('heroTitle').textContent = 'Управление командировками';
+    document.getElementById('heroSub').textContent = 'Планируйте, согласовывайте и контролируйте бюджеты';
+    document.getElementById('homeSectionTitle').textContent = 'Ожидают согласования';
+    document.getElementById('tripsTitle').textContent = 'Все командировки';
+    document.getElementById('newTripBtn').textContent = '+ Создать командировку';
+    document.getElementById('adminApprovals').style.display = 'block';
+    document.getElementById('homeScenarios').innerHTML = `
+      <div class="scenario" onclick="fillSend('Покажи расходы за февраль')">Расходы за февраль</div>
+      <div class="scenario" onclick="fillSend('Создай командировку для Иванова в Казань')">Создать командировку</div>
+      <div class="scenario" onclick="fillSend('Групповая поездка в Сочи на 50 человек')">MICE-мероприятие</div>
+      <div class="scenario" onclick="fillSend('Кто превышает бюджет?')">Контроль бюджетов</div>
+    `;
+  } else {
+    document.getElementById('userAvatar').textContent = 'МК';
+    document.getElementById('userAvatar').style.background = 'var(--blue)';
+    document.getElementById('userName').textContent = 'Марина К.';
+    document.getElementById('heroTitle').textContent = 'Куда летим?';
+    document.getElementById('heroSub').textContent = 'Опишите вашу командировку — AI-помощник подберёт лучшие варианты';
+    document.getElementById('homeSectionTitle').textContent = 'Мои командировки';
+    document.getElementById('tripsTitle').textContent = 'Мои командировки';
+    document.getElementById('newTripBtn').textContent = '+ Новая заявка';
+    document.getElementById('adminApprovals').style.display = 'none';
+    document.getElementById('homeScenarios').innerHTML = `
+      <div class="scenario" onclick="fillSend('1 билет в Казань, самолёт, 10 марта')">Билет в Казань на 10 марта</div>
+      <div class="scenario" onclick="fillSend('Командировка в Екатеринбург 14-16 марта, 2 человека')">Командировка в Екатеринбург</div>
+      <div class="scenario" onclick="fillSend('Отель в Сочи на 3 ночи до 5000₽')">Отель в Сочи до 5000₽</div>
+      <div class="scenario" onclick="fillSend('Авансовый отчёт за последнюю поездку')">Авансовый отчёт</div>
+    `;
+  }
+  buildNav();
+  buildTrips();
+  buildApprovals();
+  showPage('home');
+}
+
+function buildNav() {
+  const nav = document.getElementById('mainNav');
+  const items = role === 'admin' ? navAdmin : navEmployee;
+  nav.innerHTML = items.map(i => `<button data-page="${i.id}">${i.label}</button>`).join('');
+  nav.querySelectorAll('button').forEach(b => b.addEventListener('click', () => showPage(b.dataset.page)));
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const pg = document.getElementById('page-'+id);
+  if (pg) { pg.classList.add('active'); window.scrollTo(0,0); }
+  document.querySelectorAll('.h-nav button').forEach(b => {
+    b.classList.toggle('active', b.dataset.page === id);
+  });
+  document.getElementById('chatFixed').style.display = id==='chat' ? 'block' : 'none';
+  if (id==='analytics') animateStats();
+}
+
+/* ══════ TRIPS DATA ══════ */
+const allTrips = [
+  {status:'pending',badge:'На согласовании',route:'Москва → Екатеринбург',dates:'10-12 марта',who:'Дмитрий Иванов',chips:['Авиа 5 840 ₽','Отель 12 400 ₽'],total:'18 240 ₽'},
+  {status:'pending',badge:'На согласовании',route:'Москва → Новосибирск',dates:'14-16 марта',who:'Елена Козлова',chips:['Авиа 8 200 ₽','Отель 7 600 ₽'],total:'15 800 ₽'},
+  {status:'booked',badge:'Забронировано',route:'Москва → Казань',dates:'5-7 марта',who:'Дмитрий Иванов',chips:['S7 4 580 ₽','Holiday Inn 8 400 ₽'],total:'12 980 ₽'},
+  {status:'booked',badge:'Забронировано',route:'Москва → Сочи',dates:'18-20 марта',who:'Павел Смирнов',chips:['Авиа 6 100 ₽','Отель 11 200 ₽'],total:'17 300 ₽'},
+  {status:'active',badge:'В поездке',route:'Москва → Санкт-Петербург',dates:'27 фев — 1 мар',who:'Анна Сидорова',chips:['Сапсан 3 890 ₽','Azimut 9 600 ₽'],total:'12 490 ₽'},
+];
+
+function buildTrips() {
+  const homeEl = document.getElementById('homeTrips');
+  const allEl = document.getElementById('tripsAll');
+  const src = role === 'admin' ? allTrips : allTrips.filter(t => t.who === 'Дмитрий Иванов' || t.who === 'Анна Сидорова');
+  const home = src.slice(0,3);
+  [homeEl,allEl].forEach((el,idx) => {
+    const data = idx === 0 ? home : src;
+    el.innerHTML = data.map(t => `
+      <div class="trip" onclick="showPage('chat')">
+        <div class="trip-badge ${t.status}">${t.badge}</div>
+        <div class="trip-route">${t.route}</div>
+        <div class="trip-dates">${t.dates}${role==='admin' ? ' · '+t.who : ''}</div>
+        <div class="trip-chips">${t.chips.map(c=>'<span class="trip-chip">'+c+'</span>').join('')}</div>
+        <div class="trip-bottom"><span class="trip-price">${t.total}</span></div>
+      </div>
+    `).join('');
+  });
+}
+
+function buildApprovals() {
+  const el = document.getElementById('approvalsGrid');
+  const pending = allTrips.filter(t => t.status === 'pending');
+  el.innerHTML = pending.map(t => `
+    <div class="approval">
+      <div class="approval-head"><span class="approval-name">${t.who}</span><span class="approval-amount">${t.total}</span></div>
+      <div class="approval-route">${t.route} · ${t.dates}</div>
+      <div class="approval-actions">
+        <button class="approval-approve" onclick="this.textContent='Согласовано';this.style.opacity='.6'">Согласовать</button>
+        <button class="approval-reject">Отклонить</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ══════ AI CHAT ENGINE ══════ */
+const chatEl = document.getElementById('chatMsgs');
+let dialogState = 'idle';
+let dialogData = {};
+
+function fillSend(text) {
+  document.getElementById('homeInput').value = text;
+  startChat();
+}
+
+function startChat() {
+  const input = document.getElementById('homeInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  showPage('chat');
+  chatEl.innerHTML = '';
+  dialogState = 'idle';
+  dialogData = {};
+
+  showOnboardMsg();
+  setTimeout(() => addMsg('user', text), 600);
+  setTimeout(() => showTyping(), 1000);
+  setTimeout(() => { removeTyping(); processUserInput(text); }, 2200);
+}
+
+function sendMsg() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  addMsg('user', text);
+  setTimeout(() => showTyping(), 300);
+  setTimeout(() => { removeTyping(); processUserInput(text); }, 1600);
+}
+
+function showOnboardMsg() {
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  div.innerHTML = `
+    <div class="msg-ava"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 8V4H8"/><path d="M2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2a7 7 0 0 0-7 7"/></svg></span></div>
+    <div class="msg-body onboard-msg">
+      <div class="ob-title">Т-Помощник</div>
+      <div style="font-size:14px;color:var(--t2)">Привет! Я помогу организовать командировку. Опишите запрос — я подберу лучшие варианты.</div>
+      <div class="ob-steps">
+        <div class="ob-step"><div class="ob-step-num">1</div><div class="ob-step-text">Направление, дата, количество билетов</div></div>
+        <div class="ob-step"><div class="ob-step-num">2</div><div class="ob-step-text">Я уточню детали: багаж, обратный билет, отель</div></div>
+        <div class="ob-step"><div class="ob-step-num">3</div><div class="ob-step-text">Покажу лучшие варианты — выберете и забронируете</div></div>
+      </div>
+      <div class="ob-example" onclick="document.getElementById('chatInput').value='1 билет в Казань, самолёт, 10 марта';sendMsg()">
+        <div class="ob-example-label">Пример запроса</div>
+        «1 билет в Казань, самолёт, 10 марта»
+      </div>
+    </div>
+  `;
+  chatEl.appendChild(div);
+}
+
+function addMsg(type, html) {
+  const div = document.createElement('div');
+  div.className = `msg ${type}`;
+  const ava = type === 'bot'
+    ? '<span class="icon"><svg viewBox="0 0 24 24"><path d="M12 8V4H8"/><path d="M2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2a7 7 0 0 0-7 7"/></svg></span>'
+    : (role === 'admin' ? 'АП' : 'МК');
+  div.innerHTML = `<div class="msg-ava">${ava}</div><div class="msg-body">${html}</div>`;
+  chatEl.appendChild(div);
+  div.scrollIntoView({behavior:'smooth',block:'end'});
+}
+
+function showTyping() {
+  const div = document.createElement('div');
+  div.className = 'msg bot'; div.id = 'typingEl';
+  div.innerHTML = `<div class="msg-ava"><span class="icon"><svg viewBox="0 0 24 24"><path d="M12 8V4H8"/><path d="M2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2a7 7 0 0 0-7 7"/></svg></span></div><div class="msg-body"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  chatEl.appendChild(div);
+  div.scrollIntoView({behavior:'smooth',block:'end'});
+}
+function removeTyping() { const t = document.getElementById('typingEl'); if(t) t.remove(); }
+
+/* ══════ SMART DIALOG FLOW ══════ */
+function processUserInput(text) {
+  const t = text.toLowerCase();
+
+  if (dialogState === 'idle') {
+    if (t.includes('отчёт') || t.includes('отчет') || t.includes('чек')) {
+      showReceiptFlow(); return;
+    }
+    if (t.includes('расход') || t.includes('потратили') || t.includes('бюджет') || t.includes('превыш')) {
+      showAnalyticsResponse(); return;
+    }
+    if (t.includes('конференц') || t.includes('мероприят') || t.includes('mice') || t.includes('50 человек')) {
+      showMiceResponse(); return;
+    }
+    dialogData = parseBookingRequest(t, text);
+    dialogState = 'clarify_return';
+    askClarification('Нужен обратный билет?', ['Да, обратный нужен', 'Нет, только туда'], 'clarify_return');
+    return;
+  }
+
+  if (dialogState === 'clarify_return') {
+    dialogData.returnTicket = t.includes('да') || t.includes('обратн') || t.includes('нужен');
+    dialogState = 'clarify_baggage';
+    askClarification('Нужен багаж?', ['С багажом (23 кг)', 'Только ручная кладь'], 'clarify_baggage');
+    return;
+  }
+
+  if (dialogState === 'clarify_baggage') {
+    dialogData.baggage = t.includes('багаж') || t.includes('23');
+    dialogState = 'clarify_hotel';
+    askClarification('Нужно забронировать отель?', ['Да, подобрать отель', 'Нет, только билет', 'Да, с завтраком'], 'clarify_hotel');
+    return;
+  }
+
+  if (dialogState === 'clarify_hotel') {
+    dialogData.hotel = !t.includes('нет') && !t.includes('только билет');
+    dialogData.breakfast = t.includes('завтрак');
+    dialogState = 'clarify_transfer';
+    askClarification('Добавить трансфер из аэропорта?', ['Да, трансфер нужен', 'Нет, доберусь сам'], 'clarify_transfer');
+    return;
+  }
+
+  if (dialogState === 'clarify_transfer') {
+    dialogData.transfer = t.includes('да') || t.includes('нужен') || t.includes('трансфер');
+    dialogState = 'results';
+    showResults();
+    return;
+  }
+
+  if (dialogState === 'results') {
+    addMsg('bot', getFollowUp(t));
+    return;
+  }
+
+  addMsg('bot', getFollowUp(t));
+}
+
+function parseBookingRequest(t, original) {
+  const data = {original, destination:'Казань', date:'10 марта'};
+  const cities = ['казань','екатеринбург','сочи','новосибирск','петербург','спб','калининград','владивосток'];
+  cities.forEach(c => { if(t.includes(c)) data.destination = c.charAt(0).toUpperCase()+c.slice(1); });
+  if(t.includes('петербург')||t.includes('спб')) data.destination = 'Санкт-Петербург';
+  const dateMatch = t.match(/(\d{1,2})\s*(марта|апреля|мая|июня|июля|августа)/);
+  if(dateMatch) data.date = dateMatch[0];
+  return data;
+}
+
+function askClarification(question, options, nextState) {
+  const btnsHtml = options.map(o => `<button class="clarify-btn" onclick="selectClarify(this,'${o}')">${o}</button>`).join('');
+  addMsg('bot', `${question}<div class="clarify-btns">${btnsHtml}</div>`);
+}
+
+function selectClarify(btn, text) {
+  btn.parentElement.querySelectorAll('.clarify-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  setTimeout(() => {
+    addMsg('user', text);
+    setTimeout(() => showTyping(), 300);
+    setTimeout(() => { removeTyping(); processUserInput(text); }, 1200);
+  }, 200);
+}
+
+function showResults() {
+  const dest = dialogData.destination || 'Казань';
+  const date = dialogData.date || '10 марта';
+  const hasBag = dialogData.baggage;
+  const hasHotel = dialogData.hotel;
+  const hasTransfer = dialogData.transfer;
+  const hasBreakfast = dialogData.breakfast;
+
+  let html = `Нашёл лучшие варианты для вас:<br><strong>Москва → ${dest}</strong>, ${date}
+  <div class="results">
+    <div class="result best" onclick="selectResult(this)">
+      <div class="result-badge">Лучшая цена</div>
+      <div class="result-top"><span class="result-airline">S7 Airlines</span><span class="result-price">${hasBag?'5 280':'4 580'} ₽</span></div>
+      <div class="result-route">SVO → ${dest.substring(0,3).toUpperCase()} · 08:00 — 09:30 · Прямой · 1ч 30м</div>
+      <div class="result-tags">
+        <span class="result-tag ok">В рамках политики</span>
+        ${hasBag ? '<span class="result-tag info">Багаж 23 кг</span>' : '<span class="result-tag info">Ручная кладь</span>'}
+        <span class="result-tag info">Wi-Fi</span>
+      </div>
+      <button class="result-select" onclick="event.stopPropagation();bookFlight(this)">Выбрать этот рейс</button>
+    </div>
+    <div class="result" onclick="selectResult(this)">
+      <div class="result-top"><span class="result-airline">Победа</span><span class="result-price">${hasBag?'4 100':'3 200'} ₽</span></div>
+      <div class="result-route">VKO → ${dest.substring(0,3).toUpperCase()} · 11:40 — 13:15 · Прямой · 1ч 35м</div>
+      <div class="result-tags">
+        <span class="result-tag ok">В рамках политики</span>
+        ${hasBag ? '<span class="result-tag info">Багаж 23 кг</span>' : ''}
+      </div>
+      <button class="result-select" onclick="event.stopPropagation();bookFlight(this)">Выбрать</button>
+    </div>
+    <div class="result" onclick="selectResult(this)">
+      <div class="result-top"><span class="result-airline">Аэрофлот</span><span class="result-price">${hasBag?'7 590':'6 890'} ₽</span></div>
+      <div class="result-route">SVO → ${dest.substring(0,3).toUpperCase()} · 14:10 — 15:45 · Прямой · 1ч 35м</div>
+      <div class="result-tags">
+        <span class="result-tag warn">Превышает лимит на 890 ₽</span>
+        ${hasBag ? '<span class="result-tag info">Багаж 23 кг</span>' : ''}
+        <span class="result-tag info">Бизнес-зал</span>
+      </div>
+      <button class="result-select" onclick="event.stopPropagation();bookFlight(this)">Выбрать</button>
+    </div>
+  </div>`;
+
+  if (dialogData.returnTicket) {
+    html += `<div class="ai-note">Обратные рейсы подобраны автоматически на ${getReturnDate()}. Можно изменить дату.</div>`;
+  }
+
+  addMsg('bot', html);
+
+  if (hasHotel) {
+    setTimeout(() => showTyping(), 800);
+    setTimeout(() => {
+      removeTyping();
+      addMsg('bot', `
+        А вот отели рядом с центром:
+        <div class="results">
+          <div class="result best">
+            <div class="result-badge">Рекомендация</div>
+            <div class="result-top"><span class="result-airline">Holiday Inn ${dest}</span><span class="result-price">4 200 ₽/н</span></div>
+            <div class="result-route">1.2 км от центра · Рейтинг 4.3${hasBreakfast?' · Завтрак включён':''}</div>
+            <div class="result-tags"><span class="result-tag ok">В рамках политики</span><span class="result-tag info">2 ночи = 8 400 ₽</span></div>
+            <button class="result-select" onclick="bookHotel(this)">Забронировать</button>
+          </div>
+          <div class="result">
+            <div class="result-top"><span class="result-airline">Ibis ${dest}</span><span class="result-price">3 800 ₽/н</span></div>
+            <div class="result-route">0.8 км от центра · Рейтинг 4.1${hasBreakfast?' · Завтрак +600₽':''}</div>
+            <div class="result-tags"><span class="result-tag ok">В рамках политики</span><span class="result-tag info">2 ночи = 7 600 ₽</span></div>
+            <button class="result-select" onclick="bookHotel(this)">Забронировать</button>
+          </div>
+        </div>
+      `);
+    }, 1500);
+  }
+
+  if (hasTransfer) {
+    setTimeout(() => {
+      showTyping();
+      setTimeout(() => {
+        removeTyping();
+        addMsg('bot', `
+          Трансфер из аэропорта ${dest}:
+          <div class="results">
+            <div class="result best">
+              <div class="result-top"><span class="result-airline">Комфорт</span><span class="result-price">890 ₽</span></div>
+              <div class="result-route">Аэропорт → Holiday Inn · ~30 мин</div>
+              <button class="result-select" onclick="this.textContent='Добавлено';this.style.background='var(--green)';this.style.color='white'">Добавить</button>
+            </div>
+          </div>
+        `);
+      }, 1000);
+    }, hasHotel ? 3000 : 1500);
+  }
+
+  const summaryDelay = hasHotel && hasTransfer ? 4500 : hasHotel ? 3000 : hasTransfer ? 2500 : 1000;
+  setTimeout(() => showBookingSummary(), summaryDelay);
+}
+
+function showBookingSummary() {
+  const dest = dialogData.destination || 'Казань';
+  let lines = [['Авиабилет (S7)', '4 580 ₽']];
+  let total = 4580;
+  if (dialogData.baggage) { lines.push(['Багаж 23 кг', '+700 ₽']); total += 700; }
+  if (dialogData.returnTicket) { lines.push(['Обратный билет', '4 580 ₽']); total += 4580; }
+  if (dialogData.hotel) { lines.push(['Отель (2 ночи)', '8 400 ₽']); total += 8400; }
+  if (dialogData.transfer) { lines.push(['Трансфер', '890 ₽']); total += 890; }
+  const cashback = Math.round(total * 0.05);
+
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    addMsg('bot', `
+      <strong>Итого по командировке в ${dest}:</strong>
+      <div class="summary">
+        ${lines.map(l => `<div class="summary-row"><span>${l[0]}</span><span>${l[1]}</span></div>`).join('')}
+        <div class="summary-row total"><span>Итого</span><span>${total.toLocaleString('ru-RU')} ₽</span></div>
+        <div class="summary-cashback">Кэшбэк: +${cashback.toLocaleString('ru-RU')} ₽ (5%)</div>
+      </div>
+      <div class="ai-note">AI-совет: цена на S7 может вырасти на ~12% завтра. Рекомендую бронировать сейчас.</div>
+      <div class="act-row">
+        <button class="act-primary" onclick="bookAll(this)">Забронировать всё</button>
+        <button class="act-secondary" onclick="addMsg('user','Изменить параметры');setTimeout(()=>{addMsg('bot','Что хотите изменить?<div class=\\'clarify-btns\\'><button class=\\'clarify-btn\\' onclick=\\'selectClarify(this,\"Другой рейс\")\\'>Другой рейс</button><button class=\\'clarify-btn\\' onclick=\\'selectClarify(this,\"Другой отель\")\\'>Другой отель</button><button class=\\'clarify-btn\\' onclick=\\'selectClarify(this,\"Другие даты\")\\'>Другие даты</button></div>')},400)">Изменить</button>
+      </div>
+    `);
+  }, 800);
+}
+
+function bookFlight(btn) {
+  btn.textContent = 'Выбрано';
+  btn.style.background = 'var(--green)';
+  btn.style.color = 'white';
+}
+function bookHotel(btn) {
+  btn.textContent = 'Выбрано';
+  btn.style.background = 'var(--green)';
+  btn.style.color = 'white';
+}
+function bookAll(btn) {
+  btn.textContent = 'Бронирую...';
+  btn.style.background = 'var(--blue)';
+  btn.style.color = 'white';
+  btn.style.pointerEvents = 'none';
+  setTimeout(() => {
+    btn.textContent = 'Забронировано';
+    btn.style.background = 'var(--green)';
+    setTimeout(() => {
+      addMsg('bot', `
+        Готово! Всё забронировано:<br><br>
+        <div class="summary">
+          <div class="summary-row"><span>Авиабилет</span><span>Подтверждён, e-ticket на почте</span></div>
+          ${dialogData.hotel ? '<div class="summary-row"><span>Отель</span><span>Ваучер в приложении</span></div>' : ''}
+          ${dialogData.transfer ? '<div class="summary-row"><span>Трансфер</span><span>Водитель с табличкой</span></div>' : ''}
+          <div class="summary-row"><span>Виртуальная карта</span><span>Выпущена, лимит 15 000 ₽</span></div>
+          <div class="summary-row"><span>Приказ Т-9</span><span>Сформирован</span></div>
+        </div>
+        <div class="ai-note">Заявка отправлена на согласование. Уведомление руководителю ушло в Telegram.</div>
+        <div class="act-row">
+          <button class="act-primary" onclick="showPage('finance')">Открыть карту</button>
+          <button class="act-secondary" onclick="showPage('trips')">Мои командировки</button>
+        </div>
+      `);
+    }, 500);
+  }, 1500);
+}
+
+function selectResult(el) {
+  el.closest('.results').querySelectorAll('.result').forEach(r => r.classList.remove('best'));
+  el.classList.add('best');
+}
+
+function showReceiptFlow() {
+  addMsg('bot', `
+    Загрузите фото чека или опишите расход — я добавлю в авансовый отчёт.
+    <div class="clarify-btns">
+      <button class="clarify-btn" onclick="selectClarify(this,'Сфотографировать чек')">Загрузить фото чека</button>
+      <button class="clarify-btn" onclick="selectClarify(this,'Ввести вручную: такси 420₽')">Ввести вручную</button>
+      <button class="clarify-btn" onclick="selectClarify(this,'Показать текущий отчёт')">Текущий отчёт</button>
+    </div>
+  `);
+  dialogState = 'results';
+}
+
+function showAnalyticsResponse() {
+  addMsg('bot', `
+    <strong>Расходы за февраль 2026:</strong>
+    <div class="summary">
+      <div class="summary-row"><span>Авиабилеты</span><span>980 000 ₽</span></div>
+      <div class="summary-row"><span>Отели</span><span>720 000 ₽</span></div>
+      <div class="summary-row"><span>Такси</span><span>180 000 ₽</span></div>
+      <div class="summary-row"><span>Прочее</span><span>120 000 ₽</span></div>
+      <div class="summary-row total"><span>Итого</span><span>2 000 000 ₽</span></div>
+      <div class="summary-cashback">Бюджет: 2 200 000 ₽ · Экономия: 200 000 ₽ (9%)</div>
+    </div>
+    <div class="ai-note">Основная статья — авиабилеты (49%). Перевод перелётов МСК-СПб на Сапсан даст экономию 15-18%.</div>
+    <div class="act-row"><button class="act-primary" onclick="showPage('analytics')">Открыть дашборд</button></div>
+  `);
+  dialogState = 'results';
+}
+
+function showMiceResponse() {
+  addMsg('bot', `
+    <strong>Организую конференцию в Сочи</strong> на 50 человек:
+    <div class="summary">
+      <div class="summary-row"><span>Площадка</span><span>Radisson Blu, зал «Олимп»</span></div>
+      <div class="summary-row"><span>Даты</span><span>15-17 апреля (доступно)</span></div>
+      <div class="summary-row"><span>Групповой перелёт</span><span>~275 000 ₽</span></div>
+      <div class="summary-row"><span>Проживание (50 номеров, 2 ночи)</span><span>~450 000 ₽</span></div>
+      <div class="summary-row"><span>Кейтеринг</span><span>~180 000 ₽</span></div>
+      <div class="summary-row total"><span>Итого</span><span>~990 000 ₽</span></div>
+      <div class="summary-cashback">Групповая скидка: -110 000 ₽</div>
+    </div>
+    <div class="act-row">
+      <button class="act-primary">Создать мероприятие</button>
+      <button class="act-secondary">Изменить параметры</button>
+    </div>
+  `);
+  dialogState = 'results';
+}
+
+function getReturnDate() {
+  const d = dialogData.date || '10 марта';
+  const match = d.match(/(\d+)/);
+  if (match) return (parseInt(match[1]) + 2) + ' ' + (d.match(/(марта|апреля|мая|июня|июля|августа)/)?.[0] || 'марта');
+  return '12 марта';
+}
+
+function getFollowUp(t) {
+  if (t.includes('спасибо') || t.includes('отлично')) return 'Рад помочь! Если что-то ещё понадобится — пишите.';
+  if (t.includes('согласов')) return 'Заявка отправлена на согласование. Обычно ответ приходит в течение 30 минут.';
+  if (t.includes('другой рейс')||t.includes('другой отель')) return 'Ищу альтернативы, один момент...';
+  return 'Принято. Что-то ещё нужно по командировке?';
+}
+
+/* ══════ ANALYTICS ══════ */
+function animateStats() {
+  animateNum(document.getElementById('sExp'), 2.4, ' млн ₽', 1000);
+  animateNum(document.getElementById('sSav'), 340, ' тыс ₽', 1000);
+  animateNum(document.getElementById('sTrip'), 87, '', 1000);
+  animateNum(document.getElementById('sCash'), 28400, ' ₽', 1000);
+  animateNum(document.getElementById('savBig'), 340000, ' ₽', 1200);
+}
+function animateNum(el, target, suffix, dur) {
+  if (!el) return;
+  const start = performance.now();
+  (function tick(now) {
+    const p = Math.min((now-start)/dur, 1);
+    const e = 1-Math.pow(1-p,3);
+    el.textContent = Math.round(target*e).toLocaleString('ru-RU') + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+  })(start);
+}
+
+/* ══════ TEXTAREA RESIZE ══════ */
+document.querySelectorAll('textarea').forEach(ta => {
+  ta.addEventListener('input', function(){ this.style.height='22px'; this.style.height=Math.min(this.scrollHeight,100)+'px'; });
+});
+
+/* ══════ TAB CLICKS ══════ */
+document.querySelectorAll('.b-tab').forEach((tab,i,tabs) => {
+  tab.addEventListener('click', () => { tabs.forEach(t=>t.classList.remove('active')); tab.classList.add('active'); });
+});
+document.querySelectorAll('.tab-btn').forEach((tab,i,tabs) => {
+  tab.addEventListener('click', () => { tabs.forEach(t=>t.classList.remove('active')); tab.classList.add('active'); });
+});
+
+/* ══════ INIT ══════ */
+buildNav();
+buildTrips();
+buildApprovals();
+</script>
+</body>
+</html>

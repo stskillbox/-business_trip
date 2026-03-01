@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI в корпоративных путешествиях</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --yellow: #FFDD2D;
+      --yellow-dark: #F2C500;
+      --black: #1A1A1A;
+      --gray: #333;
+      --gray-light: #666;
+      --white: #FFFFFF;
+      --green: #062A2F;
+      --coral: #F89572;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--black);
+      color: var(--white);
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      padding: 48px 64px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      z-index: 1;
+    }
+
+    /* Титульный слайд */
+    .slide-title {
+      background: var(--yellow);
+      color: var(--black);
+    }
+
+    .slide-title h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      max-width: 800px;
+    }
+
+    .slide-title .subtitle {
+      margin-top: 24px;
+      font-size: 1.25rem;
+      color: var(--gray);
+      font-weight: 500;
+    }
+
+    .slide-title .tag {
+      margin-top: 48px;
+      display: inline-block;
+      background: var(--black);
+      color: var(--yellow);
+      padding: 8px 16px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: 8px;
+    }
+
+    /* Слайды с тёмным фоном */
+    .slide-dark {
+      background: var(--black);
+    }
+
+    .slide-dark h2 {
+      font-size: clamp(1.75rem, 3vw, 2.5rem);
+      font-weight: 800;
+      color: var(--yellow);
+      margin-bottom: 32px;
+      letter-spacing: -0.02em;
+    }
+
+    .slide-dark p, .slide-dark li {
+      font-size: 1.125rem;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .slide-dark ul {
+      list-style: none;
+      margin-top: 16px;
+    }
+
+    .slide-dark li {
+      padding: 12px 0;
+      padding-left: 24px;
+      position: relative;
+    }
+
+    .slide-dark li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      background: var(--yellow);
+      border-radius: 50%;
+    }
+
+    /* Слайды со светлым фоном */
+    .slide-light {
+      background: var(--white);
+      color: var(--black);
+    }
+
+    .slide-light h2 {
+      color: var(--black);
+      font-size: clamp(1.75rem, 3vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 32px;
+    }
+
+    .slide-light p, .slide-light li {
+      color: var(--gray);
+      font-size: 1.125rem;
+      line-height: 1.6;
+    }
+
+    .slide-light li::before {
+      background: var(--black);
+    }
+
+    /* Карточки */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px;
+      padding: 24px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .slide-light .card {
+      background: #F5F5F5;
+      border-color: #E0E0E0;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: var(--yellow);
+    }
+
+    .card .num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--yellow);
+      margin-bottom: 8px;
+    }
+
+    .card h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      font-size: 0.9375rem;
+      opacity: 0.85;
+    }
+
+    /* Problem statement блок */
+    .problem-block {
+      margin-top: 32px;
+      padding: 32px;
+      background: rgba(255,221,45,0.12);
+      border-left: 4px solid var(--yellow);
+      border-radius: 0 12px 12px 0;
+    }
+
+    .problem-block p {
+      font-size: 1.25rem;
+      line-height: 1.7;
+      font-weight: 500;
+    }
+
+    .slide-light .problem-block {
+      background: #FFF9E6;
+      border-left-color: var(--black);
+    }
+
+    .slide-light .problem-block p {
+      color: var(--black);
+    }
+
+    /* Статистика */
+    .stat-row {
+      display: flex;
+      gap: 48px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .stat .big {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--yellow);
+      line-height: 1;
+    }
+
+    .stat .label {
+      font-size: 1rem;
+      margin-top: 8px;
+      opacity: 0.8;
+    }
+
+    /* Навигация */
+    .nav {
+      position: fixed;
+      bottom: 32px;
+      right: 64px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 100;
+    }
+
+    .nav-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--yellow);
+      color: var(--black);
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .nav-btn:hover {
+      transform: scale(1.05);
+      background: var(--yellow-dark);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .slide-counter {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* Feature list */
+    .feature-list {
+      display: grid;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 16px 20px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .slide-light .feature-item {
+      background: #FAFAFA;
+      border-color: #EEE;
+    }
+
+    .feature-item .icon {
+      width: 40px;
+      height: 40px;
+      background: var(--yellow);
+      color: var(--black);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .feature-item h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .feature-item p {
+      font-size: 0.9375rem;
+      opacity: 0.85;
+    }
+
+    @media (max-width: 768px) {
+      .slide {
+        padding: 32px 24px;
+      }
+      .nav {
+        right: 24px;
+        bottom: 24px;
+      }
+    }
+
+    /* Печать / PDF */
+    @media print {
+      body { background: #fff; }
+      .nav { display: none !important; }
+      .slide {
+        position: relative !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        height: auto !important;
+        min-height: 100vh;
+        page-break-after: always;
+      }
+      .slide:last-child { page-break-after: auto; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Слайд 1: Титульный -->
+  <div class="slide slide-title active" data-slide="1">
+    <h1>AI в корпоративных путешествиях</h1>
+    <p class="subtitle">Проблемы бронирования, отзывы компаний и возможности для стартапов</p>
+    <span class="tag">Deep Research · 2025</span>
+  </div>
+
+  <!-- Слайд 2: Проблема -->
+  <div class="slide slide-dark" data-slide="2">
+    <h2>Проблема</h2>
+    <div class="problem-block">
+      <p>Компании и сотрудники тратят слишком много времени и нервов на корпоративные поездки. Поиск и бронирование — долгие и запутанные. Изменения и отмены превращаются в бесконечный обмен между платформой и поставщиками. Закрытие расходов требует ручного сбора чеков. Системы не объясняют отказы, взимают непонятные сборы и не дают прозрачного статуса. В итоге сотрудники обходят корпоративные инструменты, а компании теряют контроль и переплачивают.</p>
+    </div>
+  </div>
+
+  <!-- Слайд 3: Цифры из отзывов -->
+  <div class="slide slide-dark" data-slide="3">
+    <h2>Что говорят компании</h2>
+    <div class="stat-row">
+      <div class="stat">
+        <div class="big">63%</div>
+        <div class="label">Главная боль — время на expense-отчёты (BCD Travel, 1349 респондентов)</div>
+      </div>
+      <div class="stat">
+        <div class="big">25%</div>
+        <div class="label">Главная проблема — стоимость бронирования (исследования Deloitte/Skift)</div>
+      </div>
+      <div class="stat">
+        <div class="big">85%</div>
+        <div class="label">SMB готовы сменить платформу на более удобную</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Слайд 4: Боли по сегментам -->
+  <div class="slide slide-dark" data-slide="4">
+    <h2>Боли по сегментам</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="num">1</div>
+        <h3>Сотрудник</h3>
+        <p>Долгий поиск, зависания, непонятные отказы, ручной сбор чеков, «пинг-понг» при отменах</p>
+      </div>
+      <div class="card">
+        <div class="num">2</div>
+        <h3>Travel-менеджер</h3>
+        <p>Слабая аналитика нарушений, нет прозрачности по переплатам, медленный саппорт</p>
+      </div>
+      <div class="card">
+        <div class="num">3</div>
+        <h3>Финансы</h3>
+        <p>Ручная сверка броней и транзакций, скрытые комиссии, проверки постфактум</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Слайд 5: Отзывы о платформах -->
+  <div class="slide slide-light" data-slide="5">
+    <h2>Отзывы о платформах</h2>
+    <ul>
+      <li><strong>SAP Concur</strong> (Trustpilot 1.2/5): «Устаревший интерфейс», зависания по часу, поддержка даёт ссылки на FAQ вместо решения</li>
+      <li><strong>Navan</strong>: «Пинг-понг» с авиакомпаниями, скрытые сборы $25, деактивированные карты продолжают списывать, невозможно закрыть аккаунт месяцами</li>
+      <li><strong>TravelPerk</strong>: Поддержка в Европе — неудобно для США, ограничения бесплатного тарифа</li>
+    </ul>
+  </div>
+
+  <!-- Слайд 6: Решение — фичи MVP -->
+  <div class="slide slide-dark" data-slide="6">
+    <h2>Решение: фичи MVP</h2>
+    <div class="feature-list">
+      <div class="feature-item">
+        <span class="icon">1</span>
+        <div>
+          <h4>Умный поиск в чате</h4>
+          <p>«Рейс в Берлин 12–15 марта, утро» → варианты с ценами и бронированием</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <span class="icon">2</span>
+        <div>
+          <h4>Объяснение политики</h4>
+          <p>«Рейс дороже лимита на €45. Альтернатива: 14:30, в рамках политики»</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <span class="icon">3</span>
+        <div>
+          <h4>Единый статус изменений</h4>
+          <p>«Запрос на возврат у авиакомпании. Ожидаем ответ до 15.03»</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <span class="icon">4</span>
+        <div>
+          <h4>Авто-привязка чеков</h4>
+          <p>E-mail/фото чека → сопоставление с бронированием и предзаполнение expense</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <span class="icon">5</span>
+        <div>
+          <h4>Прозрачные комиссии</h4>
+          <p>«Рейс €320 + сервис €12. При отмене: возврат по правилам авиакомпании, комиссия €0»</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Слайд 7: Возможность -->
+  <div class="slide slide-title" data-slide="7">
+    <h1>Рынок готов к смене</h1>
+    <p class="subtitle">$28 млрд — потенциал Gen AI в travel. 83% компаний увеличили бюджеты на AI. Проблемы чётко сформулированы — решения ещё нет.</p>
+    <span class="tag">Opportunity</span>
+  </div>
+
+  <!-- Навигация -->
+  <div class="nav">
+    <button class="nav-btn" id="prev" aria-label="Назад">←</button>
+    <span class="slide-counter"><span id="current">1</span> / <span id="total">7</span></span>
+    <button class="nav-btn" id="next" aria-label="Вперёд">→</button>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    let current = 1;
+
+    function showSlide(n) {
+      current = Math.max(1, Math.min(n, total));
+      slides.forEach((s, i) => {
+        s.classList.toggle('active', parseInt(s.dataset.slide) === current);
+      });
+      document.getElementById('current').textContent = current;
+      document.getElementById('prev').disabled = current === 1;
+      document.getElementById('next').disabled = current === total;
+    }
+
+    document.getElementById('prev').onclick = () => showSlide(current - 1);
+    document.getElementById('next').onclick = () => showSlide(current + 1);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); showSlide(current + 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); showSlide(current - 1); }
+    });
+
+    showSlide(1);
+  </script>
+</body>
+</html>

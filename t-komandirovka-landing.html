@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Т-Командировка — AI-платформа управления деловыми поездками</title>
+  <link rel="preconnect" href="https://www.cdn-tinkoff.ru">
+  <link crossorigin="anonymous" rel="stylesheet" href="https://www.cdn-tinkoff.ru/frontend-libraries/npm/react-kit-font/1.0.0/fonts.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --yellow: #FFDD2D;
+      --yellow-dark: #F5D000;
+      --black: #1A1A1A;
+      --white: #FFFFFF;
+      --gray-50: #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-200: #E5E7EB;
+      --gray-400: #9CA3AF;
+      --gray-500: #6B7280;
+      --gray-700: #374151;
+      --blue: #428BF9;
+      --blue-light: #EBF3FF;
+      --green: #22C55E;
+      --green-light: #DCFCE7;
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 20px;
+      --radius-pill: 999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 2px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 4px 24px rgba(0,0,0,0.10);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    @font-face { font-family: 'TinkoffSans'; src: url('https://www.cdn-tinkoff.ru/frontend-libraries/npm/react-kit-font/1.0.0/TinkoffSans_Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+    @font-face { font-family: 'TinkoffSans'; src: url('https://www.cdn-tinkoff.ru/frontend-libraries/npm/react-kit-font/1.0.0/TinkoffSans_Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+    @font-face { font-family: 'haas'; src: url('https://www.cdn-tinkoff.ru/frontend-libraries/npm/react-kit-font/1.0.0/NeueHaasUnicaW1G-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+    @font-face { font-family: 'haas'; src: url('https://www.cdn-tinkoff.ru/frontend-libraries/npm/react-kit-font/1.0.0/NeueHaasUnicaW1G-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+    @font-face { font-family: 'haas'; src: url('https://www.cdn-tinkoff.ru/frontend-libraries/npm/react-kit-font/1.0.0/NeueHaasUnicaW1G-Bold.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+
+    body {
+      font-family: 'haas', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--black);
+      background: var(--white);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* ─── HEADER ─────────────────────────────────────────────── */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray-200);
+      height: 60px;
+      display: flex;
+      align-items: center;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 17px;
+      letter-spacing: -0.3px;
+    }
+    .logo-icon {
+      width: 34px;
+      height: 34px;
+      background: var(--yellow);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 900;
+    }
+    .nav {
+      display: flex;
+      gap: 28px;
+      flex: 1;
+    }
+    .nav a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-700);
+      transition: color 0.15s;
+    }
+    .nav a:hover { color: var(--black); }
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+    .btn-ghost {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      border: 1.5px solid var(--gray-200);
+      cursor: pointer;
+      background: transparent;
+      transition: all 0.15s;
+    }
+    .btn-ghost:hover { border-color: var(--gray-400); }
+    .btn-primary {
+      padding: 8px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 700;
+      background: var(--yellow);
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-primary:hover { background: var(--yellow-dark); transform: translateY(-1px); }
+
+    /* ─── HERO ───────────────────────────────────────────────── */
+    .hero {
+      background: var(--black);
+      color: var(--white);
+      padding: 80px 24px 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .hero-bg-circle {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.15;
+      pointer-events: none;
+    }
+    .hero-bg-circle.c1 { width: 600px; height: 600px; background: var(--yellow); top: -200px; right: -100px; }
+    .hero-bg-circle.c2 { width: 400px; height: 400px; background: var(--blue); bottom: 0; left: -100px; }
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: end;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,221,45,0.15);
+      border: 1px solid rgba(255,221,45,0.3);
+      border-radius: var(--radius-pill);
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--yellow);
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      font-family: 'TinkoffSans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 52px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+    }
+    .hero h1 span { color: var(--yellow); }
+    .hero-sub {
+      font-size: 18px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.6;
+      margin-bottom: 36px;
+      max-width: 480px;
+    }
+    .hero-cta {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .btn-hero-primary {
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: 700;
+      background: var(--yellow);
+      color: var(--black);
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-hero-primary:hover { background: var(--yellow-dark); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,221,45,0.35); }
+    .btn-hero-ghost {
+      padding: 13px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+      border: 1.5px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      background: transparent;
+      transition: all 0.2s;
+    }
+    .btn-hero-ghost:hover { border-color: rgba(255,255,255,0.5); color: var(--white); }
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .hero-stat-value { font-size: 28px; font-weight: 900; color: var(--yellow); }
+    .hero-stat-label { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+    /* Hero visual */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-bottom: 0;
+    }
+    .app-mockup {
+      background: #1E2430;
+      border-radius: 20px 20px 0 0;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-bottom: none;
+    }
+    .app-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .app-dots { display: flex; gap: 5px; }
+    .app-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .app-dot.r { background: #FF5F57; }
+    .app-dot.y { background: #FEBC2E; }
+    .app-dot.g { background: #28C840; }
+    .app-title-bar { flex: 1; text-align: center; font-size: 13px; color: rgba(255,255,255,0.4); }
+
+    .ai-chat { display: flex; flex-direction: column; gap: 12px; }
+    .chat-msg { display: flex; gap: 10px; align-items: flex-start; }
+    .chat-msg.user { flex-direction: row-reverse; }
+    .chat-avatar {
+      width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700;
+    }
+    .chat-avatar.bot { background: rgba(66,139,249,0.2); }
+    .chat-avatar.usr { background: var(--yellow); color: var(--black); }
+    .chat-bubble {
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+      max-width: 220px;
+    }
+    .chat-bubble.bot { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.9); border-top-left-radius: 4px; }
+    .chat-bubble.user { background: var(--blue); color: white; border-top-right-radius: 4px; }
+
+    .flight-card-mini {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 4px;
+    }
+    .flight-card-mini.best { border-color: rgba(66,139,249,0.5); background: rgba(66,139,249,0.08); }
+    .fc-row { display: flex; justify-content: space-between; align-items: center; }
+    .fc-airline { font-size: 13px; font-weight: 700; color: white; }
+    .fc-price { font-size: 15px; font-weight: 800; color: var(--yellow); }
+    .fc-route { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 4px; }
+    .fc-badge { font-size: 10px; font-weight: 600; background: rgba(66,139,249,0.2); color: var(--blue); padding: 2px 8px; border-radius: 999px; margin-top: 6px; display: inline-block; }
+    .fc-select { width: 100%; margin-top: 10px; padding: 7px; background: var(--yellow); color: var(--black); border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; }
+
+    .hero-floating-card {
+      position: absolute;
+      right: -20px;
+      bottom: 80px;
+      background: white;
+      border-radius: 14px;
+      padding: 14px 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      min-width: 200px;
+    }
+    .hfc-label { font-size: 11px; color: var(--gray-500); font-weight: 500; margin-bottom: 6px; }
+    .hfc-value { font-size: 22px; font-weight: 900; color: var(--green); }
+    .hfc-sub { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+    .hfc-bar { height: 4px; background: var(--gray-100); border-radius: 4px; margin-top: 10px; }
+    .hfc-bar-fill { height: 100%; width: 68%; background: var(--green); border-radius: 4px; }
+
+    /* ─── SECTION BASICS ─────────────────────────────────────── */
+    section { padding: 80px 24px; }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--blue);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'TinkoffSans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 17px;
+      color: var(--gray-500);
+      max-width: 580px;
+      line-height: 1.6;
+    }
+    .section-header { margin-bottom: 48px; }
+
+    /* ─── STATS BAR ──────────────────────────────────────────── */
+    .stats-bar {
+      background: var(--gray-50);
+      border-top: 1px solid var(--gray-200);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 32px 24px;
+    }
+    .stats-bar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+    }
+    .stat-item { text-align: center; }
+    .stat-value { font-size: 36px; font-weight: 900; letter-spacing: -1px; }
+    .stat-value span { color: var(--yellow); }
+    .stat-label { font-size: 14px; color: var(--gray-500); margin-top: 4px; }
+
+    /* ─── WHY / FEATURES ─────────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      transition: all 0.2s;
+    }
+    .feature-card:hover {
+      border-color: var(--yellow);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .feature-icon {
+      width: 56px; height: 56px;
+      border-radius: 16px;
+      background: var(--yellow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-shrink: 0;
+    }
+    .feature-icon.blue { background: #E8F0FE; }
+    .feature-icon.green { background: #E6F9EE; }
+    .feature-icon.dark { background: #1A1A1A; }
+    .feature-icon.purple { background: #F0EEFF; }
+    .feature-icon.orange { background: #FFF3E0; }
+    .feature-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+    .feature-desc { font-size: 14px; color: var(--gray-500); line-height: 1.6; }
+    .feature-badge {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      background: var(--blue-light);
+      color: var(--blue);
+    }
+    .feature-badge.yellow { background: rgba(255,221,45,0.15); color: #B8860B; }
+
+    /* ─── HOW IT WORKS ───────────────────────────────────────── */
+    .how-bg { background: var(--black); color: var(--white); }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 48px;
+    }
+    .step-card {
+      position: relative;
+    }
+    .step-num {
+      font-size: 64px;
+      font-weight: 900;
+      color: rgba(255,221,45,0.12);
+      line-height: 1;
+      margin-bottom: 16px;
+      letter-spacing: -3px;
+    }
+    .step-title { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
+    .step-desc { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+    .step-chip {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-pill);
+      padding: 5px 12px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.6);
+    }
+    .step-arrow {
+      position: absolute;
+      top: 32px;
+      right: -20px;
+      color: rgba(255,255,255,0.1);
+      font-size: 28px;
+      z-index: 1;
+    }
+
+    /* ─── UTP / ADVANTAGES ───────────────────────────────────── */
+    .utp-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .utp-visual {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      position: relative;
+    }
+    .virtual-card {
+      background: linear-gradient(135deg, #1A1A2E 0%, #16213E 60%, #0F3460 100%);
+      border-radius: 16px;
+      padding: 24px;
+      color: white;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .vc-bg-circle {
+      position: absolute;
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: rgba(255,221,45,0.1);
+      top: -40px; right: -40px;
+    }
+    .vc-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.5; margin-bottom: 12px; }
+    .vc-trip { font-size: 14px; font-weight: 600; opacity: 0.7; margin-bottom: 20px; }
+    .vc-number { font-size: 18px; font-weight: 700; letter-spacing: 3px; font-variant-numeric: tabular-nums; margin-bottom: 20px; }
+    .vc-footer { display: flex; justify-content: space-between; align-items: flex-end; }
+    .vc-name { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
+    .vc-badge { background: var(--yellow); color: var(--black); font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 6px; }
+    .balance-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .balance-item { text-align: center; }
+    .balance-label { font-size: 11px; color: var(--gray-400); margin-bottom: 4px; }
+    .balance-value { font-size: 16px; font-weight: 800; }
+    .balance-value.green { color: var(--green); }
+    .balance-value.red { color: #EF4444; }
+    .balance-progress { height: 4px; background: var(--gray-200); border-radius: 4px; margin-top: 12px; }
+    .balance-fill { height: 100%; width: 60%; background: var(--yellow); border-radius: 4px; }
+    .utp-list { display: flex; flex-direction: column; gap: 20px; }
+    .utp-item { display: flex; gap: 16px; align-items: flex-start; }
+    .utp-dot {
+      width: 40px; height: 40px; flex-shrink: 0;
+      border-radius: 10px;
+      background: var(--yellow);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .utp-dot.blue { background: var(--blue-light); }
+    .utp-dot.green { background: var(--green-light); }
+    .utp-item-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .utp-item-desc { font-size: 14px; color: var(--gray-500); line-height: 1.5; }
+
+    /* ─── ROLES ──────────────────────────────────────────────── */
+    .roles-bg { background: var(--gray-50); }
+    .roles-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .role-tab {
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid var(--gray-200);
+      background: var(--white);
+      transition: all 0.15s;
+    }
+    .role-tab.active {
+      background: var(--black);
+      color: var(--white);
+      border-color: var(--black);
+    }
+    .roles-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .role-benefits { display: flex; flex-direction: column; gap: 16px; }
+    .role-benefit {
+      display: flex;
+      gap: 14px;
+      padding: 16px;
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+    }
+    .rb-check {
+      width: 24px; height: 24px; flex-shrink: 0;
+      background: var(--green-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rb-title { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+    .rb-desc { font-size: 13px; color: var(--gray-500); }
+    .role-mockup {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+    }
+    .mock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .mock-title { font-size: 16px; font-weight: 800; }
+    .mock-badge { font-size: 11px; font-weight: 700; background: var(--yellow); padding: 3px 10px; border-radius: var(--radius-pill); }
+    .mock-stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+    .mock-stat { background: var(--gray-50); border-radius: 10px; padding: 12px; text-align: center; }
+    .mock-stat-val { font-size: 20px; font-weight: 900; }
+    .mock-stat-val.y { color: #B8860B; }
+    .mock-stat-val.g { color: var(--green); }
+    .mock-stat-label { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+    .mock-chart { height: 60px; background: var(--gray-50); border-radius: 10px; overflow: hidden; position: relative; }
+    .chart-bars { display: flex; gap: 4px; align-items: flex-end; height: 100%; padding: 8px; }
+    .chart-bar { flex: 1; border-radius: 3px 3px 0 0; background: var(--gray-200); }
+    .chart-bar.active { background: var(--yellow); }
+    .chart-bar.high { background: var(--blue); }
+
+    /* ─── PRICING ────────────────────────────────────────────── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .price-card {
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      position: relative;
+      transition: all 0.2s;
+    }
+    .price-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+    .price-card.featured {
+      border-color: var(--yellow);
+      background: #FFFBEB;
+    }
+    .price-featured-badge {
+      position: absolute;
+      top: -13px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--yellow);
+      color: var(--black);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 14px;
+      border-radius: var(--radius-pill);
+      white-space: nowrap;
+    }
+    .price-tier { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gray-500); margin-bottom: 8px; }
+    .price-name { font-size: 22px; font-weight: 900; margin-bottom: 4px; }
+    .price-desc { font-size: 14px; color: var(--gray-500); margin-bottom: 24px; }
+    .price-amount { font-size: 36px; font-weight: 900; letter-spacing: -1px; margin-bottom: 4px; }
+    .price-amount span { font-size: 16px; font-weight: 500; color: var(--gray-500); }
+    .price-period { font-size: 13px; color: var(--gray-400); margin-bottom: 28px; }
+    .price-cta {
+      width: 100%;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1.5px solid var(--gray-200);
+      background: transparent;
+      transition: all 0.15s;
+      margin-bottom: 24px;
+    }
+    .price-cta.yellow { background: var(--yellow); border-color: var(--yellow); }
+    .price-cta:hover { opacity: 0.85; }
+    .price-features { display: flex; flex-direction: column; gap: 10px; }
+    .pf-item { display: flex; gap: 10px; font-size: 14px; align-items: flex-start; }
+    .pf-check { color: var(--green); font-size: 16px; line-height: 1.2; flex-shrink: 0; }
+    .pf-x { color: var(--gray-300); font-size: 16px; line-height: 1.2; flex-shrink: 0; }
+
+    /* ─── COMPARE ────────────────────────────────────────────── */
+    .compare-bg { background: var(--gray-50); }
+    .compare-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .compare-table th, .compare-table td {
+      padding: 14px 16px;
+      text-align: center;
+      font-size: 14px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .compare-table th { font-weight: 800; font-size: 13px; background: var(--gray-50); }
+    .compare-table th:first-child, .compare-table td:first-child { text-align: left; font-weight: 600; }
+    .compare-table .col-us { background: rgba(255,221,45,0.05); }
+    .compare-table th.col-us { background: rgba(255,221,45,0.12); color: var(--black); }
+    .ct { color: var(--green); font-size: 18px; }
+    .cx { color: var(--gray-300); font-size: 18px; }
+    .cp { color: #F59E0B; font-size: 16px; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:hover td { background: var(--gray-50); }
+    .compare-table tr:hover td.col-us { background: rgba(255,221,45,0.06); }
+
+    /* ─── TESTIMONIALS ───────────────────────────────────────── */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .testimonial-card {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      padding: 24px;
+    }
+    .t-stars { color: var(--yellow); font-size: 16px; margin-bottom: 12px; }
+    .t-text { font-size: 15px; color: var(--gray-700); line-height: 1.6; margin-bottom: 16px; font-style: italic; }
+    .t-author { display: flex; gap: 12px; align-items: center; }
+    .t-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--yellow); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; }
+    .t-name { font-size: 14px; font-weight: 700; }
+    .t-position { font-size: 12px; color: var(--gray-400); }
+
+    /* ─── CTA ────────────────────────────────────────────────── */
+    .cta-section {
+      background: var(--black);
+      color: white;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-inner { position: relative; z-index: 1; }
+    .cta-section h2 { font-size: 44px; font-weight: 900; letter-spacing: -1px; margin-bottom: 16px; }
+    .cta-section h2 span { color: var(--yellow); }
+    .cta-section p { font-size: 18px; color: rgba(255,255,255,0.6); margin-bottom: 36px; max-width: 520px; margin-left: auto; margin-right: auto; }
+    .cta-form {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      max-width: 480px;
+      margin: 0 auto 20px;
+    }
+    .cta-input {
+      flex: 1;
+      padding: 14px 18px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.07);
+      color: white;
+      font-size: 15px;
+      outline: none;
+    }
+    .cta-input::placeholder { color: rgba(255,255,255,0.35); }
+    .cta-input:focus { border-color: var(--yellow); }
+    .cta-note { font-size: 13px; color: rgba(255,255,255,0.35); }
+    .cta-trust {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      margin-top: 40px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .cta-trust-item { text-align: center; }
+    .cta-trust-value { font-size: 24px; font-weight: 900; color: var(--yellow); }
+    .cta-trust-label { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+    /* ─── FOOTER ─────────────────────────────────────────────── */
+    .footer {
+      background: var(--gray-50);
+      border-top: 1px solid var(--gray-200);
+      padding: 48px 24px 32px;
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-top { display: grid; grid-template-columns: 240px repeat(4, 1fr); gap: 40px; margin-bottom: 40px; }
+    .footer-logo { font-size: 18px; font-weight: 900; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .footer-tagline { font-size: 13px; color: var(--gray-500); line-height: 1.5; }
+    .footer-col h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--gray-400); margin-bottom: 16px; }
+    .footer-col a { display: block; font-size: 14px; color: var(--gray-700); margin-bottom: 10px; transition: color 0.15s; }
+    .footer-col a:hover { color: var(--black); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--gray-200); padding-top: 24px; }
+    .footer-copy { font-size: 13px; color: var(--gray-400); }
+
+    /* ─── ECOSYSTEM STRIP ────────────────────────────────────── */
+    .ecosystem-strip { background: var(--yellow); padding: 24px; }
+    .eco-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 32px; }
+    .eco-title { font-size: 16px; font-weight: 800; white-space: nowrap; }
+    .eco-items { display: flex; gap: 12px; flex-wrap: wrap; }
+    .eco-item {
+      background: rgba(0,0,0,0.08);
+      border-radius: var(--radius-pill);
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .eco-item svg { vertical-align: middle; margin-right: 4px; }
+
+    /* ─── AI BADGE ───────────────────────────────────────────── */
+    .ai-section { background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F3460 100%); color: white; }
+    .ai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .ai-features { display: flex; flex-direction: column; gap: 20px; }
+    .ai-feature {
+      display: flex;
+      gap: 16px;
+      padding: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius-md);
+    }
+    .ai-feature-icon {
+      width: 42px; height: 42px; flex-shrink: 0;
+      background: rgba(66,139,249,0.2);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ai-feature-title { font-size: 16px; font-weight: 700; margin-bottom: 5px; }
+    .ai-feature-desc { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+    .ai-feature-gain {
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--green);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .ai-mockup {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+    }
+    .ai-mock-header { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; }
+    .ai-mock-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: rgba(66,139,249,0.5);
+    }
+    .ai-mock-title { font-size: 13px; color: rgba(255,255,255,0.5); }
+    .ai-insight {
+      background: rgba(66,139,249,0.08);
+      border-left: 3px solid var(--blue);
+      border-radius: 0 10px 10px 0;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+    .ai-insight-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--blue); font-weight: 700; margin-bottom: 4px; }
+    .ai-insight-text { font-size: 14px; color: rgba(255,255,255,0.85); line-height: 1.5; }
+    .ai-savings-widget {
+      background: rgba(34,197,94,0.08);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .ai-savings-num { font-size: 32px; font-weight: 900; color: var(--green); }
+    .ai-savings-label { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+      .hero-visual { display: none; }
+      .hero h1 { font-size: 40px; }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-top { grid-template-columns: 1fr 1fr 1fr; }
+      .ai-grid { grid-template-columns: 1fr; }
+      .utp-grid { grid-template-columns: 1fr; }
+      .roles-content { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav { display: none; }
+      .hero { padding: 60px 20px 0; }
+      .hero h1 { font-size: 32px; }
+      section { padding: 60px 20px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .stats-bar-inner { grid-template-columns: repeat(2, 1fr); }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .section-title { font-size: 28px; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 20px; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 28px; }
+    }
+
+    /* ─── ANIMATIONS ─────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-content { animation: fadeUp 0.6s ease-out; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">Т</div>
+      <span>Командировка</span>
+    </div>
+    <nav class="nav">
+      <a href="#features">Возможности</a>
+      <a href="#how">Как работает</a>
+      <a href="#pricing">Тарифы</a>
+      <a href="#compare">Сравнение</a>
+      <a href="#ai">AI-платформа</a>
+    </nav>
+    <div class="header-actions">
+      <button class="btn-ghost">Войти</button>
+      <button class="btn-primary">Подключить бесплатно</button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-circle c1"></div>
+  <div class="hero-bg-circle c2"></div>
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-label">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M6 3.5V6.5L8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        AI-first платформа · 2026
+      </div>
+      <h1>Деловые поездки<br><span>без лишних<br>сложностей</span></h1>
+      <p class="hero-sub">Единственная платформа, где банковские сервисы и управление командировками объединены в одной экосистеме Т-Банка</p>
+      <div class="hero-cta">
+        <button class="btn-hero-primary">
+          Подключить бесплатно
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="btn-hero-ghost">Смотреть демо</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-value">до 30%</div>
+          <div class="hero-stat-label">экономия бюджета</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">0 ₽</div>
+          <div class="hero-stat-label">абонентская плата</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">24/7</div>
+          <div class="hero-stat-label">поддержка</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">5 мин</div>
+          <div class="hero-stat-label">бронирование</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="app-mockup">
+        <div class="app-bar">
+          <div class="app-dots">
+            <div class="app-dot r"></div>
+            <div class="app-dot y"></div>
+            <div class="app-dot g"></div>
+          </div>
+          <div class="app-title-bar">Т-Командировка · AI-ассистент</div>
+        </div>
+        <div class="ai-chat">
+          <div class="chat-msg">
+            <div class="chat-avatar bot">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="3" stroke="#428BF9" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="#428BF9" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div class="chat-bubble bot">Привет! Опишите командировку — подберу лучшие варианты ✈️</div>
+          </div>
+          <div class="chat-msg user">
+            <div class="chat-avatar usr">АН</div>
+            <div class="chat-bubble user">Москва → Казань, 15 марта, туда-обратно, отель нужен</div>
+          </div>
+          <div class="chat-msg">
+            <div class="chat-avatar bot">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="3" stroke="#428BF9" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="#428BF9" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div style="flex: 1">
+              <div class="chat-bubble bot" style="max-width: 100%">Нашёл 3 рейса. Лучший вариант 👇</div>
+              <div class="flight-card-mini best" style="max-width: 280px; margin-top: 8px">
+                <div class="fc-row">
+                  <span class="fc-airline">Аэрофлот SU-1234</span>
+                  <span class="fc-price">4 980 ₽</span>
+                </div>
+                <div class="fc-route">SVO → KZN · 08:00—09:35 · Прямой · 1ч 35м</div>
+                <div class="fc-badge">✦ Лучшая цена · В рамках политики</div>
+                <button class="fc-select">Выбрать этот рейс</button>
+              </div>
+              <div class="flight-card-mini" style="max-width: 280px; margin-top: 6px">
+                <div class="fc-row">
+                  <span class="fc-airline">S7 Airlines</span>
+                  <span class="fc-price">5 450 ₽</span>
+                </div>
+                <div class="fc-route">DME → KZN · 11:15—12:50 · Прямой</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-floating-card">
+        <div class="hfc-label">Экономия этого месяца</div>
+        <div class="hfc-value">+127 400 ₽</div>
+        <div class="hfc-sub">↑ 23% vs прошлый месяц</div>
+        <div class="hfc-bar"><div class="hfc-bar-fill"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSYSTEM STRIP -->
+<div class="ecosystem-strip">
+  <div class="eco-inner">
+    <div class="eco-title">Всё в одной экосистеме:</div>
+    <div class="eco-items">
+      <div class="eco-item">✈️ Авиабилеты</div>
+      <div class="eco-item">🚂 Ж/д билеты</div>
+      <div class="eco-item">🏨 Отели</div>
+      <div class="eco-item">🚕 Такси</div>
+      <div class="eco-item">🍕 Питание</div>
+      <div class="eco-item">🚗 Каршеринг</div>
+      <div class="eco-item">💳 Корп. карты</div>
+      <div class="eco-item">📊 Аналитика</div>
+      <div class="eco-item">🎯 MICE</div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-tag">Возможности платформы</div>
+      <h2 class="section-title">Всё для деловых поездок<br>в одном месте</h2>
+      <p class="section-sub">Т-Командировка — единственный сервис, который объединяет банковские инструменты, тревел-сервисы и AI-автоматизацию</p>
+    </div>
+    <div class="features-grid">
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <!-- Самолёт — T-Bank filled style -->
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24.5 4.083a2.333 2.333 0 0 0-3.3 0L17.5 7.783 7 5.25 4.083 8.167l8.167 4.666-3.5 3.5-3.5-.583L3.5 17.5l4.666 2.333L10.5 24.5l1.75-1.75-.583-3.5 3.5-3.5 4.666 8.167 2.917-2.917-2.333-10.5 3.7-3.7a2.333 2.333 0 0 0 .383-2.717z" fill="#1A1A1A"/>
+          </svg>
+        </div>
+        <div class="feature-title">Бронирование без очередей</div>
+        <div class="feature-desc">500+ авиакомпаний, 3 млн+ отелей, ж/д и автобусы. Всё бронируется за 5 минут прямо в приложении или через AI-чат.</div>
+        <div class="feature-badge yellow">500+ авиакомпаний</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon blue">
+          <!-- AI/Чат — filled sparkle -->
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4.667 4.667h18.666A2.333 2.333 0 0 1 25.667 7v11.667a2.333 2.333 0 0 1-2.334 2.333H8.167L2.333 26.833V7a2.333 2.333 0 0 1 2.334-2.333z" fill="#3B82F6"/>
+            <path d="M14 10.5v.01M9.333 13.417h9.334M9.333 10.5h2.334" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="21" cy="8.167" r="3.5" fill="#FFDD2D"/>
+            <path d="M21 6.833v1.167l.875.583" stroke="#1A1A1A" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="feature-title">AI-ассистент 24/7</div>
+        <div class="feature-desc">Напишите «Казань, 10 марта, отель до 5000 ₽» — ИИ сам найдёт варианты, уточнит детали и забронирует. Без форм и звонков.</div>
+        <div class="feature-badge">Уникально на рынке</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon green">
+          <!-- Экосистема — пазл/сеть -->
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="9" height="9" rx="2.5" fill="#16A34A"/>
+            <rect x="16" y="3" width="9" height="9" rx="2.5" fill="#22C55E"/>
+            <rect x="3" y="16" width="9" height="9" rx="2.5" fill="#22C55E"/>
+            <rect x="16" y="16" width="9" height="9" rx="2.5" fill="#16A34A"/>
+            <path d="M12 7.5h4M7.5 12v4M20.5 12v4M12 20.5h4" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="feature-title">Экосистема Т-Банка</div>
+        <div class="feature-desc">Зарплатный проект + командировки + корпоративные карты + кэшбэк — всё в одном банке. Суточные сразу на карту сотрудника.</div>
+        <div class="feature-badge">Только у нас</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon dark">
+          <!-- Карта — filled card with chip -->
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2.333" y="6.417" width="23.334" height="15.166" rx="3" fill="#FFDD2D"/>
+            <rect x="2.333" y="11.083" width="23.334" height="4.084" fill="#1A1A1A" opacity="0.15"/>
+            <rect x="4.667" y="17.5" width="7" height="2.333" rx="1" fill="#1A1A1A" opacity="0.5"/>
+            <rect x="4.667" y="7.583" width="5.833" height="4.667" rx="1.5" fill="white" opacity="0.9"/>
+          </svg>
+        </div>
+        <div class="feature-title">Виртуальная командировочная карта</div>
+        <div class="feature-desc">Каждая командировка — отдельная виртуальная карта с лимитом = бюджет поездки. Расходы автоматически попадают в отчёт.</div>
+        <div class="feature-badge yellow">Уникальная фича</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon orange">
+          <!-- Документ с галочкой -->
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 3.5h9.917L23.333 9.917V24.5A1.167 1.167 0 0 1 22.167 25.667H7A1.167 1.167 0 0 1 5.833 24.5V4.667A1.167 1.167 0 0 1 7 3.5z" fill="#F97316"/>
+            <path d="M16.917 3.5v6.417h6.416" fill="white" opacity="0.3"/>
+            <path d="M9.917 15.167l2.916 2.916 5.25-5.25" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="feature-title">Автоматическая отчётность</div>
+        <div class="feature-desc">Авансовые отчёты, расчёт суточных, приказы — формируются автоматически. Интеграция с 1С, ЭДО, ЗУП. Сфотографировал чек — готово.</div>
+        <div class="feature-badge yellow">OCR чеков</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon blue">
+          <!-- Аналитика — bar chart filled -->
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3.5" y="14" width="5.833" height="10.5" rx="1.5" fill="#3B82F6"/>
+            <rect x="11.083" y="8.167" width="5.834" height="16.333" rx="1.5" fill="#1D4ED8"/>
+            <rect x="18.667" y="3.5" width="5.833" height="21" rx="1.5" fill="#3B82F6"/>
+            <path d="M2.333 25.667h23.334" stroke="#1D4ED8" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="feature-title">CFO-дашборд</div>
+        <div class="feature-desc">Real-time аналитика расходов, AI-прогнозы бюджета, топ направлений, экономия по подразделениям. Всё нужное — в одном экране.</div>
+        <div class="feature-badge">BI-аналитика</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon green">
+          <!-- Щит с галочкой (политика) -->
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 2.333L4.083 6.417v7A14.583 14.583 0 0 0 14 25.667a14.583 14.583 0 0 0 9.917-12.25v-7L14 2.333z" fill="#22C55E"/>
+            <path d="M9.917 14l2.916 2.917 5.25-5.25" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="feature-title">Тревел-политика и согласования</div>
+        <div class="feature-desc">Настройте лимиты, цепочки согласований и правила. Сотрудники видят доступные варианты в рамках бюджета — без нарушений.</div>
+        <div class="feature-badge yellow">Гибкие правила</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon purple">
+          <!-- Замок — безопасность -->
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8.167 11.667V8.75a5.833 5.833 0 1 1 11.666 0v2.917" stroke="#7C3AED" stroke-width="2" stroke-linecap="round"/>
+            <rect x="4.083" y="11.667" width="19.834" height="15.166" rx="3" fill="#7C3AED"/>
+            <circle cx="14" cy="18.667" r="2.333" fill="white"/>
+            <rect x="13.125" y="18.667" width="1.75" height="3.5" rx="0.875" fill="white"/>
+          </svg>
+        </div>
+        <div class="feature-title">Безопасность и соответствие</div>
+        <div class="feature-desc">Хранение данных в РФ по ФЗ-152. Сертификация ФСТЭК. Реестр Минцифры. Постановление Правительства №501 — полное соответствие.</div>
+        <div class="feature-badge">ФЗ-152 · ФСТЭК</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon dark">
+          <!-- Звезда/мероприятия (MICE) -->
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 2.333l3.208 6.496 7.167 1.043-5.187 5.054 1.224 7.136L14 18.521l-6.412 3.54 1.224-7.136L3.625 9.872l7.167-1.043L14 2.333z" fill="#FFDD2D"/>
+            <circle cx="14" cy="21.583" r="2.917" fill="#FFDD2D" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="feature-title">MICE и корпоративные мероприятия</div>
+        <div class="feature-desc">Конференции, стратсессии, тимбилдинг, корпоративы — организация «под ключ» в одном окне с командировками. Групповые бронирования.</div>
+        <div class="feature-badge yellow">Полный цикл</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="how-bg">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-tag" style="color: rgba(255,221,45,0.7)">Как это работает</div>
+      <h2 class="section-title" style="color: white">Командировка за 5 минут</h2>
+      <p class="section-sub">Три простых шага от идеи до подтверждения</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-title">Опишите поездку</div>
+        <div class="step-desc">Напишите в AI-чат или заполните форму. Укажите направление, даты и предпочтения. Бот уточнит детали: багаж, отель, трансфер.</div>
+        <div class="step-chip">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Голос или текст
+        </div>
+        <div class="step-arrow">→</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="step-title">Выберите варианты</div>
+        <div class="step-desc">AI покажет лучшие рейсы, отели и трансфер прямо в чате. Все варианты — в рамках тревел-политики компании. Цены и прогноз изменения.</div>
+        <div class="step-chip">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M13 3L6 10l-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Мгновенные результаты
+        </div>
+        <div class="step-arrow">→</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="step-title">Летите. Отчёт — сам</div>
+        <div class="step-desc">Нажмите «Забронировать всё» — билеты, отель и виртуальная карта мгновенно в телефоне. После поездки авансовый отчёт сформируется автоматически.</div>
+        <div class="step-chip">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.8"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Автоотчётность
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI SECTION -->
+<section id="ai" class="ai-section">
+  <div class="section-inner">
+    <div class="ai-grid">
+      <div>
+        <div class="section-tag" style="color: #60A5FA">AI-технологии</div>
+        <h2 class="section-title" style="color: white; margin-bottom: 12px">Искусственный интеллект<br>экономит до 25% бюджета</h2>
+        <p class="section-sub" style="color: rgba(255,255,255,0.5); margin-bottom: 36px">Предиктивная аналитика, умные рекомендации и автоматизация рутины — ни у одного конкурента нет такого набора</p>
+        <div class="ai-features">
+          <div class="ai-feature">
+            <div class="ai-feature-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2l2.5 5 5.5.8-4 3.9.9 5.5L10 14.5l-4.9 2.7.9-5.5L2 7.8l5.5-.8L10 2z" stroke="#428BF9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <div class="ai-feature-title">Предиктивные цены на билеты</div>
+              <div class="ai-feature-desc">«Купите сейчас — завтра будет на 18% дороже». AI анализирует динамику цен и рекомендует оптимальный момент покупки.</div>
+              <div class="ai-feature-gain">↑ Экономия до 15% на авиабилетах</div>
+            </div>
+          </div>
+          <div class="ai-feature">
+            <div class="ai-feature-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="3" stroke="#428BF9" stroke-width="1.5"/><path d="M7 10h6M10 7v6" stroke="#428BF9" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <div class="ai-feature-title">OCR распознавание чеков</div>
+              <div class="ai-feature-desc">Сфотографировал чек — сумма, дата и НДС автоматически распознаны и добавлены в авансовый отчёт. Без ручного ввода.</div>
+              <div class="ai-feature-gain">↓ Снижение ошибок на 82%</div>
+            </div>
+          </div>
+          <div class="ai-feature">
+            <div class="ai-feature-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="#428BF9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <div class="ai-feature-title">Аномалии и контроль расходов</div>
+              <div class="ai-feature-desc">AI детектирует подозрительные траты и нарушения тревел-политики в реальном времени. Уведомления финансовому директору мгновенно.</div>
+              <div class="ai-feature-gain">↓ Предотвращение перерасхода</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ai-mockup">
+        <div class="ai-mock-header">
+          <div class="ai-mock-dot"></div>
+          <div class="ai-mock-dot"></div>
+          <div class="ai-mock-dot"></div>
+          <div class="ai-mock-title">AI-аналитика · Март 2026</div>
+        </div>
+        <div class="ai-insight">
+          <div class="ai-insight-label">⚡ AI-инсайт</div>
+          <div class="ai-insight-text">Цены на рейсы Москва–Сочи вырастут на 22% через 3 дня. Рекомендую забронировать сейчас для 5 командировок в апреле.</div>
+        </div>
+        <div class="ai-insight">
+          <div class="ai-insight-label">📊 Прогноз бюджета</div>
+          <div class="ai-insight-text">При текущем темпе командировок ожидается перерасход на 12% в апреле. Основная причина — отели в Екатеринбурге. Предлагаю альтернативы.</div>
+        </div>
+        <div class="ai-insight">
+          <div class="ai-insight-label">💡 Рекомендация</div>
+          <div class="ai-insight-text">3 сотрудника летят в Казань в одни даты. Групповой тариф сэкономит 18 400 ₽. Объединить бронирования?</div>
+        </div>
+        <div class="ai-savings-widget">
+          <div class="ai-savings-num">342 800 ₽</div>
+          <div class="ai-savings-label">сэкономлено AI за последние 3 месяца</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- UTP / VIRTUAL CARD -->
+<section>
+  <div class="section-inner">
+    <div class="utp-grid">
+      <div>
+        <div class="section-tag">Уникально в России</div>
+        <h2 class="section-title">Зарплата. Командировка.<br>Кэшбэк. Один банк.</h2>
+        <p class="section-sub" style="margin-bottom: 32px">Виртуальная карта на каждую поездку, суточные на зарплатный счёт и кэшбэк до 5% — всё работает само, пока сотрудник летит.</p>
+        <div class="utp-list">
+          <div class="utp-item">
+            <div class="utp-dot">
+              <!-- Карта filled -->
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1.5" y="4.5" width="17" height="11" rx="2.5" fill="#1A1A1A"/><rect x="1.5" y="8" width="17" height="3" fill="white" opacity="0.15"/><rect x="3.5" y="12" width="5" height="1.5" rx="0.75" fill="white" opacity="0.5"/><rect x="3.5" y="5.5" width="4" height="3.5" rx="1" fill="#FFDD2D"/></svg>
+            </div>
+            <div>
+              <div class="utp-item-title">Виртуальная командировочная карта</div>
+              <div class="utp-item-desc">На каждую поездку — отдельная виртуальная карта с лимитом = бюджет. Расходы автоматически в отчёт. Ни у одного конкурента нет.</div>
+            </div>
+          </div>
+          <div class="utp-item">
+            <div class="utp-dot blue">
+              <!-- Звезда-кэшбэк filled -->
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667l2.292 4.641 5.125.746-3.708 3.616.875 5.108L10 13.25l-4.584 2.528.875-5.108-3.708-3.616 5.125-.746L10 1.667z" fill="#3B82F6"/></svg>
+            </div>
+            <div>
+              <div class="utp-item-title">Кэшбэк до 5% + до 11 000 ₽/мес.</div>
+              <div class="utp-item-desc">Кэшбэк на авиабилеты, отели и аренду авто через Т-Банк. Подписка Pro для сотрудников — повышенный кэшбэк. Реальные деньги компании.</div>
+            </div>
+          </div>
+          <div class="utp-item">
+            <div class="utp-dot green">
+              <!-- Щит filled -->
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 1.667l-7.083 2.916v5c0 4.584 3.042 8.875 7.083 10 4.041-1.125 7.083-5.416 7.083-10v-5L10 1.667z" fill="#22C55E"/><path d="M7 10.5l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <div class="utp-item-title">Зарплата + суточные = один банк</div>
+              <div class="utp-item-desc">Суточные автоматически на зарплатную карту сотрудника через зарплатный проект Т-Банка. Ни одна тревел-платформа не может предложить это.</div>
+            </div>
+          </div>
+          <div class="utp-item">
+            <div class="utp-dot">
+              <!-- Подарок/бонус filled -->
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2.5" y="9.167" width="15" height="9.166" rx="1.5" fill="#1A1A1A"/><rect x="1.667" y="5.833" width="16.666" height="3.334" rx="1.333" fill="#FFDD2D"/><path d="M10 5.833V18.333M7.5 5.833a2.5 2.5 0 0 1 0-5c1.5 0 2.5 2.5 2.5 5zM12.5 5.833a2.5 2.5 0 0 0 0-5c-1.5 0-2.5 2.5-2.5 5z" stroke="#1A1A1A" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <div class="utp-item-title">Геймификация экономии</div>
+              <div class="utp-item-desc">Сотрудник выбрал бюджетный отель — получает бонус на личную карту. Компания экономит, сотрудник мотивирован. Win-win.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="utp-visual">
+        <div class="virtual-card">
+          <div class="vc-bg-circle"></div>
+          <div class="vc-label">Командировочная карта</div>
+          <div class="vc-trip">Командировка #1247 · Казань · 15-18 марта</div>
+          <div class="vc-number">•••• •••• •••• 4521</div>
+          <div class="vc-footer">
+            <div class="vc-name">Иванов Алексей Н.</div>
+            <div class="vc-badge">Т-БАНК</div>
+          </div>
+        </div>
+        <div style="margin-bottom: 16px">
+          <div style="font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 10px">Бюджет поездки</div>
+          <div class="balance-row">
+            <div class="balance-item">
+              <div class="balance-label">Лимит</div>
+              <div class="balance-value">35 000 ₽</div>
+            </div>
+            <div class="balance-item">
+              <div class="balance-label">Потрачено</div>
+              <div class="balance-value red">21 340 ₽</div>
+            </div>
+            <div class="balance-item">
+              <div class="balance-label">Остаток</div>
+              <div class="balance-value green">13 660 ₽</div>
+            </div>
+          </div>
+          <div class="balance-progress"><div class="balance-fill"></div></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--gray-100); border-radius: 10px">
+            <div style="display: flex; gap: 10px; align-items: center">
+              <span style="font-size: 20px">✈️</span>
+              <div>
+                <div style="font-size: 13px; font-weight: 600">Аэрофлот SU-1234</div>
+                <div style="font-size: 11px; color: var(--gray-400)">15 марта · OCR распознан</div>
+              </div>
+            </div>
+            <div style="font-size: 14px; font-weight: 700">-4 980 ₽</div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--gray-100); border-radius: 10px">
+            <div style="display: flex; gap: 10px; align-items: center">
+              <span style="font-size: 20px">🏨</span>
+              <div>
+                <div style="font-size: 13px; font-weight: 600">Hilton Garden Inn Казань</div>
+                <div style="font-size: 11px; color: var(--gray-400)">15-18 марта · 3 ночи</div>
+              </div>
+            </div>
+            <div style="font-size: 14px; font-weight: 700">-12 600 ₽</div>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--green-light); border-radius: 10px">
+            <div style="display: flex; gap: 10px; align-items: center">
+              <span style="font-size: 20px">🎁</span>
+              <div>
+                <div style="font-size: 13px; font-weight: 600; color: var(--green)">Кэшбэк Т-Банка</div>
+                <div style="font-size: 11px; color: var(--green)">5% за бронирование отеля</div>
+              </div>
+            </div>
+            <div style="font-size: 14px; font-weight: 700; color: var(--green)">+630 ₽</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROLES -->
+<section class="roles-bg">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-tag">Для каждой роли</div>
+      <h2 class="section-title">Удобно всем в компании</h2>
+      <p class="section-sub">От сотрудника до финансового директора — у каждого свой интерфейс и нужные инструменты</p>
+    </div>
+    <div class="roles-tabs">
+      <div class="role-tab active">Тревел-менеджеру</div>
+      <div class="role-tab">Руководителю</div>
+      <div class="role-tab">Бухгалтеру</div>
+      <div class="role-tab">Сотруднику</div>
+    </div>
+    <div class="roles-content">
+      <div class="role-benefits">
+        <div class="role-benefit">
+          <div class="rb-check">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#22C55E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div class="rb-title">Меньше ручной работы</div>
+            <div class="rb-desc">Сотрудники сами бронируют всё для командировки через AI-чат. Вы только контролируете и согласовываете.</div>
+          </div>
+        </div>
+        <div class="role-benefit">
+          <div class="rb-check">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#22C55E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div class="rb-title">Единый кабинет для всего</div>
+            <div class="rb-desc">Профили сотрудников, тревел-политика, аналитика, документы — в одном интерфейсе. Больше не нужно жонглировать вкладками.</div>
+          </div>
+        </div>
+        <div class="role-benefit">
+          <div class="rb-check">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#22C55E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div class="rb-title">Холдинговые структуры</div>
+            <div class="rb-desc">Один логин для доступа ко всем юридическим лицам. Идеально для групп компаний и холдингов.</div>
+          </div>
+        </div>
+        <div class="role-benefit">
+          <div class="rb-check">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#22C55E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div class="rb-title">Поддержка 24/7</div>
+            <div class="rb-desc">Персональный менеджер отвечает в любое время. Ночью, в выходные — всегда на связи. Ответ за 5 минут.</div>
+          </div>
+        </div>
+      </div>
+      <div class="role-mockup">
+        <div class="mock-header">
+          <div class="mock-title">Дашборд тревел-менеджера</div>
+          <div class="mock-badge">Март 2026</div>
+        </div>
+        <div class="mock-stat-row">
+          <div class="mock-stat">
+            <div class="mock-stat-val">47</div>
+            <div class="mock-stat-label">Командировок</div>
+          </div>
+          <div class="mock-stat">
+            <div class="mock-stat-val y">12</div>
+            <div class="mock-stat-label">На согласовании</div>
+          </div>
+          <div class="mock-stat">
+            <div class="mock-stat-val g">-28%</div>
+            <div class="mock-stat-label">Экономия</div>
+          </div>
+        </div>
+        <div style="margin-bottom: 12px; font-size: 13px; font-weight: 600; color: var(--gray-500)">Активность по дням</div>
+        <div class="mock-chart">
+          <div class="chart-bars">
+            <div class="chart-bar" style="height: 40%"></div>
+            <div class="chart-bar" style="height: 65%"></div>
+            <div class="chart-bar" style="height: 50%"></div>
+            <div class="chart-bar high" style="height: 85%"></div>
+            <div class="chart-bar" style="height: 70%"></div>
+            <div class="chart-bar active" style="height: 90%"></div>
+            <div class="chart-bar" style="height: 55%"></div>
+          </div>
+        </div>
+        <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 6px">
+          <div style="display: flex; justify-content: space-between; padding: 8px 10px; background: var(--gray-50); border-radius: 8px; font-size: 13px">
+            <span>Иванов А. → Казань</span>
+            <span style="background: #DCFCE7; color: var(--green); padding: 1px 8px; border-radius: 999px; font-weight: 600; font-size: 11px">Согласовано</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 10px; background: var(--gray-50); border-radius: 8px; font-size: 13px">
+            <span>Петрова С. → Сочи</span>
+            <span style="background: #FEF3C7; color: #D97706; padding: 1px 8px; border-radius: 999px; font-weight: 600; font-size: 11px">На рассмотрении</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-tag">Тарифы</div>
+      <h2 class="section-title">Прозрачные тарифы<br>без скрытых комиссий</h2>
+      <p class="section-sub">Никакой абонентской платы — платите только за бронирование. Или выберите тариф с расширенными возможностями.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-tier">Старт</div>
+        <div class="price-name">Базовый</div>
+        <div class="price-desc">Для компаний до 50 сотрудников и небольшого числа поездок</div>
+        <div class="price-amount">0 ₽ <span>/ мес.</span></div>
+        <div class="price-period">Без абонентской платы. Только сервисный сбор за бронирование</div>
+        <button class="price-cta">Начать бесплатно</button>
+        <div class="price-features">
+          <div class="pf-item"><span class="pf-check">✓</span> Авиа, ж/д, отели</div>
+          <div class="pf-item"><span class="pf-check">✓</span> AI-чат для бронирования</div>
+          <div class="pf-item"><span class="pf-check">✓</span> Тревел-политика (базовая)</div>
+          <div class="pf-item"><span class="pf-check">✓</span> ЭДО и отчёты</div>
+          <div class="pf-item"><span class="pf-check">✓</span> Поддержка 24/7</div>
+          <div class="pf-item"><span class="pf-x">✗</span> Виртуальные карты</div>
+          <div class="pf-item"><span class="pf-x">✗</span> OCR чеков</div>
+          <div class="pf-item"><span class="pf-x">✗</span> CFO-дашборд</div>
+        </div>
+      </div>
+
+      <div class="price-card featured">
+        <div class="price-featured-badge">Популярный выбор</div>
+        <div class="price-tier">Бизнес</div>
+        <div class="price-name">Профессиональный</div>
+        <div class="price-desc">Для компаний с активными командировками и потребностью в автоматизации</div>
+        <div class="price-amount">4 990 ₽ <span>/ мес.</span></div>
+        <div class="price-period">Фиксированная плата + сниженный сбор за бронирование</div>
+        <button class="price-cta yellow">Подключить</button>
+        <div class="price-features">
+          <div class="pf-item"><span class="pf-check">✓</span> Всё из Базового</div>
+          <div class="pf-item"><span class="pf-check">✓</span> Виртуальные карты на поездку</div>
+          <div class="pf-item"><span class="pf-check">✓</span> OCR распознавание чеков</div>
+          <div class="pf-item"><span class="pf-check">✓</span> Авансовые отчёты автоматом</div>
+          <div class="pf-item"><span class="pf-check">✓</span> Интеграция с 1С и ЗУП</div>
+          <div class="pf-item"><span class="pf-check">✓</span> AI-прогнозы цен</div>
+          <div class="pf-item"><span class="pf-check">✓</span> Кэшбэк до 5%</div>
+          <div class="pf-item"><span class="pf-x">✗</span> MICE и мероприятия</div>
+        </div>
+      </div>
+
+      <div class="price-card">
+        <div class="price-tier">Enterprise</div>
+        <div class="price-name">Корпоративный</div>
+        <div class="price-desc">Для крупных компаний с полным циклом командировок, MICE и кастомными условиями</div>
+        <div class="price-amount" style="font-size: 24px; letter-spacing: -0.5px">Индивидуально</div>
+        <div class="price-period">Обсуждаем условия с учётом объёма и задач бизнеса</div>
+        <button class="price-cta">Получить предложение</button>
+        <div class="price-features">
+          <div class="pf-item"><span class="pf-check">✓</span> Всё из Профессионального</div>
+          <div class="pf-item"><span class="pf-check">✓</span> MICE и корп. мероприятия</div>
+          <div class="pf-item"><span class="pf-check">✓</span> CFO-дашборд и BI-аналитика</div>
+          <div class="pf-item"><span class="pf-check">✓</span> Premium-карты для руководителей</div>
+          <div class="pf-item"><span class="pf-check">✓</span> Персональный менеджер</div>
+          <div class="pf-item"><span class="pf-check">✓</span> SSO + SAP/Oracle интеграции</div>
+          <div class="pf-item"><span class="pf-check">✓</span> Отсрочка платежа / кредитные линии</div>
+          <div class="pf-item"><span class="pf-check">✓</span> SLA 99.9% + приоритетная поддержка</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section id="compare" class="compare-bg">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-tag">Сравнение</div>
+      <h2 class="section-title">Почему Т-Командировка?</h2>
+      <p class="section-sub">Мы — единственный сервис, объединяющий три слоя: банк, тревел и lifestyle</p>
+    </div>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Возможность</th>
+          <th class="col-us">⭐ Т-Командировка</th>
+          <th>Яндекс</th>
+          <th>Smartway</th>
+          <th>OneTwoTrip</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Авиа, ж/д, отели</td>
+          <td class="col-us"><span class="ct">✓</span></td>
+          <td><span class="ct">✓</span></td>
+          <td><span class="ct">✓</span></td>
+          <td><span class="ct">✓</span></td>
+        </tr>
+        <tr>
+          <td>Такси + питание + каршеринг</td>
+          <td class="col-us"><span class="ct">✓</span></td>
+          <td><span class="ct">✓</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="cx">✗</span></td>
+        </tr>
+        <tr>
+          <td>Без абонентской платы</td>
+          <td class="col-us"><span class="ct">✓</span></td>
+          <td><span class="ct">✓</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="ct">✓</span></td>
+        </tr>
+        <tr>
+          <td>AI-ассистент для бронирования</td>
+          <td class="col-us"><span class="ct">✓</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="cx">✗</span></td>
+        </tr>
+        <tr>
+          <td>Виртуальная командировочная карта</td>
+          <td class="col-us"><span class="ct">✓</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="cx">✗</span></td>
+        </tr>
+        <tr>
+          <td>OCR распознавание чеков</td>
+          <td class="col-us"><span class="ct">✓</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="cx">✗</span></td>
+        </tr>
+        <tr>
+          <td>Зарплата + суточные в одном банке</td>
+          <td class="col-us"><span class="ct">✓</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="cx">✗</span></td>
+        </tr>
+        <tr>
+          <td>Авансовые отчёты автоматически</td>
+          <td class="col-us"><span class="ct">✓</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="ct">✓</span></td>
+          <td><span class="cx">✗</span></td>
+        </tr>
+        <tr>
+          <td>Интеграция 1С + ЗУП</td>
+          <td class="col-us"><span class="ct">✓</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="ct">✓</span></td>
+          <td><span class="ct">✓</span></td>
+        </tr>
+        <tr>
+          <td>MICE и корп. мероприятия</td>
+          <td class="col-us"><span class="ct">✓</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="ct">✓</span></td>
+          <td><span class="cx">✗</span></td>
+        </tr>
+        <tr>
+          <td>AI-прогноз цен на билеты</td>
+          <td class="col-us"><span class="ct">✓</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="cx">✗</span></td>
+        </tr>
+        <tr>
+          <td>Кэшбэк для компании</td>
+          <td class="col-us"><span class="ct">✓</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="cp">~</span></td>
+        </tr>
+        <tr>
+          <td>Отсрочка платежа / кредит</td>
+          <td class="col-us"><span class="ct">✓</span></td>
+          <td><span class="cp">~</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="cp">~</span></td>
+        </tr>
+        <tr>
+          <td>Premium-сервис и VIP-залы</td>
+          <td class="col-us"><span class="ct">✓</span></td>
+          <td><span class="cx">✗</span></td>
+          <td><span class="cp">~</span></td>
+          <td><span class="cx">✗</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="text-align: center; margin-top: 16px; font-size: 13px; color: var(--gray-400)">✓ реализовано &nbsp;·&nbsp; ~ частично &nbsp;·&nbsp; ✗ отсутствует</div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section>
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-tag">Отзывы клиентов</div>
+      <h2 class="section-title">Нам доверяют профессионалы</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"Перешли с Smartway. Экономим 28% бюджета за счёт AI-рекомендаций. Виртуальные карты — революция: больше не нужно собирать чеки вручную."</div>
+        <div class="t-author">
+          <div class="t-avatar">МК</div>
+          <div>
+            <div class="t-name">Марина Козлова</div>
+            <div class="t-position">Тревел-менеджер, ГК «Ростех»</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"Как CFO меня интересовал контроль расходов. Дашборд показывает всё в реальном времени. AI обнаружил паттерн перерасхода, который я бы не заметил месяцами."</div>
+        <div class="t-author">
+          <div class="t-avatar" style="background: var(--blue); color: white">АС</div>
+          <div>
+            <div class="t-name">Алексей Смирнов</div>
+            <div class="t-position">CFO, Технологическая компания, 800 сотрудников</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"Бронирую командировки через AI-чат за 3 минуты. Написал «Казань на 3 дня» — бот сам нашёл рейс, отель, предложил такси. Авансовый отчёт сам заполнился."</div>
+        <div class="t-author">
+          <div class="t-avatar" style="background: var(--green); color: white">ДН</div>
+          <div>
+            <div class="t-name">Дмитрий Носов</div>
+            <div class="t-position">Менеджер по продажам, 5 поездок в месяц</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="hero-bg-circle c1" style="opacity: 0.1; width: 500px; height: 500px; top: -200px; right: 0;"></div>
+  <div class="hero-bg-circle c2" style="opacity: 0.08; left: -100px; bottom: -100px;"></div>
+  <div class="section-inner cta-inner">
+    <div class="section-tag" style="color: rgba(255,221,45,0.7); text-align: center">Начать сейчас</div>
+    <h2>Подключите Т-Командировка<br><span>бесплатно за 5 минут</span></h2>
+    <p>Без абонентской платы. Без бумаг и визитов в офис. Просто оставьте заявку — личный менеджер свяжется и поможет настроить всё под ваш бизнес.</p>
+    <div class="cta-form">
+      <input class="cta-input" type="tel" placeholder="+7 (___) ___-__-__">
+      <button class="btn-hero-primary" style="white-space: nowrap; padding: 14px 24px">
+        Оставить заявку
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+    <div class="cta-note">Нажимая кнопку, вы соглашаетесь с условиями обработки персональных данных</div>
+    <div class="cta-trust">
+      <div class="cta-trust-item">
+        <div class="cta-trust-value">19 лет</div>
+        <div class="cta-trust-label">Т-Банк на рынке</div>
+      </div>
+      <div class="cta-trust-item">
+        <div class="cta-trust-value">54 млн</div>
+        <div class="cta-trust-label">клиентов в экосистеме</div>
+      </div>
+      <div class="cta-trust-item">
+        <div class="cta-trust-value">1,5 млн</div>
+        <div class="cta-trust-label">бизнес-клиентов</div>
+      </div>
+      <div class="cta-trust-item">
+        <div class="cta-trust-value">Системно<br>значимый</div>
+        <div class="cta-trust-label">банк по версии ЦБ РФ</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">
+          <div class="logo-icon">Т</div>
+          <span>Командировка</span>
+        </div>
+        <div class="footer-tagline">AI-платформа управления деловыми поездками в экосистеме Т-Банка</div>
+      </div>
+      <div class="footer-col">
+        <h4>Продукт</h4>
+        <a href="#">Возможности</a>
+        <a href="#">Тарифы</a>
+        <a href="#">Интеграции</a>
+        <a href="#">AI-технологии</a>
+        <a href="#">MICE</a>
+      </div>
+      <div class="footer-col">
+        <h4>Решения</h4>
+        <a href="#">Малый бизнес</a>
+        <a href="#">Средний бизнес</a>
+        <a href="#">Корпорации</a>
+        <a href="#">Госсектор</a>
+        <a href="#">Стартапы</a>
+      </div>
+      <div class="footer-col">
+        <h4>Ресурсы</h4>
+        <a href="#">Документация</a>
+        <a href="#">API</a>
+        <a href="#">Блог</a>
+        <a href="#">Кейсы клиентов</a>
+        <a href="#">Вебинары</a>
+      </div>
+      <div class="footer-col">
+        <h4>Компания</h4>
+        <a href="https://www.tbank.ru/business/" target="_blank">Т-Банк для бизнеса</a>
+        <a href="#">О продукте</a>
+        <a href="#">Контакты</a>
+        <a href="#">Партнёрам</a>
+        <a href="#">Пресс-центр</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 АО «ТБанк» · Т-Командировка · Универсальная лицензия ЦБ РФ № 2673</div>
+      <div style="display: flex; gap: 20px; font-size: 13px; color: var(--gray-400)">
+        <a href="#" style="color: var(--gray-400)">Политика конфиденциальности</a>
+        <a href="#" style="color: var(--gray-400)">Условия использования</a>
+        <a href="#" style="color: var(--gray-400)">ФЗ-152</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Tabs interaction
+  document.querySelectorAll('.role-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  // Smooth scroll for nav links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
