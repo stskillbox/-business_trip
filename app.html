@@ -1551,9 +1551,242 @@ function approveTrip(btn, action) {
   }
 }
 
-/* ── CHAT ── */
-let chatStep = 0;
+/* ══════════════════════════════════════════════════════
+   CITY DATABASE  (IATA + base prices + hotels)
+   ══════════════════════════════════════════════════════ */
+const CITIES = {
+  'москва':            { iata:'MOW', name:'Москва',            aliases:['мск','москвы','из москвы','в москву'] },
+  'санкт-петербург':   { iata:'LED', name:'Санкт-Петербург',   baseFly:3500,  baseHotel:4800, dur:'1ч 30мин', aliases:['питер','спб','петербург','ленинград','санкт петербург'] },
+  'казань':            { iata:'KZN', name:'Казань',            baseFly:3800,  baseHotel:3900, dur:'2ч 15мин', aliases:['кзн'] },
+  'новосибирск':       { iata:'OVB', name:'Новосибирск',       baseFly:7200,  baseHotel:4200, dur:'4ч 10мин', aliases:['новосиб','нск'] },
+  'екатеринбург':      { iata:'SVX', name:'Екатеринбург',      baseFly:5800,  baseHotel:3800, dur:'2ч 35мин', aliases:['ебург','екб','свердловск'] },
+  'сочи':              { iata:'AER', name:'Сочи',              baseFly:5200,  baseHotel:5500, dur:'2ч 25мин', aliases:['в сочи'] },
+  'краснодар':         { iata:'KRR', name:'Краснодар',         baseFly:4800,  baseHotel:3200, dur:'2ч 10мин', aliases:[] },
+  'ростов-на-дону':    { iata:'ROV', name:'Ростов-на-Дону',    baseFly:5100,  baseHotel:3400, dur:'2ч 20мин', aliases:['ростов'] },
+  'уфа':               { iata:'UFA', name:'Уфа',               baseFly:5400,  baseHotel:3500, dur:'2ч 30мин', aliases:[] },
+  'самара':            { iata:'KUF', name:'Самара',            baseFly:4200,  baseHotel:3200, dur:'1ч 50мин', aliases:[] },
+  'нижний новгород':   { iata:'GOJ', name:'Нижний Новгород',   baseFly:2800,  baseHotel:3000, dur:'1ч 20мин', aliases:['нижний','нн','горький'] },
+  'пермь':             { iata:'PEE', name:'Пермь',             baseFly:6200,  baseHotel:3600, dur:'2ч 50мин', aliases:[] },
+  'красноярск':        { iata:'KJA', name:'Красноярск',        baseFly:8500,  baseHotel:3800, dur:'4ч 50мин', aliases:[] },
+  'воронеж':           { iata:'VOZ', name:'Воронеж',           baseFly:3200,  baseHotel:2800, dur:'1ч 30мин', aliases:[] },
+  'тюмень':            { iata:'TJM', name:'Тюмень',            baseFly:6800,  baseHotel:3600, dur:'3ч 10мин', aliases:[] },
+  'иркутск':           { iata:'IKT', name:'Иркутск',           baseFly:11500, baseHotel:3600, dur:'5ч 40мин', aliases:[] },
+  'челябинск':         { iata:'CEK', name:'Челябинск',         baseFly:5600,  baseHotel:3200, dur:'2ч 30мин', aliases:['челяба'] },
+  'омск':              { iata:'OMS', name:'Омск',              baseFly:7100,  baseHotel:3400, dur:'3ч 40мин', aliases:[] },
+  'владивосток':       { iata:'VVO', name:'Владивосток',       baseFly:18000, baseHotel:5000, dur:'9ч 00мин', aliases:['владик'] },
+  'хабаровск':         { iata:'KHV', name:'Хабаровск',         baseFly:17500, baseHotel:4800, dur:'8ч 30мин', aliases:[] },
+};
+
+const AIRLINES = {
+  'LED':['Аэрофлот','S7 Airlines','Победа'],
+  'KZN':['S7 Airlines','Аэрофлот','Победа'],
+  'OVB':['S7 Airlines','Аэрофлот','Уральские авиалинии'],
+  'SVX':['Уральские авиалинии','S7 Airlines','Аэрофлот'],
+  'AER':['Аэрофлот','Победа','S7 Airlines'],
+  'KRR':['Аэрофлот','Победа','S7 Airlines'],
+  'ROV':['Аэрофлот','S7 Airlines','Победа'],
+  'default':['Аэрофлот','S7 Airlines','Победа'],
+};
+
+const AIRPORTS = {
+  'MOW':['SVO','SVO','VKO'],
+  'LED':['LED'],
+  'KZN':['KZN'],
+  'OVB':['OVB'],
+  'SVX':['SVX'],
+  'AER':['AER'],
+  'default':['iata'],
+};
+
+const HOTELS = {
+  'KZN': [
+    { name:'Kazan Palace by Tasigo', stars:'★★★★', note:'Центр · 4 мин до Кремля · Корп. тариф −15%', mult:1.0 },
+    { name:'Courtyard by Marriott Kazan', stars:'★★★★', note:'Бизнес-район · Завтрак включён', mult:1.25 },
+    { name:'Ibis Kazan Centre', stars:'★★★', note:'Центр · 7 мин пешком до Кремля', mult:0.7 },
+  ],
+  'LED': [
+    { name:'Marriott St. Petersburg', stars:'★★★★★', note:'Невский пр-т · Лучший вид на Неву', mult:1.4 },
+    { name:'Holiday Inn Moskovskie Vorota', stars:'★★★★', note:'М. Московские Ворота · Завтрак вкл.', mult:1.0 },
+    { name:'Ibis St Petersburg Centre', stars:'★★★', note:'Центр · Отличный завтрак', mult:0.65 },
+  ],
+  'OVB': [
+    { name:'Marriott Novosibirsk', stars:'★★★★', note:'Центр · Конференц-зал', mult:1.1 },
+    { name:'Azimut Hotel Novosibirsk', stars:'★★★', note:'Набережная р. Обь · Панорамный ресторан', mult:0.85 },
+    { name:'ibis Novosibirsk', stars:'★★★', note:'Деловой центр · Завтрак вкл.', mult:0.7 },
+  ],
+  'SVX': [
+    { name:'Hyatt Regency Ekaterinburg', stars:'★★★★★', note:'Центр города · Панорамные виды', mult:1.5 },
+    { name:'Novotel Ekaterinburg Centre', stars:'★★★★', note:'Мк-н Центральный · Завтрак вкл.', mult:1.0 },
+    { name:'Park Inn Ekaterinburg', stars:'★★★★', note:'Исторический центр · Wi-Fi', mult:0.8 },
+  ],
+  'default': [
+    { name:'Novotel Centre', stars:'★★★★', note:'Центр · Завтрак включён', mult:1.0 },
+    { name:'ibis Centre', stars:'★★★', note:'Деловой центр · Wi-Fi', mult:0.7 },
+    { name:'Park Inn', stars:'★★★★', note:'Бизнес-район · Конференц-зал', mult:0.85 },
+  ],
+};
+
+/* ══════════════════════════════════════════════════════
+   NLP — RUSSIAN TEXT PARSER
+   ══════════════════════════════════════════════════════ */
+const MONTHS = { 'января':1,'февраля':2,'марта':3,'апреля':4,'мая':5,'июня':6,'июля':7,'августа':8,'сентября':9,'октября':10,'ноября':11,'декабря':12 };
+
+function parseTrip(text) {
+  const t = text.toLowerCase().trim();
+  const result = { origin: null, dest: null, depDate: null, retDate: null, nights: null, budget: null, withHotel: true, withBaggage: null };
+
+  // --- CITIES ---
+  for (const [key, city] of Object.entries(CITIES)) {
+    const terms = [key, ...city.aliases];
+    for (const term of terms) {
+      if (t.includes(term)) {
+        const beforeCity = ['из ', 'от '];
+        const isOrigin = beforeCity.some(p => t.includes(p + term));
+        if (isOrigin) result.origin = city;
+        else if (!result.dest || term.length > 2) result.dest = city;
+      }
+    }
+  }
+  if (!result.origin) result.origin = CITIES['москва'];
+
+  // --- DATES ---
+  // "10 марта", "10.03", "10/03"
+  const dateRx = /(\d{1,2})\s*(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)/g;
+  const dateRx2 = /(\d{1,2})[./](\d{1,2})/g;
+  let dateMatches = [...t.matchAll(dateRx)].map(m => ({ day: parseInt(m[1]), month: MONTHS[m[2]] }));
+  if (!dateMatches.length) {
+    dateMatches = [...t.matchAll(dateRx2)].map(m => ({ day: parseInt(m[1]), month: parseInt(m[2]) }));
+  }
+  if (dateMatches[0]) { result.depDate = { day: dateMatches[0].day, month: dateMatches[0].month }; }
+  if (dateMatches[1]) { result.retDate = { day: dateMatches[1].day, month: dateMatches[1].month }; }
+
+  // "на 3 дня", "на 2 ночи"
+  const daysRx = /на\s+(\d+)\s+(дн|ноч|суток)/;
+  const dm = t.match(daysRx);
+  if (dm) result.nights = parseInt(dm[1]);
+  if (!result.nights && result.depDate && result.retDate) {
+    result.nights = result.retDate.day - result.depDate.day;
+    if (result.nights <= 0) result.nights = 1;
+  }
+  if (!result.nights) result.nights = 2;
+
+  // --- BUDGET ---
+  const budRx = /(\d[\d\s]*)\s*(тыс|к\b|000)?\s*₽?/;
+  const bm = t.match(/бюджет[^\d]*(\d[\d ]*)/i) || t.match(/до\s+(\d[\d ]*)/i) || t.match(/(\d{4,6})\s*₽/);
+  if (bm) result.budget = parseInt(bm[1].replace(/\s/g,''));
+
+  // --- OPTIONS ---
+  if (t.includes('без отел') || t.includes('без гостин') || t.includes('только билет')) result.withHotel = false;
+  if (t.includes('с завтрак') || t.includes('завтрак')) result.withBreakfast = true;
+  if (t.includes('с багаж') || t.includes('23 кг')) result.withBaggage = true;
+  if (t.includes('без багаж') || t.includes('ручная кладь')) result.withBaggage = false;
+  if (t.includes('бизнес') || t.includes('business')) result.bizClass = true;
+  if (t.includes('поезд') || t.includes('жд') || t.includes('ж/д') || t.includes('ржд')) result.byTrain = true;
+
+  return result;
+}
+
+function fmtDate(d) {
+  if (!d) return '';
+  const mn = ['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];
+  return `${d.day} ${mn[d.month-1]}`;
+}
+
+function isoDate(d) {
+  if (!d) return '';
+  const y = 2026;
+  return `${y}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}`;
+}
+
+/* ══════════════════════════════════════════════════════
+   PRICE ENGINE  (deterministic variation by route+date)
+   ══════════════════════════════════════════════════════ */
+function hashNum(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) & 0xffffffff;
+  return Math.abs(h);
+}
+
+function genFlights(trip) {
+  const dest = trip.dest;
+  if (!dest || !dest.baseFly) return null;
+  const key = `${dest.iata}-${trip.depDate ? trip.depDate.day : 10}-${trip.depDate ? trip.depDate.month : 3}`;
+  const h = hashNum(key);
+  const airlines = AIRLINES[dest.iata] || AIRLINES['default'];
+  const airports = AIRPORTS['MOW'] || ['SVO'];
+  const depAirport = airports[h % airports.length];
+  const arrAirport = dest.iata;
+
+  // Lead time factor (book early = cheaper)
+  const today = new Date();
+  let leadDays = 14;
+  if (trip.depDate) {
+    const dep = new Date(2026, trip.depDate.month-1, trip.depDate.day);
+    leadDays = Math.max(0, Math.round((dep - today) / 86400000));
+  }
+  const leadFactor = leadDays <= 1 ? 1.55 : leadDays <= 3 ? 1.35 : leadDays <= 7 ? 1.18 : leadDays <= 14 ? 1.05 : 0.95;
+
+  const base = dest.baseFly * leadFactor;
+  const classMult = trip.bizClass ? 3.2 : 1;
+
+  const flights = airlines.map((airline, i) => {
+    const variation = 1 + (hashNum(key + airline) % 40 - 15) / 100;
+    const price = Math.round(base * variation * classMult * (i === 0 ? 0.95 : i === 1 ? 1.1 : 0.82) / 100) * 100;
+    const isOnPolicy = !trip.budget || price <= trip.budget * 0.5;
+    const hasBaggage = i === 1 || (i === 0 && airline !== 'Победа');
+    // departure times
+    const times = [['06:00','07:30','08:20','10:10','12:30'],['09:45','11:00','10:30','12:30','14:40'],['08:10','10:00','12:20','14:15','16:45']];
+    const tIdx = (h + i * 7) % 5;
+    const depTime = times[i % 3][tIdx];
+    const [dH, dM] = depTime.split(':').map(Number);
+    const [durH, durM] = dest.dur.replace('мин','').split('ч ').map(Number);
+    const arrH = (dH + durH + Math.floor((dM + durM) / 60)) % 24;
+    const arrM = (dM + durM) % 60;
+    const arrTime = `${String(arrH).padStart(2,'0')}:${String(arrM).padStart(2,'0')}`;
+    return { airline, price, depAirport, arrAirport, depTime, arrTime, dur: dest.dur, hasBaggage, isOnPolicy, isBest: i === 0 };
+  }).sort((a,b) => a.price - b.price);
+
+  return flights;
+}
+
+function genHotels(trip) {
+  const dest = trip.dest;
+  if (!dest || !dest.baseHotel) return null;
+  const pool = HOTELS[dest.iata] || HOTELS['default'];
+  const key = `h-${dest.iata}-${trip.depDate ? trip.depDate.day : 10}`;
+  const h = hashNum(key);
+
+  return pool.map((hotel, i) => {
+    const variation = 1 + (hashNum(key + hotel.name) % 30 - 10) / 100;
+    const price = Math.round(dest.baseHotel * hotel.mult * variation / 100) * 100;
+    const isOnPolicy = price <= 7500;
+    return { ...hotel, price, isOnPolicy, isBest: i === 0 };
+  });
+}
+
+function tinkoffFlightUrl(trip) {
+  const from = trip.origin ? trip.origin.iata : 'MOW';
+  const to = trip.dest ? trip.dest.iata : '';
+  const dep = isoDate(trip.depDate) || '2026-03-10';
+  const ret = trip.retDate ? isoDate(trip.retDate) : '';
+  let url = `https://www.tinkoff.ru/travel/flights/${from}-${to}/?departureDate=${dep}`;
+  if (ret) url += `&returnDate=${ret}`;
+  url += `&passengers=1_0_0&serviceClass=${trip.bizClass ? 'business' : 'economy'}`;
+  return url;
+}
+
+function tinkoffHotelUrl(trip) {
+  const city = trip.dest ? trip.dest.name : '';
+  const cin = isoDate(trip.depDate) || '2026-03-10';
+  const cout = trip.retDate ? isoDate(trip.retDate) : (trip.depDate ? isoDate({day: trip.depDate.day + (trip.nights||2), month: trip.depDate.month}) : '2026-03-12');
+  return `https://www.tinkoff.ru/travel/hotels/?location=${encodeURIComponent(city)}&checkIn=${cin}&checkOut=${cout}&adults=1`;
+}
+
+/* ══════════════════════════════════════════════════════
+   CHAT ENGINE
+   ══════════════════════════════════════════════════════ */
 let chatBusy = false;
+let chatCtx = {};
 const chatMsgs = document.getElementById('chat-messages');
 
 function addBot(html) {
@@ -1561,81 +1794,292 @@ function addBot(html) {
   d.className = 'cmsg fade-in';
   d.innerHTML = `<div class="cmsg-av bot">T</div><div class="cmsg-bubble bot">${html}</div>`;
   chatMsgs.appendChild(d);
-  d.querySelectorAll('.chat-pill').forEach(p => p.addEventListener('click', () => { if(!chatBusy){ addUser(p.textContent); setTimeout(nextChat,500); }}));
-  d.querySelectorAll('.fl-select,.hl-select').forEach(b => b.addEventListener('click', () => {
-    const par = b.closest('.fl-list,.hl-list');
-    if (par) par.querySelectorAll('button').forEach(x => { x.disabled=true; x.classList.remove('selected'); });
-    b.classList.add('selected'); b.textContent = '✓ Выбрано';
-    if (!chatBusy) setTimeout(nextChat, 700);
+  d.querySelectorAll('.chat-pill').forEach(p => p.addEventListener('click', () => {
+    if (chatBusy) return;
+    const txt = p.textContent.trim();
+    addUser(txt);
+    p.closest('.chat-pills').querySelectorAll('.chat-pill').forEach(x => x.classList.add('disabled'));
+    handlePill(txt);
   }));
-  chatMsgs.scrollIntoView({behavior:'smooth',block:'end'});
+  d.querySelectorAll('.fl-select').forEach(b => b.addEventListener('click', function() {
+    const list = this.closest('.fl-list');
+    list.querySelectorAll('.fl-select').forEach(x => { x.disabled=true; x.classList.remove('selected'); x.textContent='Выбрать'; });
+    this.classList.add('selected'); this.textContent = '✓ Выбрано';
+    const airline = this.closest('.fl-card').querySelector('.fl-airline').textContent;
+    const price = this.closest('.fl-card').querySelector('.fl-price').textContent;
+    chatCtx.chosenFlight = { airline, price };
+    if (!chatBusy) setTimeout(() => respondHotels(), 800);
+  }));
+  d.querySelectorAll('.hl-select').forEach(b => b.addEventListener('click', function() {
+    const list = this.closest('.hl-list');
+    list.querySelectorAll('.hl-select').forEach(x => { x.disabled=true; x.classList.remove('selected'); x.textContent='Выбрать'; });
+    this.classList.add('selected'); this.textContent = '✓ Выбрано';
+    const name = this.closest('.hl-card').querySelector('.hl-name').textContent;
+    const price = this.closest('.hl-card').querySelector('.hl-price').textContent;
+    chatCtx.chosenHotel = { name, price };
+    if (!chatBusy) setTimeout(() => respondSummary(), 900);
+  }));
+  chatMsgs.scrollTop = chatMsgs.scrollHeight;
   return d;
 }
+
 function addUser(text) {
   const d = document.createElement('div');
   d.className = 'cmsg user-msg fade-in';
   d.innerHTML = `<div class="cmsg-av user">${currentRole==='admin'?'АП':'МК'}</div><div class="cmsg-bubble user">${text}</div>`;
   chatMsgs.appendChild(d);
-  chatMsgs.scrollIntoView({behavior:'smooth',block:'end'});
+  chatMsgs.scrollTop = chatMsgs.scrollHeight;
 }
+
 function showTyping() {
+  hideTyping();
   const d = document.createElement('div');
   d.id = 'typing-ind'; d.className = 'cmsg';
   d.innerHTML = `<div class="cmsg-av bot">T</div><div class="cmsg-bubble bot"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
   chatMsgs.appendChild(d);
-  chatMsgs.scrollIntoView({behavior:'smooth',block:'end'});
+  chatMsgs.scrollTop = chatMsgs.scrollHeight;
 }
 function hideTyping() { const t = document.getElementById('typing-ind'); if(t) t.remove(); }
 
-const chatFlows = [
-  () => { hideTyping(); addBot(`Нашёл билеты Москва — Казань на 10 марта. Нужен обратный?<div class="chat-pills"><div class="chat-pill">Да, 12 марта</div><div class="chat-pill">Да, 13 марта</div><div class="chat-pill">Только туда</div></div>`); chatBusy=false; },
-  () => { hideTyping(); addBot(`Принято! Нужен багаж?<div class="chat-pills"><div class="chat-pill">Да, 1 место 23 кг</div><div class="chat-pill">Только ручная кладь</div></div>`); chatBusy=false; },
-  () => { hideTyping(); addBot(`Забронировать отель?<div class="chat-pills"><div class="chat-pill">Да, с завтраком</div><div class="chat-pill">Да, без завтрака</div><div class="chat-pill">Нет</div></div>`); chatBusy=false; },
-  () => { hideTyping(); addBot(`Нужен трансфер из аэропорта?<div class="chat-pills"><div class="chat-pill">Да</div><div class="chat-pill">Нет</div></div>`); chatBusy=false; },
-  () => { hideTyping(); addBot(`Лучшие рейсы Москва — Казань, 10 марта:<div class="fl-list"><div class="fl-card best"><div class="fl-hdr"><span class="fl-airline">S7 Airlines</span><span class="fl-price">4 200 ₽</span></div><div class="fl-route">SVO — KZN · Прямой</div><div class="fl-time">07:30 — 09:45 · 2ч 15мин</div><div class="fl-tags"><span class="ft-g">В рамках политики</span><span class="ft-gr">Ручная кладь</span></div><button class="fl-select">Выбрать</button></div><div class="fl-card"><div class="fl-hdr"><span class="fl-airline">Аэрофлот</span><span class="fl-price">5 800 ₽</span></div><div class="fl-route">SVO — KZN · Прямой</div><div class="fl-time">12:10 — 14:20 · 2ч 10мин</div><div class="fl-tags"><span class="ft-g">В рамках политики</span><span class="ft-gr">Багаж вкл.</span></div><button class="fl-select">Выбрать</button></div><div class="fl-card"><div class="fl-hdr"><span class="fl-airline">Победа</span><span class="fl-price">3 100 ₽</span></div><div class="fl-route">VKO — KZN · Прямой</div><div class="fl-time">06:00 — 08:30 · 2ч 30мин</div><div class="fl-tags"><span class="ft-o">Без багажа</span><span class="ft-gr">Внуково</span></div><button class="fl-select">Выбрать</button></div></div>`); chatBusy=false; },
-  () => { hideTyping(); addBot(`Отели в Казани, 10–12 марта, с завтраком:<div class="hl-list"><div class="hl-card best"><div class="hl-hdr"><div><div class="hl-name">Kazan Palace by Tasigo</div><div class="hl-stars">★★★★</div></div><span class="hl-price">3 900 ₽/н.</span></div><div class="hl-meta">Центр · 4 мин до Кремля · Корпоративный тариф −15%</div><div class="fl-tags mt8"><span class="ft-g">В рамках политики</span></div><button class="hl-select">Выбрать</button></div><div class="hl-card"><div class="hl-hdr"><div><div class="hl-name">Courtyard by Marriott</div><div class="hl-stars">★★★★</div></div><span class="hl-price">4 800 ₽/н.</span></div><div class="hl-meta">Бизнес-район · Wi-Fi · Завтрак включён</div><div class="fl-tags mt8"><span class="ft-g">В рамках политики</span></div><button class="hl-select">Выбрать</button></div></div>`); chatBusy=false; },
-  () => { hideTyping(); addBot(`Итоговая сводка:<div class="sum-card mt8"><div class="sum-row"><span class="sum-lbl">S7 Москва–Казань (10 мар, 07:30)</span><span>4 200 ₽</span></div><div class="sum-row"><span class="sum-lbl">S7 Казань–Москва (12 мар, 18:00)</span><span>4 000 ₽</span></div><div class="sum-row"><span class="sum-lbl">Kazan Palace, 2 ночи с завтраком</span><span>7 800 ₽</span></div><div class="sum-row"><span class="sum-lbl">Трансфер аэропорт–отель</span><span>1 200 ₽</span></div><div class="sum-total"><span>Итого</span><span>17 200 ₽</span></div><div class="cashback">💳 +860 ₽ кэшбэк (5%) на карту</div></div><div class="ai-note"><strong>AI-совет:</strong> цена S7 вырастет на ~12% завтра. Рекомендую бронировать сейчас.</div><div style="display:flex;gap:10px;margin-top:12px"><button class="btn btn-primary btn-lg" id="book-all-btn" onclick="bookAll()">Забронировать всё — 17 200 ₽</button><button class="btn btn-outline" onclick="navigateTo(\'page-chat\')">Изменить</button></div>`); chatBusy=false; },
-  () => { hideTyping(); addBot(`<div class="confirm-card"><div class="confirm-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="confirm-title">Командировка забронирована!</div><div class="confirm-row"><span class="confirm-lbl">Заявка</span><span class="confirm-val">#1248</span></div><div class="confirm-row"><span class="confirm-lbl">Маршрут</span><span class="confirm-val">Москва — Казань — Москва</span></div><div class="confirm-row"><span class="confirm-lbl">Даты</span><span class="confirm-val">10–12 марта 2026</span></div><div class="confirm-row"><span class="confirm-lbl">Итого</span><span class="confirm-val">17 200 ₽</span></div><div class="vc-mini"><div class="vc-mini-num">•••• •••• •••• 7892</div><div class="vc-mini-foot"><span>KALININA M.A.</span><span style="background:var(--yellow);color:var(--black);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:900">T-BANK</span></div></div><div class="vc-mini-note">Лимит: 17 200 ₽. Билеты и ваучер отправлены на почту.</div></div>`); chatBusy=false; }
-];
-
-function nextChat() {
-  if (chatStep >= chatFlows.length) return;
-  chatBusy = true;
-  showTyping();
-  setTimeout(() => { chatFlows[chatStep](); chatStep++; }, chatStep >= 4 ? 1800 : 1200);
-}
-
-function bookAll() {
-  const btn = document.getElementById('book-all-btn');
-  if (!btn || btn.disabled) return;
-  btn.textContent = 'Бронирую...'; btn.style.background = 'var(--blue)'; btn.disabled = true;
-  setTimeout(() => { btn.textContent = '✓ Забронировано!'; btn.style.background = 'var(--green)'; setTimeout(nextChat, 800); }, 2000);
-}
-
+/* ── MAIN SEND HANDLER ── */
 function sendChat() {
   const ta = document.getElementById('chat-ta');
   if (!ta) return;
   const text = ta.value.trim();
   if (!text || chatBusy) return;
-  addUser(text);
   ta.value = ''; ta.style.height = 'auto';
-  if (chatStep === 0) setTimeout(nextChat, 500);
+  addUser(text);
+  processMessage(text);
+}
+
+function processMessage(text) {
+  const trip = parseTrip(text);
+  chatCtx.trip = trip;
+
+  if (!trip.dest) {
+    chatBusy = true;
+    showTyping();
+    setTimeout(() => {
+      hideTyping();
+      addBot(`Куда летим? Укажи город назначения — например:
+        <div class="chat-pills">
+          <div class="chat-pill">Санкт-Петербург</div>
+          <div class="chat-pill">Казань</div>
+          <div class="chat-pill">Новосибирск</div>
+          <div class="chat-pill">Екатеринбург</div>
+          <div class="chat-pill">Сочи</div>
+        </div>`);
+      chatBusy = false;
+    }, 900);
+    return;
+  }
+
+  if (!trip.depDate) {
+    chatBusy = true;
+    showTyping();
+    setTimeout(() => {
+      hideTyping();
+      addBot(`Когда вылетаем в <strong>${trip.dest.name}</strong>? Укажи дату:
+        <div class="chat-pills">
+          <div class="chat-pill">10 марта</div>
+          <div class="chat-pill">15 марта</div>
+          <div class="chat-pill">20 марта</div>
+          <div class="chat-pill">1 апреля</div>
+        </div>`);
+      chatBusy = false;
+    }, 900);
+    return;
+  }
+
+  // Have enough — search!
+  respondFlights();
+}
+
+function handlePill(text) {
+  const trip = chatCtx.trip || {};
+  const re = parseTrip(text);
+
+  // If pill is a city name
+  if (re.dest && !trip.dest) { trip.dest = re.dest; chatCtx.trip = trip; }
+  // If pill is a date
+  if (re.depDate && !trip.depDate) { trip.depDate = re.depDate; chatCtx.trip = trip; }
+  // If pill is "с завтраком" etc.
+  if (text.includes('завтрак')) trip.withBreakfast = true;
+  if (text.includes('трансфер') || text === 'Да') trip.withTransfer = true;
+  if (text === 'Нет') trip.withTransfer = false;
+
+  if (!trip.dest || !trip.depDate) {
+    processMessage(text);
+  } else if (!chatCtx.flightsShown) {
+    respondFlights();
+  } else if (chatCtx.flightsShown && !chatCtx.hotelsShown) {
+    respondHotels();
+  }
+}
+
+/* ── RESPOND: FLIGHTS ── */
+function respondFlights() {
+  chatBusy = true;
+  showTyping();
+  const trip = chatCtx.trip;
+  const flights = genFlights(trip);
+
+  setTimeout(() => {
+    hideTyping();
+    if (!flights) { addBot('Не нашёл рейсов по этому направлению. Попробуй другой город.'); chatBusy=false; return; }
+
+    const leadDays = (() => {
+      const today = new Date(), dep = new Date(2026, trip.depDate.month-1, trip.depDate.day);
+      return Math.max(0, Math.round((dep-today)/86400000));
+    })();
+
+    const cheapest = flights[0];
+    const aiTip = leadDays <= 3
+      ? `<div class="ai-note"><strong>AI:</strong> Вылет через ${leadDays} дн. — цены на пике (+35%). Если возможно, перенеси на неделю позже и сэкономь ~${Math.round(cheapest.price*0.25/100)*100} ₽.</div>`
+      : leadDays >= 14
+      ? `<div class="ai-note"><strong>AI:</strong> Отличное время бронирования — вылет через ${leadDays} дн., скидка ~8% к стандарту.</div>`
+      : `<div class="ai-note"><strong>AI:</strong> Средняя цена по маршруту ${trip.origin.name}–${trip.dest.name}. Забронировав сегодня, сэкономишь ~${Math.round(cheapest.price*0.12/100)*100} ₽ по сравнению с покупкой за 1–3 дня.</div>`;
+
+    const flHtml = flights.map((f, i) => `
+      <div class="fl-card ${f.isBest ? 'best' : ''}">
+        <div class="fl-hdr">
+          <span class="fl-airline">${f.airline}</span>
+          <span class="fl-price">${f.price.toLocaleString('ru')} ₽</span>
+        </div>
+        <div class="fl-route">${f.depAirport} — ${f.arrAirport} · Прямой</div>
+        <div class="fl-time">${f.depTime} — ${f.arrTime} · ${f.dur}</div>
+        <div class="fl-tags">
+          ${f.isOnPolicy ? '<span class="ft-g">В рамках политики</span>' : '<span class="ft-o">Превышение лимита</span>'}
+          ${f.hasBaggage ? '<span class="ft-gr">Багаж вкл.</span>' : '<span class="ft-o">Ручная кладь</span>'}
+          ${f.isBest ? '<span class="ft-g">Лучшая цена</span>' : ''}
+        </div>
+        <button class="fl-select">Выбрать</button>
+      </div>`).join('');
+
+    addBot(`Нашёл рейсы <strong>${trip.origin.name} → ${trip.dest.name}</strong>, ${fmtDate(trip.depDate)}:
+      ${aiTip}
+      <div class="fl-list">${flHtml}</div>
+      <div style="margin-top:10px">
+        <a href="${tinkoffFlightUrl(trip)}" target="_blank" class="btn btn-outline" style="font-size:12px;text-decoration:none;display:inline-flex">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Все рейсы на T‑Путешествия
+        </a>
+      </div>`);
+    chatCtx.flightsShown = true;
+    chatBusy = false;
+  }, 1600);
+}
+
+/* ── RESPOND: HOTELS ── */
+function respondHotels() {
+  if (!chatCtx.trip.withHotel) { respondSummary(); return; }
+  chatBusy = true;
+  showTyping();
+  const trip = chatCtx.trip;
+  const hotels = genHotels(trip);
+
+  setTimeout(() => {
+    hideTyping();
+    if (!hotels) { respondSummary(); return; }
+
+    const hlHtml = hotels.map((h, i) => `
+      <div class="hl-card ${h.isBest ? 'best' : ''}">
+        <div class="hl-hdr">
+          <div>
+            <div class="hl-name">${h.name}</div>
+            <div class="hl-stars">${h.stars}</div>
+          </div>
+          <span class="hl-price">${h.price.toLocaleString('ru')} ₽/н.</span>
+        </div>
+        <div class="hl-meta">${h.note}</div>
+        <div class="fl-tags mt8">
+          ${h.isOnPolicy ? '<span class="ft-g">В рамках политики</span>' : '<span class="ft-o">Выше лимита</span>'}
+          ${h.isBest ? '<span class="ft-g">AI-выбор</span>' : ''}
+        </div>
+        <button class="hl-select">Выбрать</button>
+      </div>`).join('');
+
+    addBot(`Отели в <strong>${trip.dest.name}</strong>, ${fmtDate(trip.depDate)}–${trip.retDate ? fmtDate(trip.retDate) : `+${trip.nights} ночи`}:
+      <div class="hl-list">${hlHtml}</div>
+      <div style="margin-top:10px">
+        <a href="${tinkoffHotelUrl(trip)}" target="_blank" class="btn btn-outline" style="font-size:12px;text-decoration:none;display:inline-flex">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Все отели на T‑Путешествия
+        </a>
+      </div>`);
+    chatCtx.hotelsShown = true;
+    chatBusy = false;
+  }, 1500);
+}
+
+/* ── RESPOND: SUMMARY ── */
+function respondSummary() {
+  chatBusy = true;
+  showTyping();
+  const trip = chatCtx.trip;
+  const fl = chatCtx.chosenFlight;
+  const ht = chatCtx.chosenHotel;
+
+  setTimeout(() => {
+    hideTyping();
+    const flPrice = fl ? parseInt(fl.price.replace(/[^\d]/g,'')) : (trip.dest ? genFlights(trip)[0].price : 0);
+    const flName = fl ? fl.airline : (trip.dest ? genFlights(trip)[0].airline : '—');
+    const htPrice = ht ? parseInt(ht.price.replace(/[^\d]/g,'')) * trip.nights : (trip.dest && trip.withHotel ? (genHotels(trip)||[])[0]?.price * trip.nights : 0);
+    const htName = ht ? ht.name : (trip.dest && trip.withHotel ? (genHotels(trip)||[])[0]?.name : null);
+    const transfer = 1200;
+    const total = flPrice * 2 + (htPrice||0) + transfer;
+    const cashback = Math.round(total * 0.05);
+    const budgetOk = !trip.budget || total <= trip.budget;
+
+    const flightUrl = tinkoffFlightUrl(trip);
+    const hotelUrl = tinkoffHotelUrl(trip);
+
+    addBot(`Сводка по командировке:
+      <div class="sum-card mt8">
+        <div class="sum-row"><span class="sum-lbl">${flName}, ${trip.origin?.name}–${trip.dest?.name} (туда)</span><span>${flPrice.toLocaleString('ru')} ₽</span></div>
+        <div class="sum-row"><span class="sum-lbl">${flName}, ${trip.dest?.name}–${trip.origin?.name} (обратно)</span><span>${flPrice.toLocaleString('ru')} ₽</span></div>
+        ${htName ? `<div class="sum-row"><span class="sum-lbl">${htName}, ${trip.nights} н.</span><span>${htPrice.toLocaleString('ru')} ₽</span></div>` : ''}
+        <div class="sum-row"><span class="sum-lbl">Трансфер (такси)</span><span>${transfer.toLocaleString('ru')} ₽</span></div>
+        <div class="sum-total"><span>Итого</span><span style="color:${budgetOk?'var(--blue)':'var(--red)'}">${total.toLocaleString('ru')} ₽</span></div>
+        <div class="cashback">Кэшбэк 5% = +${cashback.toLocaleString('ru')} ₽ на карту</div>
+      </div>
+      ${!budgetOk ? `<div class="ai-note" style="border-color:var(--orange);background:#fffbeb"><strong>AI:</strong> Итого превышает бюджет ${trip.budget?.toLocaleString('ru')} ₽ на ${(total-trip.budget).toLocaleString('ru')} ₽. Могу предложить альтернативы дешевле.</div>` : ''}
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+        <a href="${flightUrl}" target="_blank" class="btn btn-primary btn-lg" style="text-decoration:none">Забронировать на T‑Путешествия →</a>
+        <button class="btn btn-outline" onclick="resetChat()">Новый запрос</button>
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:var(--text2)">Кнопка откроет T‑Путешествия с готовым поиском по вашему маршруту</div>`);
+
+    chatBusy = false;
+  }, 1400);
+}
+
+function resetChat() {
+  chatCtx = {};
+  addBot(`Готов к новому поиску! Опиши командировку — куда, когда и с чем:<div class="chat-pills"><div class="chat-pill">В Питер на 2 дня</div><div class="chat-pill">Казань, 15 марта, с отелем</div><div class="chat-pill">Новосибирск, апрель, бюджет 30к</div></div>`);
+}
+
+function bookAll() {
+  const trip = chatCtx.trip;
+  if (trip) window.open(tinkoffFlightUrl(trip), '_blank');
 }
 
 function useExample() {
   navigateTo('page-chat');
   setTimeout(() => {
-    addUser('1 билет в Казань, самолёт, 10 марта, бюджет до 20 000 ₽');
-    setTimeout(nextChat, 500);
+    const exText = 'Нужно в Казань на 10 марта, с отелем на 2 ночи с завтраком, бюджет до 20 000 ₽';
+    addUser(exText);
+    processMessage(exText);
   }, 300);
 }
 
 function goToChat(text) {
   const inp = document.getElementById('home-search');
   const val = text || (inp && inp.value.trim());
-  if (!val) { navigateTo('page-chat'); return; }
   navigateTo('page-chat');
-  setTimeout(() => { addUser(val); if (inp) inp.value = ''; if (chatStep === 0) setTimeout(nextChat, 500); }, 300);
+  setTimeout(() => {
+    if (val) { addUser(val); if (inp) inp.value = ''; processMessage(val); }
+  }, 300);
 }
 
 /* ── CHAT INPUT ── */
