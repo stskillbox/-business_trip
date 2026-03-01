@@ -1853,7 +1853,22 @@ function sendChat() {
 }
 
 function processMessage(text) {
-  const trip = parseTrip(text);
+  const parsed = parseTrip(text);
+  // Merge with existing context so multi-turn conversation keeps all details
+  const prev = chatCtx.trip || {};
+  const trip = {
+    origin:       parsed.origin      || prev.origin,
+    dest:         parsed.dest        || prev.dest,
+    depDate:      parsed.depDate     || prev.depDate,
+    retDate:      parsed.retDate     || prev.retDate,
+    nights:       parsed.nights !== 2 ? parsed.nights : (prev.nights || 2),
+    budget:       parsed.budget      || prev.budget,
+    withHotel:    parsed.withHotel   !== undefined ? parsed.withHotel : (prev.withHotel !== undefined ? prev.withHotel : true),
+    withBreakfast:parsed.withBreakfast || prev.withBreakfast,
+    withBaggage:  parsed.withBaggage !== null ? parsed.withBaggage : prev.withBaggage,
+    bizClass:     parsed.bizClass    || prev.bizClass,
+    byTrain:      parsed.byTrain     || prev.byTrain,
+  };
   chatCtx.trip = trip;
 
   if (!trip.dest) {
@@ -1896,19 +1911,19 @@ function processMessage(text) {
 }
 
 function handlePill(text) {
+  // Merge pill info into context (processMessage will handle the merge too)
   const trip = chatCtx.trip || {};
   const re = parseTrip(text);
 
-  // If pill is a city name
-  if (re.dest && !trip.dest) { trip.dest = re.dest; chatCtx.trip = trip; }
-  // If pill is a date
+  if (re.dest && !trip.dest)   { trip.dest   = re.dest;   chatCtx.trip = trip; }
   if (re.depDate && !trip.depDate) { trip.depDate = re.depDate; chatCtx.trip = trip; }
-  // If pill is "с завтраком" etc.
-  if (text.includes('завтрак')) trip.withBreakfast = true;
-  if (text.includes('трансфер') || text === 'Да') trip.withTransfer = true;
-  if (text === 'Нет') trip.withTransfer = false;
+  if (text.includes('завтрак')) { trip.withBreakfast = true; chatCtx.trip = trip; }
+  if (text.includes('трансфер') || text === 'Да') { trip.withTransfer = true; chatCtx.trip = trip; }
+  if (text === 'Нет') { trip.withTransfer = false; chatCtx.trip = trip; }
 
-  if (!trip.dest || !trip.depDate) {
+  const t = chatCtx.trip || {};
+  if (!t.dest || !t.depDate) {
+    // Still missing info — run through processMessage (will merge)
     processMessage(text);
   } else if (!chatCtx.flightsShown) {
     respondFlights();
@@ -2078,7 +2093,32 @@ function goToChat(text) {
   const val = text || (inp && inp.value.trim());
   navigateTo('page-chat');
   setTimeout(() => {
-    if (val) { addUser(val); if (inp) inp.value = ''; processMessage(val); }
+    if (val) { addUser(val); if (inp) inp.value = ''; chatCtx = {}; processMessage(val); }
+  }, 300);
+}
+
+/* ── HOME PAGE SEARCH ── */
+function handleHomeSearch() {
+  const inp = document.getElementById('home-search');
+  const val = inp ? inp.value.trim() : '';
+  if (!val) { navigateTo('page-chat'); return; }
+  chatCtx = {};
+  navigateTo('page-chat');
+  setTimeout(() => {
+    addUser(val);
+    if (inp) inp.value = '';
+    processMessage(val);
+  }, 300);
+}
+
+function setSearchAndGo(text) {
+  const inp = document.getElementById('home-search');
+  if (inp) inp.value = text;
+  chatCtx = {};
+  navigateTo('page-chat');
+  setTimeout(() => {
+    addUser(text);
+    processMessage(text);
   }, 300);
 }
 
