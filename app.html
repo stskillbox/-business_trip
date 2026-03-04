@@ -1650,6 +1650,7 @@ function parseTrip(text) {
     passengers: null,
     requestedPassengers: null,
     isMice: false,
+    cityCount: 0,
   };
 
   // --- CITIES ---
@@ -1676,6 +1677,7 @@ function parseTrip(text) {
   for (const m of cityMatches) {
     if (!uniqueCities.some(x => x.city.iata === m.city.iata)) uniqueCities.push(m);
   }
+  result.cityCount = uniqueCities.length;
 
   // 1) Explicit prepositions have top priority
   for (const m of uniqueCities) {
@@ -1875,7 +1877,7 @@ function hashNum(s) {
 function genFlights(trip) {
   const origin = trip.origin;
   const dest = trip.dest;
-  if (!origin || !dest || !dest.baseFly) return null;
+  if (!origin || !dest || !dest.baseFly || origin.iata === dest.iata) return null;
   const key = `${dest.iata}-${trip.depDate ? trip.depDate.day : 10}-${trip.depDate ? trip.depDate.month : 3}`;
   const h = hashNum(key);
   const airlines = AIRLINES[dest.iata] || AIRLINES['default'];
@@ -2031,8 +2033,9 @@ function processMessage(text) {
   const parsed = parseTrip(text);
   // Merge with existing context so multi-turn conversation keeps all details
   const prev = chatCtx.trip || {};
+  const onlyDestinationProvided = parsed.cityCount === 1 && parsed.dest && !parsed.origin;
   const trip = {
-    origin:       parsed.origin      || prev.origin,
+    origin:       onlyDestinationProvided ? null : (parsed.origin || prev.origin),
     dest:         parsed.dest        || prev.dest,
     depDate:      parsed.depDate     || prev.depDate,
     retDate:      parsed.retDate     || prev.retDate,
@@ -2047,6 +2050,11 @@ function processMessage(text) {
     requestedPassengers: parsed.requestedPassengers || prev.requestedPassengers || parsed.passengers || prev.passengers || 1,
     isMice:       parsed.isMice || prev.isMice,
   };
+
+  // Never keep degenerate same-city routes (e.g. "Казань -> Казань")
+  if (trip.origin && trip.dest && trip.origin.iata === trip.dest.iata) {
+    trip.origin = null;
+  }
   chatCtx.trip = trip;
 
   if (!trip.dest) {
