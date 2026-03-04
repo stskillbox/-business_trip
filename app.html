@@ -2229,6 +2229,7 @@ function respondSummary() {
     const cashback = Math.round(total * 0.05);
     const budgetOk = !trip.budget || total <= trip.budget;
 
+    const flightUrl = tinkoffFlightUrl(trip);
     const hotelUrl = tinkoffHotelUrl(trip);
     const batchSize = bookingPaxForDeepLink(trip);
     const batchCount = Math.ceil(paxCount / batchSize);
@@ -2244,11 +2245,12 @@ function respondSummary() {
       </div>
       ${!budgetOk ? `<div class="ai-note" style="border-color:var(--orange);background:#fffbeb"><strong>AI:</strong> Итого превышает бюджет ${trip.budget?.toLocaleString('ru')} ₽ на ${(total-trip.budget).toLocaleString('ru')} ₽. Могу предложить альтернативы дешевле.</div>` : ''}
       ${trip.isMice ? `<div class="ai-note" style="border-color:var(--blue);background:#eef5ff"><strong>MICE-план:</strong> ${paxCount} пассажиров = ${batchCount} заявк${batchCount === 1 ? 'а' : batchCount < 5 ? 'и' : ''} по ${batchSize} чел. (последняя может быть меньше).</div>` : ''}
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
-        ${trip.withHotel ? `<a href="${hotelUrl}" target="_blank" class="btn btn-primary btn-lg" style="text-decoration:none">Забронировать гостиницу →</a>` : ''}
-        <button class="btn btn-outline" onclick="resetChat()">Новый запрос</button>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:14px;max-width:420px">
+        <a href="${flightUrl}" target="_blank" class="btn btn-primary btn-lg" style="text-decoration:none;justify-content:center">1) Купить авиабилет →</a>
+        ${trip.withHotel ? `<a href="${hotelUrl}" target="_blank" class="btn btn-outline btn-lg" style="text-decoration:none;justify-content:center">2) Забронировать гостиницу →</a>` : ''}
+        <button class="btn btn-outline" onclick="resetChat()" style="justify-content:center">Новый запрос</button>
       </div>
-      <div style="margin-top:10px;font-size:12px;color:var(--text2)">Переходы на авиа и поезда доступны на первом экране с вариантами. В карточке оформления оставлена только бронь гостиницы.</div>`);
+      <div style="margin-top:10px;font-size:12px;color:var(--text2)">Логика оформления: сначала авиабилет, затем отель. Кнопки вынесены в вертикальный блок, чтобы не перекрывать друг друга.</div>`);
 
     chatBusy = false;
   }, 1400);
