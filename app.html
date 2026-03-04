@@ -1638,7 +1638,19 @@ function dateFromToday(offsetDays) {
 
 function parseTrip(text) {
   const t = text.toLowerCase().trim();
-  const result = { origin: null, dest: null, depDate: null, retDate: null, nights: null, budget: null, withHotel: true, withBaggage: null, passengers: 1 };
+  const result = {
+    origin: null,
+    dest: null,
+    depDate: null,
+    retDate: null,
+    nights: null,
+    budget: null,
+    withHotel: true,
+    withBaggage: null,
+    passengers: 1,
+    requestedPassengers: 1,
+    isMice: false,
+  };
 
   // --- CITIES ---
   // \b does NOT work with Cyrillic in JS, so we use simple string includes
@@ -1719,10 +1731,22 @@ function parseTrip(text) {
   // --- PASSENGERS ---
   // "2 человека", "на 3 пассажира", "двое", "трое"
   const pasRx = t.match(/(\d+)\s*(человек|пассажир|взросл|гост|билет)/);
-  if (pasRx) result.passengers = Math.min(9, parseInt(pasRx[1]));
-  if (t.includes('двое') || t.includes(' два ') || t.includes(' двух ')) result.passengers = 2;
-  if (t.includes('трое') || t.includes(' три ') || t.includes(' трёх '))  result.passengers = 3;
-  if (t.includes('четверо') || t.includes(' четыре '))                    result.passengers = 4;
+  if (pasRx) {
+    result.requestedPassengers = Math.max(1, parseInt(pasRx[1]));
+    result.passengers = Math.min(9, result.requestedPassengers);
+  }
+  if (t.includes('двое') || t.includes(' два ') || t.includes(' двух ')) {
+    result.requestedPassengers = 2;
+    result.passengers = 2;
+  }
+  if (t.includes('трое') || t.includes(' три ') || t.includes(' трёх ')) {
+    result.requestedPassengers = 3;
+    result.passengers = 3;
+  }
+  if (t.includes('четверо') || t.includes(' четыре ')) {
+    result.requestedPassengers = 4;
+    result.passengers = 4;
+  }
 
   // --- BUDGET ---
   const bm = t.match(/бюджет[^\d]*(\d[\d ]*)/i) || t.match(/до\s+(\d[\d ]*)/i) || t.match(/(\d{4,6})\s*₽/);
@@ -1740,6 +1764,15 @@ function parseTrip(text) {
   if (t.includes('без багаж') || t.includes('ручная кладь')) result.withBaggage = false;
   if (t.includes('бизнес') || t.includes('business') || t.includes('бизнес-класс') || t.includes('бизнескласс')) result.bizClass = true;
   if (t.includes('поезд') || t.includes('жд') || t.includes('ж/д') || t.includes('ржд') || t.includes('сапсан')) result.byTrain = true;
+  if (
+    t.includes('mice') ||
+    t.includes('майс') ||
+    t.includes('массов') ||
+    t.includes('групп') ||
+    t.includes('конференц') ||
+    t.includes('мероприят')
+  ) result.isMice = true;
+  if (result.requestedPassengers >= 15) result.isMice = true;
 
   return result;
 }
@@ -1767,6 +1800,59 @@ function addTripDays(d, offset) {
   const dt = new Date(y, d.month - 1, d.day);
   dt.setDate(dt.getDate() + offset);
   return { day: dt.getDate(), month: dt.getMonth() + 1 };
+}
+
+const TRAIN_SLUGS = {
+  'Москва':'moskva',
+  'Санкт-Петербург':'sanktt-peterburg',
+  'Казань':'kazan',
+  'Новосибирск':'novosibirsk',
+  'Екатеринбург':'ekaterinburg',
+  'Нижний Новгород':'nizhnij-novgorod',
+  'Сочи':'sochi',
+  'Краснодар':'krasnodar',
+  'Ростов-на-Дону':'rostov',
+  'Самара':'samara',
+  'Уфа':'ufa',
+  'Пермь':'perm',
+  'Воронеж':'voronezh',
+  'Тюмень':'tyumen',
+  'Иркутск':'irkutsk',
+  'Челябинск':'chelyabinsk',
+  'Омск':'omsk',
+  'Владивосток':'vladivostok',
+  'Хабаровск':'khabarovsk',
+};
+
+function bookingPaxForDeepLink(trip) {
+  const pax = trip?.requestedPassengers || trip?.passengers || 1;
+  return Math.max(1, Math.min(9, pax));
+}
+
+function trainSlug(name) {
+  return TRAIN_SLUGS[name] || encodeURIComponent((name || '').toLowerCase().replace(/\s+/g, '-'));
+}
+
+function tinkoffTrainUrl(trip) {
+  const fromName = trip.origin?.name || 'Москва';
+  const toName = trip.dest?.name || '';
+  if (!toName) return 'https://www.tbank.ru/travel/trains/';
+
+  const fromSlug = trainSlug(fromName);
+  const toSlug = trainSlug(toName);
+  const dep = isoDate(trip.depDate) || isoDate(dateFromToday(7));
+  const pax = bookingPaxForDeepLink(trip);
+  const params = new URLSearchParams({
+    origin: fromName,
+    originId: fromSlug,
+    destination: toName,
+    destinationId: toSlug,
+    date: dep,
+    adults: String(pax),
+    children: '0',
+  });
+
+  return `https://www.tbank.ru/travel/trains/routes/${fromSlug}/${toSlug}/?${params.toString()}`;
 }
 
 /* ══════════════════════════════════════════════════════
@@ -1840,7 +1926,7 @@ function tinkoffFlightUrl(trip) {
   const to   = trip.dest   ? trip.dest.iata   : '';
   const dep  = tbankRouteDate(trip.depDate) || tbankRouteDate(dateFromToday(7));
   const ret  = trip.retDate ? tbankRouteDate(trip.retDate) : '';
-  const adults   = trip.passengers || 1;
+  const adults = bookingPaxForDeepLink(trip);
   const cabin = trip.bizClass ? 'C' : 'Y';
 
   if (!to) return 'https://www.tbank.ru/travel/flights/';
@@ -1857,7 +1943,7 @@ function tinkoffHotelUrl(trip) {
   const cin   = isoDate(trip.depDate) || isoDate(dateFromToday(7));
   const checkoutDate = trip.retDate || addTripDays(trip.depDate, trip.nights || 2) || dateFromToday(9);
   const dout  = isoDate(checkoutDate);
-  const guests = trip.passengers || 1;
+  const guests = bookingPaxForDeepLink(trip);
   return `https://www.tbank.ru/travel/hotels/new/?destination=${encodeURIComponent(city)}&checkIn=${cin}&checkOut=${dout}&adults=${guests}&children=0`;
 }
 
@@ -1884,9 +1970,9 @@ function addBot(html) {
     const list = this.closest('.fl-list');
     list.querySelectorAll('.fl-select').forEach(x => { x.disabled=true; x.classList.remove('selected'); x.textContent='Выбрать'; });
     this.classList.add('selected'); this.textContent = '✓ Выбрано';
-    const airline = this.closest('.fl-card').querySelector('.fl-airline').textContent;
-    const price = this.closest('.fl-card').querySelector('.fl-price').textContent;
-    chatCtx.chosenFlight = { airline, price };
+    const airline = this.dataset.airline || this.closest('.fl-card').querySelector('.fl-airline').textContent;
+    const totalPrice = parseInt(this.dataset.totalPrice || '0');
+    chatCtx.chosenFlight = { airline, totalPrice };
     if (!chatBusy) setTimeout(() => respondHotels(), 800);
   }));
   d.querySelectorAll('.hl-select').forEach(b => b.addEventListener('click', function() {
@@ -1947,6 +2033,8 @@ function processMessage(text) {
     withBaggage:  parsed.withBaggage !== null ? parsed.withBaggage : prev.withBaggage,
     bizClass:     parsed.bizClass    || prev.bizClass,
     byTrain:      parsed.byTrain     || prev.byTrain,
+    requestedPassengers: parsed.requestedPassengers || prev.requestedPassengers || parsed.passengers || prev.passengers || 1,
+    isMice:       parsed.isMice || prev.isMice,
   };
   chatCtx.trip = trip;
 
@@ -2034,7 +2122,7 @@ function respondFlights() {
       ? `<div class="ai-note"><strong>AI:</strong> Отличное время бронирования — вылет через ${leadDays} дн., скидка ~8% к стандарту.</div>`
       : `<div class="ai-note"><strong>AI:</strong> Средняя цена по маршруту ${trip.origin.name}–${trip.dest.name}. Забронировав сегодня, сэкономишь ~${Math.round(cheapest.price*0.12/100)*100} ₽ по сравнению с покупкой за 1–3 дня.</div>`;
 
-    const paxCount = trip.passengers || 1;
+    const paxCount = trip.requestedPassengers || trip.passengers || 1;
     const flHtml = flights.map((f, i) => {
       const totalPrice = f.price * paxCount;
       const perPax = paxCount > 1 ? ` <span style="font-size:12px;opacity:.7">(${f.price.toLocaleString('ru')} × ${paxCount})</span>` : '';
@@ -2051,20 +2139,27 @@ function respondFlights() {
           ${f.hasBaggage ? '<span class="ft-gr">Багаж вкл.</span>' : '<span class="ft-o">Ручная кладь</span>'}
           ${f.isBest ? '<span class="ft-g">Лучшая цена</span>' : ''}
         </div>
-        <button class="fl-select">Выбрать</button>
+        <button class="fl-select" data-airline="${f.airline}" data-total-price="${totalPrice}">Выбрать</button>
       </div>`;
     }).join('');
 
-    const pax = trip.passengers > 1 ? `, ${trip.passengers} пасс.` : '';
+    const pax = paxCount > 1 ? `, ${paxCount} пасс.` : '';
+    const miceNote = trip.isMice
+      ? `<div class="ai-note" style="border-color:var(--blue);background:#eef5ff"><strong>MICE:</strong> Групповая поездка на <strong>${paxCount} человек</strong>. В deeplink Т‑Путешествий передаётся до 9 пассажиров за один поиск, поэтому массовое бронирование делится на несколько заявок.</div>`
+      : '';
+    const tbankPax = bookingPaxForDeepLink(trip);
     const cls = trip.bizClass ? ', бизнес-класс' : '';
     addBot(`Нашёл рейсы <strong>${trip.origin.name} → ${trip.dest.name}</strong>, ${fmtDate(trip.depDate)}${pax}${cls}:
       ${aiTip}
+      ${miceNote}
       <div class="fl-list">${flHtml}</div>
-      <div style="margin-top:10px">
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
         <a href="${tinkoffFlightUrl(trip)}" target="_blank" class="btn btn-outline" style="font-size:12px;text-decoration:none;display:inline-flex">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          Все рейсы на T‑Путешествия
+          Авиа в T‑Путешествиях
         </a>
+        <a href="${tinkoffTrainUrl(trip)}" target="_blank" class="btn btn-outline" style="font-size:12px;text-decoration:none;display:inline-flex">Поезда в T‑Путешествиях</a>
+        ${trip.isMice ? `<a href="${tinkoffFlightUrl(trip)}" target="_blank" class="btn btn-primary" style="font-size:12px;text-decoration:none;display:inline-flex">Массовый перелёт (${paxCount} чел., партия до ${tbankPax})</a>` : ''}
       </div>`);
     chatCtx.flightsShown = true;
     chatBusy = false;
@@ -2123,7 +2218,8 @@ function respondSummary() {
 
   setTimeout(() => {
     hideTyping();
-    const flPrice = fl ? parseInt(fl.price.replace(/[^\d]/g,'')) : (trip.dest ? genFlights(trip)[0].price : 0);
+    const paxCount = trip.requestedPassengers || trip.passengers || 1;
+    const flPrice = fl ? (fl.totalPrice || 0) : (trip.dest ? genFlights(trip)[0].price * paxCount : 0);
     const flName = fl ? fl.airline : (trip.dest ? genFlights(trip)[0].airline : '—');
     const htPrice = ht ? parseInt(ht.price.replace(/[^\d]/g,'')) * trip.nights : (trip.dest && trip.withHotel ? (genHotels(trip)||[])[0]?.price * trip.nights : 0);
     const htName = ht ? ht.name : (trip.dest && trip.withHotel ? (genHotels(trip)||[])[0]?.name : null);
@@ -2134,6 +2230,9 @@ function respondSummary() {
 
     const flightUrl = tinkoffFlightUrl(trip);
     const hotelUrl = tinkoffHotelUrl(trip);
+    const trainUrl = tinkoffTrainUrl(trip);
+    const batchSize = bookingPaxForDeepLink(trip);
+    const batchCount = Math.ceil(paxCount / batchSize);
 
     addBot(`Сводка по командировке:
       <div class="sum-card mt8">
@@ -2145,11 +2244,15 @@ function respondSummary() {
         <div class="cashback">Кэшбэк 5% = +${cashback.toLocaleString('ru')} ₽ на карту</div>
       </div>
       ${!budgetOk ? `<div class="ai-note" style="border-color:var(--orange);background:#fffbeb"><strong>AI:</strong> Итого превышает бюджет ${trip.budget?.toLocaleString('ru')} ₽ на ${(total-trip.budget).toLocaleString('ru')} ₽. Могу предложить альтернативы дешевле.</div>` : ''}
+      ${trip.isMice ? `<div class="ai-note" style="border-color:var(--blue);background:#eef5ff"><strong>MICE-план:</strong> ${paxCount} пассажиров = ${batchCount} заявк${batchCount === 1 ? 'а' : batchCount < 5 ? 'и' : ''} по ${batchSize} чел. (последняя может быть меньше).</div>` : ''}
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
-        <a href="${flightUrl}" target="_blank" class="btn btn-primary btn-lg" style="text-decoration:none">Забронировать на T‑Путешествия →</a>
+        <a href="${flightUrl}" target="_blank" class="btn btn-primary btn-lg" style="text-decoration:none">Забронировать авиа →</a>
+        <a href="${trainUrl}" target="_blank" class="btn btn-outline" style="text-decoration:none">Поезда в T‑Путешествия</a>
+        ${trip.withHotel ? `<a href="${hotelUrl}" target="_blank" class="btn btn-outline" style="text-decoration:none">Отели в T‑Путешествия</a>` : ''}
+        ${trip.isMice ? `<a href="${flightUrl}" target="_blank" class="btn btn-primary" style="text-decoration:none">Массовый перелёт (MICE)</a>` : ''}
         <button class="btn btn-outline" onclick="resetChat()">Новый запрос</button>
       </div>
-      <div style="margin-top:10px;font-size:12px;color:var(--text2)">Кнопка откроет T‑Путешествия с готовым поиском по вашему маршруту</div>`);
+      <div style="margin-top:10px;font-size:12px;color:var(--text2)">Кнопки открывают T‑Путешествия с готовым поиском по маршруту. Для групп больше 9 чел. бронирование выполняется партиями.</div>`);
 
     chatBusy = false;
   }, 1400);
