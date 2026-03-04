@@ -2228,9 +2228,7 @@ function respondSummary() {
     const cashback = Math.round(total * 0.05);
     const budgetOk = !trip.budget || total <= trip.budget;
 
-    const flightUrl = tinkoffFlightUrl(trip);
     const hotelUrl = tinkoffHotelUrl(trip);
-    const trainUrl = tinkoffTrainUrl(trip);
     const batchSize = bookingPaxForDeepLink(trip);
     const batchCount = Math.ceil(paxCount / batchSize);
 
@@ -2246,13 +2244,10 @@ function respondSummary() {
       ${!budgetOk ? `<div class="ai-note" style="border-color:var(--orange);background:#fffbeb"><strong>AI:</strong> Итого превышает бюджет ${trip.budget?.toLocaleString('ru')} ₽ на ${(total-trip.budget).toLocaleString('ru')} ₽. Могу предложить альтернативы дешевле.</div>` : ''}
       ${trip.isMice ? `<div class="ai-note" style="border-color:var(--blue);background:#eef5ff"><strong>MICE-план:</strong> ${paxCount} пассажиров = ${batchCount} заявк${batchCount === 1 ? 'а' : batchCount < 5 ? 'и' : ''} по ${batchSize} чел. (последняя может быть меньше).</div>` : ''}
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
-        <a href="${flightUrl}" target="_blank" class="btn btn-primary btn-lg" style="text-decoration:none">Забронировать авиа →</a>
-        <a href="${trainUrl}" target="_blank" class="btn btn-outline" style="text-decoration:none">Поезда в T‑Путешествия</a>
-        ${trip.withHotel ? `<a href="${hotelUrl}" target="_blank" class="btn btn-outline" style="text-decoration:none">Отели в T‑Путешествия</a>` : ''}
-        ${trip.isMice ? `<a href="${flightUrl}" target="_blank" class="btn btn-primary" style="text-decoration:none">Массовый перелёт (MICE)</a>` : ''}
+        ${trip.withHotel ? `<a href="${hotelUrl}" target="_blank" class="btn btn-primary btn-lg" style="text-decoration:none">Забронировать гостиницу →</a>` : ''}
         <button class="btn btn-outline" onclick="resetChat()">Новый запрос</button>
       </div>
-      <div style="margin-top:10px;font-size:12px;color:var(--text2)">Кнопки открывают T‑Путешествия с готовым поиском по маршруту. Для групп больше 9 чел. бронирование выполняется партиями.</div>`);
+      <div style="margin-top:10px;font-size:12px;color:var(--text2)">Переходы на авиа и поезда доступны на первом экране с вариантами. В карточке оформления оставлена только бронь гостиницы.</div>`);
 
     chatBusy = false;
   }, 1400);
