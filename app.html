@@ -1641,30 +1641,41 @@ function parseTrip(text) {
   const result = { origin: null, dest: null, depDate: null, retDate: null, nights: null, budget: null, withHotel: true, withBaggage: null, passengers: 1 };
 
   // --- CITIES ---
-  // Collect all matches with their position to resolve origin/dest by word order
+  // \b does NOT work with Cyrillic in JS, so we use simple string includes
+  const ORIGIN_PREPS = ['из ', 'от ', 'с '];   // "из сочи", "от казани"
+  const DEST_PREPS   = ['в ', 'до ', 'на ', 'во ']; // "в питер", "до москвы"
+
   const cityMatches = [];
   for (const [key, city] of Object.entries(CITIES)) {
     const terms = [key, ...city.aliases];
     for (const term of terms) {
-      const idx = t.indexOf(term);
-      if (idx !== -1) {
-        // Check if the word before this term is 'из'/'от' (origin) or 'в'/'до' (dest)
-        const before = t.slice(Math.max(0, idx - 5), idx);
-        const isOrigin = /(\bиз\s*$|\bот\s*$)/.test(before);
-        const isDest   = /(\bв\s*$|\bдо\s*$|\bна\s*$)/.test(before);
+      if (t.includes(term)) {
+        const isOrigin = ORIGIN_PREPS.some(p => t.includes(p + term));
+        const isDest   = DEST_PREPS.some(p => t.includes(p + term));
+        const idx = t.indexOf(term);
         cityMatches.push({ city, idx, term, isOrigin, isDest });
-        break; // first matching term for this city
+        break; // first matching term wins for this city
       }
     }
   }
-  // Sort by position in text
+  // Sort by position in text (left = earlier mention)
   cityMatches.sort((a, b) => a.idx - b.idx);
+
   for (const m of cityMatches) {
-    if (m.isOrigin) { result.origin = m.city; }
-    else if (m.isDest) { result.dest = m.city; }
-    else if (!result.origin && !result.dest) { result.dest = m.city; }
-    else if (result.dest && !result.origin && m.idx < cityMatches.find(x => x.city === result.dest)?.idx) { result.origin = m.city; }
-    else if (!result.dest) { result.dest = m.city; }
+    if (m.isOrigin && !result.origin) {
+      result.origin = m.city;
+    } else if (m.isDest && !result.dest) {
+      result.dest = m.city;
+    } else if (!result.origin && !result.dest) {
+      // No preposition — first mention becomes dest
+      result.dest = m.city;
+    } else if (result.dest && !result.origin) {
+      // Second city without preposition = origin if it came before dest in text
+      const destIdx = cityMatches.find(x => x.city === result.dest)?.idx ?? 999;
+      if (m.idx < destIdx) result.origin = m.city;
+    } else if (!result.dest) {
+      result.dest = m.city;
+    }
   }
   if (!result.origin) result.origin = CITIES['москва'];
 
@@ -1741,8 +1752,21 @@ function fmtDate(d) {
 
 function isoDate(d) {
   if (!d) return '';
-  const y = 2026;
+  const y = new Date().getFullYear();
   return `${y}-${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}`;
+}
+
+function tbankRouteDate(d) {
+  if (!d) return '';
+  return `${String(d.month).padStart(2,'0')}-${String(d.day).padStart(2,'0')}`;
+}
+
+function addTripDays(d, offset) {
+  if (!d) return null;
+  const y = new Date().getFullYear();
+  const dt = new Date(y, d.month - 1, d.day);
+  dt.setDate(dt.getDate() + offset);
+  return { day: dt.getDate(), month: dt.getMonth() + 1 };
 }
 
 /* ══════════════════════════════════════════════════════
@@ -1814,25 +1838,27 @@ function genHotels(trip) {
 function tinkoffFlightUrl(trip) {
   const from = trip.origin ? trip.origin.iata : 'MOW';
   const to   = trip.dest   ? trip.dest.iata   : '';
-  const dep  = isoDate(trip.depDate) || isoDate(dateFromToday(7));
-  const ret  = trip.retDate ? isoDate(trip.retDate) : '';
+  const dep  = tbankRouteDate(trip.depDate) || tbankRouteDate(dateFromToday(7));
+  const ret  = trip.retDate ? tbankRouteDate(trip.retDate) : '';
   const adults   = trip.passengers || 1;
-  const svcClass = trip.bizClass ? 'business' : 'economy';
-  let url = `https://www.tbank.ru/travel/flights/?originIata=${from}&destinationIata=${to}&departureDate=${dep}&adults=${adults}&children=0&infants=0&serviceClass=${svcClass}`;
-  if (ret) url += `&returnDate=${ret}`;
-  return url;
+  const cabin = trip.bizClass ? 'C' : 'Y';
+
+  if (!to) return 'https://www.tbank.ru/travel/flights/';
+
+  const params = `?adults=${adults}&children=0&infants=0&cabin=${cabin}&composite=0`;
+  if (ret) {
+    return `https://www.tbank.ru/travel/flights/multi-way/${from}-${to}/${dep}/${to}-${from}/${ret}/${params}`;
+  }
+  return `https://www.tbank.ru/travel/flights/one-way/${from}-${to}/${dep}/${params}`;
 }
 
 function tinkoffHotelUrl(trip) {
   const city  = trip.dest ? trip.dest.name : '';
   const cin   = isoDate(trip.depDate) || isoDate(dateFromToday(7));
-  const dout  = trip.retDate
-    ? isoDate(trip.retDate)
-    : trip.depDate
-      ? isoDate({ day: trip.depDate.day + (trip.nights || 2), month: trip.depDate.month })
-      : isoDate(dateFromToday(9));
+  const checkoutDate = trip.retDate || addTripDays(trip.depDate, trip.nights || 2) || dateFromToday(9);
+  const dout  = isoDate(checkoutDate);
   const guests = trip.passengers || 1;
-  return `https://www.tbank.ru/travel/hotels/new/?location=${encodeURIComponent(city)}&checkIn=${cin}&checkOut=${dout}&adults=${guests}&children=0`;
+  return `https://www.tbank.ru/travel/hotels/new/?destination=${encodeURIComponent(city)}&checkIn=${cin}&checkOut=${dout}&adults=${guests}&children=0`;
 }
 
 /* ══════════════════════════════════════════════════════
