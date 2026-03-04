@@ -1555,7 +1555,7 @@ function approveTrip(btn, action) {
    CITY DATABASE  (IATA + base prices + hotels)
    ══════════════════════════════════════════════════════ */
 const CITIES = {
-  'москва':            { iata:'MOW', name:'Москва',            aliases:['мск','москвы','из москвы','в москву'] },
+  'москва':            { iata:'MOW', name:'Москва',            baseFly:3500,  baseHotel:6500, dur:'1ч 30мин', aliases:['мск','москвы','из москвы','в москву'] },
   'санкт-петербург':   { iata:'LED', name:'Санкт-Петербург',   baseFly:3500,  baseHotel:4800, dur:'1ч 30мин', aliases:['питер','спб','петербург','ленинград','санкт петербург'] },
   'казань':            { iata:'KZN', name:'Казань',            baseFly:3800,  baseHotel:3900, dur:'2ч 15мин', aliases:['кзн'] },
   'новосибирск':       { iata:'OVB', name:'Новосибирск',       baseFly:7200,  baseHotel:4200, dur:'4ч 10мин', aliases:['новосиб','нск'] },
@@ -1672,24 +1672,32 @@ function parseTrip(text) {
   }
   // Sort by position in text (left = earlier mention)
   cityMatches.sort((a, b) => a.idx - b.idx);
-
+  const uniqueCities = [];
   for (const m of cityMatches) {
-    if (m.isOrigin && !result.origin) {
-      result.origin = m.city;
-    } else if (m.isDest && !result.dest) {
-      result.dest = m.city;
-    } else if (!result.origin && !result.dest) {
-      // No preposition — first mention becomes dest
-      result.dest = m.city;
-    } else if (result.dest && !result.origin) {
-      // Second city without preposition = origin if it came before dest in text
-      const destIdx = cityMatches.find(x => x.city === result.dest)?.idx ?? 999;
-      if (m.idx < destIdx) result.origin = m.city;
-    } else if (!result.dest) {
-      result.dest = m.city;
-    }
+    if (!uniqueCities.some(x => x.city.iata === m.city.iata)) uniqueCities.push(m);
   }
-  if (!result.origin) result.origin = CITIES['москва'];
+
+  // 1) Explicit prepositions have top priority
+  for (const m of uniqueCities) {
+    if (m.isOrigin && !result.origin) result.origin = m.city;
+    if (m.isDest && !result.dest) result.dest = m.city;
+  }
+
+  // 2) Fill missing parts by mention order
+  if (!result.origin && !result.dest) {
+    if (uniqueCities.length >= 2) {
+      result.origin = uniqueCities[0].city;
+      result.dest = uniqueCities[1].city;
+    } else if (uniqueCities.length === 1) {
+      result.dest = uniqueCities[0].city;
+    }
+  } else if (!result.origin && result.dest) {
+    const other = uniqueCities.find(m => m.city.iata !== result.dest.iata);
+    if (other) result.origin = other.city;
+  } else if (result.origin && !result.dest) {
+    const other = uniqueCities.find(m => m.city.iata !== result.origin.iata);
+    if (other) result.dest = other.city;
+  }
 
   // --- DATES ---
   // "завтра", "послезавтра" — \b не работает с кириллицей, используем includes
@@ -1865,14 +1873,16 @@ function hashNum(s) {
 }
 
 function genFlights(trip) {
+  const origin = trip.origin;
   const dest = trip.dest;
-  if (!dest || !dest.baseFly) return null;
+  if (!origin || !dest || !dest.baseFly) return null;
   const key = `${dest.iata}-${trip.depDate ? trip.depDate.day : 10}-${trip.depDate ? trip.depDate.month : 3}`;
   const h = hashNum(key);
   const airlines = AIRLINES[dest.iata] || AIRLINES['default'];
-  const airports = AIRPORTS['MOW'] || ['SVO'];
-  const depAirport = airports[h % airports.length];
-  const arrAirport = dest.iata;
+  const depAirports = AIRPORTS[origin.iata] || [origin.iata];
+  const arrAirports = AIRPORTS[dest.iata] || [dest.iata];
+  const depAirport = depAirports[h % depAirports.length];
+  const arrAirport = arrAirports[0];
 
   // Lead time factor (book early = cheaper)
   const today = new Date();
@@ -2051,6 +2061,23 @@ function processMessage(text) {
           <div class="chat-pill">Новосибирск</div>
           <div class="chat-pill">Екатеринбург</div>
           <div class="chat-pill">Сочи</div>
+        </div>`);
+      chatBusy = false;
+    }, 900);
+    return;
+  }
+
+  if (!trip.origin) {
+    chatBusy = true;
+    showTyping();
+    setTimeout(() => {
+      hideTyping();
+      addBot(`Поняла направление в <strong>${trip.dest.name}</strong>. Уточни, пожалуйста, <strong>откуда вылет</strong>:
+        <div class="chat-pills">
+          <div class="chat-pill">из Москвы</div>
+          <div class="chat-pill">из Санкт-Петербурга</div>
+          <div class="chat-pill">из Казани</div>
+          <div class="chat-pill">из Новосибирска</div>
         </div>`);
       chatBusy = false;
     }, 900);
