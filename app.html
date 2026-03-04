@@ -2039,7 +2039,7 @@ function processMessage(text) {
     origin:       (awaitingOrigin && parsed.cityCount >= 1)
       ? (parsed.origin || parsed.dest || prev.origin)
       : (onlyDestinationProvided ? null : (parsed.origin || prev.origin)),
-    dest:         parsed.dest        || prev.dest,
+    dest:         awaitingOrigin ? (prev.dest || parsed.dest) : (parsed.dest || prev.dest),
     depDate:      parsed.depDate     || prev.depDate,
     retDate:      parsed.retDate     || prev.retDate,
     nights:       parsed.nights !== 2 ? parsed.nights : (prev.nights || 2),
@@ -2126,13 +2126,43 @@ function handlePill(text) {
   const re = parseTrip(text);
 
   if (chatCtx.awaitingOrigin && re.cityCount >= 1) {
-    trip.origin = re.origin || re.dest || trip.origin;
+    const selectedOrigin = re.origin || re.dest;
+    if (selectedOrigin && trip.dest && selectedOrigin.iata === trip.dest.iata) {
+      addBot(`Город вылета совпадает с пунктом назначения (<strong>${trip.dest.name}</strong>). Выбери другой город вылета.`);
+      chatCtx.awaitingOrigin = true;
+      return;
+    }
+    trip.origin = selectedOrigin || trip.origin;
     chatCtx.trip = trip;
     chatCtx.awaitingOrigin = false;
-  } else {
-    if (re.dest && !trip.dest)   { trip.dest   = re.dest;   chatCtx.trip = trip; }
-    if (re.depDate && !trip.depDate) { trip.depDate = re.depDate; chatCtx.trip = trip; }
+
+    if (!trip.depDate) {
+      chatBusy = true;
+      showTyping();
+      setTimeout(() => {
+        hideTyping();
+        addBot(`Когда вылетаем в <strong>${trip.dest.name}</strong>? Укажи дату:
+          <div class="chat-pills">
+            <div class="chat-pill">10 марта</div>
+            <div class="chat-pill">15 марта</div>
+            <div class="chat-pill">20 марта</div>
+            <div class="chat-pill">1 апреля</div>
+          </div>`);
+        chatBusy = false;
+      }, 700);
+      return;
+    }
+
+    if (!chatCtx.flightsShown) {
+      respondFlights();
+    } else if (chatCtx.flightsShown && !chatCtx.hotelsShown) {
+      respondHotels();
+    }
+    return;
   }
+
+  if (re.dest && !trip.dest)   { trip.dest   = re.dest;   chatCtx.trip = trip; }
+  if (re.depDate && !trip.depDate) { trip.depDate = re.depDate; chatCtx.trip = trip; }
   if (text.includes('завтрак')) { trip.withBreakfast = true; chatCtx.trip = trip; }
   if (text.includes('трансфер') || text === 'Да') { trip.withTransfer = true; chatCtx.trip = trip; }
   if (text === 'Нет') { trip.withTransfer = false; chatCtx.trip = trip; }
