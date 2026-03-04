@@ -2033,9 +2033,12 @@ function processMessage(text) {
   const parsed = parseTrip(text);
   // Merge with existing context so multi-turn conversation keeps all details
   const prev = chatCtx.trip || {};
+  const awaitingOrigin = !!chatCtx.awaitingOrigin;
   const onlyDestinationProvided = parsed.cityCount === 1 && parsed.dest && !parsed.origin;
   const trip = {
-    origin:       onlyDestinationProvided ? null : (parsed.origin || prev.origin),
+    origin:       (awaitingOrigin && parsed.cityCount >= 1)
+      ? (parsed.origin || parsed.dest || prev.origin)
+      : (onlyDestinationProvided ? null : (parsed.origin || prev.origin)),
     dest:         parsed.dest        || prev.dest,
     depDate:      parsed.depDate     || prev.depDate,
     retDate:      parsed.retDate     || prev.retDate,
@@ -2054,6 +2057,9 @@ function processMessage(text) {
   // Never keep degenerate same-city routes (e.g. "Казань -> Казань")
   if (trip.origin && trip.dest && trip.origin.iata === trip.dest.iata) {
     trip.origin = null;
+  }
+  if (awaitingOrigin && trip.origin && trip.dest && trip.origin.iata !== trip.dest.iata) {
+    chatCtx.awaitingOrigin = false;
   }
   chatCtx.trip = trip;
 
@@ -2076,16 +2082,17 @@ function processMessage(text) {
   }
 
   if (!trip.origin) {
+    chatCtx.awaitingOrigin = true;
     chatBusy = true;
     showTyping();
     setTimeout(() => {
       hideTyping();
-      addBot(`Поняла направление в <strong>${trip.dest.name}</strong>. Уточни, пожалуйста, <strong>откуда вылет</strong>:
+      addBot(`Поняла направление в <strong>${trip.dest.name}</strong>.<br><strong>Вылет из:</strong>
         <div class="chat-pills">
-          <div class="chat-pill">из Москвы</div>
-          <div class="chat-pill">из Санкт-Петербурга</div>
-          <div class="chat-pill">из Казани</div>
-          <div class="chat-pill">из Новосибирска</div>
+          <div class="chat-pill">Москва</div>
+          <div class="chat-pill">Санкт-Петербург</div>
+          <div class="chat-pill">Казань</div>
+          <div class="chat-pill">Новосибирск</div>
         </div>`);
       chatBusy = false;
     }, 900);
@@ -2118,8 +2125,14 @@ function handlePill(text) {
   const trip = chatCtx.trip || {};
   const re = parseTrip(text);
 
-  if (re.dest && !trip.dest)   { trip.dest   = re.dest;   chatCtx.trip = trip; }
-  if (re.depDate && !trip.depDate) { trip.depDate = re.depDate; chatCtx.trip = trip; }
+  if (chatCtx.awaitingOrigin && re.cityCount >= 1) {
+    trip.origin = re.origin || re.dest || trip.origin;
+    chatCtx.trip = trip;
+    chatCtx.awaitingOrigin = false;
+  } else {
+    if (re.dest && !trip.dest)   { trip.dest   = re.dest;   chatCtx.trip = trip; }
+    if (re.depDate && !trip.depDate) { trip.depDate = re.depDate; chatCtx.trip = trip; }
+  }
   if (text.includes('завтрак')) { trip.withBreakfast = true; chatCtx.trip = trip; }
   if (text.includes('трансфер') || text === 'Да') { trip.withTransfer = true; chatCtx.trip = trip; }
   if (text === 'Нет') { trip.withTransfer = false; chatCtx.trip = trip; }
