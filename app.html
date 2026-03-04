@@ -1647,8 +1647,8 @@ function parseTrip(text) {
     budget: null,
     withHotel: true,
     withBaggage: null,
-    passengers: 1,
-    requestedPassengers: 1,
+    passengers: null,
+    requestedPassengers: null,
     isMice: false,
   };
 
@@ -1772,7 +1772,7 @@ function parseTrip(text) {
     t.includes('конференц') ||
     t.includes('мероприят')
   ) result.isMice = true;
-  if (result.requestedPassengers >= 15) result.isMice = true;
+  if ((result.requestedPassengers || 0) >= 15) result.isMice = true;
 
   return result;
 }
@@ -2033,6 +2033,7 @@ function processMessage(text) {
     withBaggage:  parsed.withBaggage !== null ? parsed.withBaggage : prev.withBaggage,
     bizClass:     parsed.bizClass    || prev.bizClass,
     byTrain:      parsed.byTrain     || prev.byTrain,
+    passengers:   parsed.passengers || prev.passengers || 1,
     requestedPassengers: parsed.requestedPassengers || prev.requestedPassengers || parsed.passengers || prev.passengers || 1,
     isMice:       parsed.isMice || prev.isMice,
   };
